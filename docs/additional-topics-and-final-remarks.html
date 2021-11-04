@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 6 Additional topics and final remarks | Statistical Methods for Environmental Mixtures</title>
+  <meta name="description" content="Humans are simultaneously exposed to a large number of environmental hazards. To allow a more accurate identification of the risks associated with environmental exposures and developing more targeted public health interventions, it is crucial that population-based studies account for the complexity of such exposures as environmental mixtures. This poses several analytic challenges and often requires the use of extensions of standard regression approaches or more flexible techinques for high-dimensional data. This document presents an extended version of the class material that was used in an introductory two-weeks course on statistical approaches for environmental mixtures. The main challanges and limitations of standard regression techniques are outlined, and recent methodological developments are introduced in a rigorous yet non-theoretical way. The course was designed for students and postdocs in environmental health with basic preliminary knoweldge on linear and logistic regression models. Sources and code examples to conduct a thorough analysis in R are also included." />
+  <meta name="generator" content="bookdown 0.22 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 6 Additional topics and final remarks | Statistical Methods for Environmental Mixtures" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="Humans are simultaneously exposed to a large number of environmental hazards. To allow a more accurate identification of the risks associated with environmental exposures and developing more targeted public health interventions, it is crucial that population-based studies account for the complexity of such exposures as environmental mixtures. This poses several analytic challenges and often requires the use of extensions of standard regression approaches or more flexible techinques for high-dimensional data. This document presents an extended version of the class material that was used in an introductory two-weeks course on statistical approaches for environmental mixtures. The main challanges and limitations of standard regression techniques are outlined, and recent methodological developments are introduced in a rigorous yet non-theoretical way. The course was designed for students and postdocs in environmental health with basic preliminary knoweldge on linear and logistic regression models. Sources and code examples to conduct a thorough analysis in R are also included." />
+  <meta name="github-repo" content="andreabellavia/mixtures" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 6 Additional topics and final remarks | Statistical Methods for Environmental Mixtures" />
+  
+  <meta name="twitter:description" content="Humans are simultaneously exposed to a large number of environmental hazards. To allow a more accurate identification of the risks associated with environmental exposures and developing more targeted public health interventions, it is crucial that population-based studies account for the complexity of such exposures as environmental mixtures. This poses several analytic challenges and often requires the use of extensions of standard regression approaches or more flexible techinques for high-dimensional data. This document presents an extended version of the class material that was used in an introductory two-weeks course on statistical approaches for environmental mixtures. The main challanges and limitations of standard regression techniques are outlined, and recent methodological developments are introduced in a rigorous yet non-theoretical way. The course was designed for students and postdocs in environmental health with basic preliminary knoweldge on linear and logistic regression models. Sources and code examples to conduct a thorough analysis in R are also included." />
+  
+
+<meta name="author" content="Andrea Bellavia" />
+
+
+<meta name="date" content="2021-11-04" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="flexible-approaches-for-complex-settings.html"/>
+<link rel="next" href="references.html"/>
+<script src="libs/header-attrs-2.9/header-attrs.js"></script>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+<link href="libs/table1-1.0/table1_defaults.css" rel="stylesheet" />
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
+<li class="chapter" data-level="" data-path="about-the-author.html"><a href="about-the-author.html"><i class="fa fa-check"></i>About the Author</a></li>
+<li class="chapter" data-level="1" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>1</b> Introduction</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="introduction.html"><a href="introduction.html#the-exposome"><i class="fa fa-check"></i><b>1.1</b> The Exposome</a></li>
+<li class="chapter" data-level="1.2" data-path="introduction.html"><a href="introduction.html#why-focusing-on-multiple-exposures"><i class="fa fa-check"></i><b>1.2</b> Why focusing on multiple exposures?</a></li>
+<li class="chapter" data-level="1.3" data-path="introduction.html"><a href="introduction.html#what-is-your-research-question"><i class="fa fa-check"></i><b>1.3</b> What is your research question?</a></li>
+<li class="chapter" data-level="1.4" data-path="introduction.html"><a href="introduction.html#broad-classifications-of-statistical-approaches"><i class="fa fa-check"></i><b>1.4</b> Broad classification(s) of statistical approaches</a></li>
+<li class="chapter" data-level="1.5" data-path="introduction.html"><a href="introduction.html#introduction-to-r-and-the-simulated-data"><i class="fa fa-check"></i><b>1.5</b> Introduction to R and the simulated data</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html"><i class="fa fa-check"></i><b>2</b> Unsupervised analysis</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#pre-processing"><i class="fa fa-check"></i><b>2.1</b> Pre-processing</a></li>
+<li class="chapter" data-level="2.2" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#correlation-analysis"><i class="fa fa-check"></i><b>2.2</b> Correlation analysis</a></li>
+<li class="chapter" data-level="2.3" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#weighted-correlation-network-analysis"><i class="fa fa-check"></i><b>2.3</b> Weighted correlation network analysis</a></li>
+<li class="chapter" data-level="2.4" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#principal-component-analysis"><i class="fa fa-check"></i><b>2.4</b> Principal component analysis</a>
+<ul>
+<li class="chapter" data-level="2.4.1" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#fitting-a-pca-in-r"><i class="fa fa-check"></i><b>2.4.1</b> Fitting a PCA in R</a></li>
+<li class="chapter" data-level="2.4.2" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#choosing-the-number-of-components"><i class="fa fa-check"></i><b>2.4.2</b> Choosing the number of components</a></li>
+<li class="chapter" data-level="2.4.3" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#getting-sense-of-components-interpretation"><i class="fa fa-check"></i><b>2.4.3</b> Getting sense of components interpretation</a></li>
+<li class="chapter" data-level="2.4.4" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#using-principal-components-in-subsequent-analyses"><i class="fa fa-check"></i><b>2.4.4</b> Using principal components in subsequent analyses</a></li>
+<li class="chapter" data-level="2.4.5" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#pca-in-practice"><i class="fa fa-check"></i><b>2.4.5</b> PCA in practice</a></li>
+</ul></li>
+<li class="chapter" data-level="2.5" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#cluster-analysis"><i class="fa fa-check"></i><b>2.5</b> Cluster analysis</a>
+<ul>
+<li class="chapter" data-level="2.5.1" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#k-means-clustering"><i class="fa fa-check"></i><b>2.5.1</b> K-means clustering</a></li>
+<li class="chapter" data-level="2.5.2" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#k-means-in-r"><i class="fa fa-check"></i><b>2.5.2</b> K-means in R</a></li>
+<li class="chapter" data-level="2.5.3" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#cluster-analysis-to-simplify-descriptive-statistics-presentation"><i class="fa fa-check"></i><b>2.5.3</b> Cluster analysis to simplify descriptive statistics presentation</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html"><i class="fa fa-check"></i><b>3</b> Regression-based approaches</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#ols-regression"><i class="fa fa-check"></i><b>3.1</b> OLS regression</a>
+<ul>
+<li class="chapter" data-level="3.1.1" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#single-regression-ewas"><i class="fa fa-check"></i><b>3.1.1</b> Single regression (EWAS)</a></li>
+<li class="chapter" data-level="3.1.2" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#multiple-regression"><i class="fa fa-check"></i><b>3.1.2</b> Multiple regression</a></li>
+<li class="chapter" data-level="3.1.3" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#the-problem-of-multicollinearity"><i class="fa fa-check"></i><b>3.1.3</b> The problem of Multicollinearity</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#penalized-regression-approaches"><i class="fa fa-check"></i><b>3.2</b> Penalized regression approaches</a>
+<ul>
+<li class="chapter" data-level="3.2.1" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#bias-variance-tradeoff"><i class="fa fa-check"></i><b>3.2.1</b> Bias-variance tradeoff</a></li>
+<li class="chapter" data-level="3.2.2" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#ridge-regression"><i class="fa fa-check"></i><b>3.2.2</b> Ridge regression</a></li>
+<li class="chapter" data-level="3.2.3" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#lasso"><i class="fa fa-check"></i><b>3.2.3</b> LASSO</a></li>
+<li class="chapter" data-level="3.2.4" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#elastic-net"><i class="fa fa-check"></i><b>3.2.4</b> Elastic net</a></li>
+<li class="chapter" data-level="3.2.5" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#additional-notes"><i class="fa fa-check"></i><b>3.2.5</b> Additional notes</a></li>
+<li class="chapter" data-level="3.2.6" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#elastic-net-and-environmental-mixtures"><i class="fa fa-check"></i><b>3.2.6</b> Elastic Net and environmental mixtures</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#other-regression-based-approaches"><i class="fa fa-check"></i><b>3.3</b> Other regression-based approaches</a>
+<ul>
+<li class="chapter" data-level="3.3.1" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#hierarchical-linear-models"><i class="fa fa-check"></i><b>3.3.1</b> Hierarchical linear models</a></li>
+<li class="chapter" data-level="3.3.2" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#partial-least-square-regression"><i class="fa fa-check"></i><b>3.3.2</b> Partial least square regression</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#advantages-and-limitations-of-regression-approaches"><i class="fa fa-check"></i><b>3.4</b> Advantages and limitations of regression approaches</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><i class="fa fa-check"></i><b>4</b> Assessing the overall (cumulative) effect of multiple exposures</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#unsupervised-summary-scores"><i class="fa fa-check"></i><b>4.1</b> Unsupervised summary scores</a></li>
+<li class="chapter" data-level="4.2" data-path="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#weighted-quantile-sum"><i class="fa fa-check"></i><b>4.2</b> Weighted quantile sum</a>
+<ul>
+<li class="chapter" data-level="4.2.1" data-path="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#model-definition-and-estimation"><i class="fa fa-check"></i><b>4.2.1</b> Model definition and estimation</a></li>
+<li class="chapter" data-level="4.2.2" data-path="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#the-unidirectionality-assumption"><i class="fa fa-check"></i><b>4.2.2</b> The unidirectionality assumption</a></li>
+<li class="chapter" data-level="4.2.3" data-path="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#extensions-of-the-original-wqs-regression"><i class="fa fa-check"></i><b>4.2.3</b> Extensions of the original WQS regression</a></li>
+<li class="chapter" data-level="4.2.4" data-path="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#quantile-g-computation"><i class="fa fa-check"></i><b>4.2.4</b> Quantile G-computation</a></li>
+<li class="chapter" data-level="4.2.5" data-path="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#wqs-regression-in-r"><i class="fa fa-check"></i><b>4.2.5</b> WQS regression in R</a></li>
+<li class="chapter" data-level="4.2.6" data-path="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#example-from-the-literature"><i class="fa fa-check"></i><b>4.2.6</b> Example from the literature</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html"><i class="fa fa-check"></i><b>5</b> Flexible approaches for complex settings</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#bayesian-kernel-machine-regression"><i class="fa fa-check"></i><b>5.1</b> Bayesian Kernel Machine Regression</a>
+<ul>
+<li class="chapter" data-level="5.1.1" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#introduction-1"><i class="fa fa-check"></i><b>5.1.1</b> Introduction</a></li>
+<li class="chapter" data-level="5.1.2" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#estimation"><i class="fa fa-check"></i><b>5.1.2</b> Estimation</a></li>
+<li class="chapter" data-level="5.1.3" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#trace-plots-and-burning-phase"><i class="fa fa-check"></i><b>5.1.3</b> Trace plots and burning phase</a></li>
+<li class="chapter" data-level="5.1.4" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#visualizing-results"><i class="fa fa-check"></i><b>5.1.4</b> Visualizing results</a></li>
+<li class="chapter" data-level="5.1.5" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#hierarchical-selection"><i class="fa fa-check"></i><b>5.1.5</b> Hierarchical selection</a></li>
+<li class="chapter" data-level="5.1.6" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#extensions"><i class="fa fa-check"></i><b>5.1.6</b> Extensions</a></li>
+<li class="chapter" data-level="5.1.7" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#practical-considerations-and-discussion"><i class="fa fa-check"></i><b>5.1.7</b> Practical considerations and discussion</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#assessing-interactions"><i class="fa fa-check"></i><b>5.2</b> Assessing interactions</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#tree-based-modeling"><i class="fa fa-check"></i><b>5.2.1</b> Tree-based modeling</a></li>
+<li class="chapter" data-level="5.2.2" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#interaction-screening-and-regression-approaches"><i class="fa fa-check"></i><b>5.2.2</b> Interaction screening and regression approaches</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="additional-topics-and-final-remarks.html"><a href="additional-topics-and-final-remarks.html"><i class="fa fa-check"></i><b>6</b> Additional topics and final remarks</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="additional-topics-and-final-remarks.html"><a href="additional-topics-and-final-remarks.html#causal-mixture-effects"><i class="fa fa-check"></i><b>6.1</b> Causal mixture effects</a></li>
+<li class="chapter" data-level="6.2" data-path="additional-topics-and-final-remarks.html"><a href="additional-topics-and-final-remarks.html#binary-and-zero-inflated-exposures"><i class="fa fa-check"></i><b>6.2</b> Binary and zero-inflated exposures</a></li>
+<li class="chapter" data-level="6.3" data-path="additional-topics-and-final-remarks.html"><a href="additional-topics-and-final-remarks.html#mediation-analysis"><i class="fa fa-check"></i><b>6.3</b> Mediation analysis</a></li>
+<li class="chapter" data-level="6.4" data-path="additional-topics-and-final-remarks.html"><a href="additional-topics-and-final-remarks.html#conclusion"><i class="fa fa-check"></i><b>6.4</b> Conclusion</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Statistical Methods for Environmental Mixtures</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="additional-topics-and-final-remarks" class="section level1" number="6">
+<h1><span class="header-section-number">Chapter 6</span> Additional topics and final remarks</h1>
+<p>The aim of this last section is to provide a very brief introduction to additional topics that are often of relevance when investigating the health effects of multiple environmental exposures. First, we will provide a general overview of the extent to which what has been discussed so far can be evaluated from a causal inference perspective. Next, we will describe some relatively common situations where additional methodological considerations are required, namely the presence of zero-inflated or binary exposures. Finally, we will present an introductory overview of approaches that allow incorporating multiple exposures in mediation analysis, which is often a primary goal of exposome research.</p>
+<div id="causal-mixture-effects" class="section level2" number="6.1">
+<h2><span class="header-section-number">6.1</span> Causal mixture effects</h2>
+<p>To improve our understanding of the associations between environmental exposures and health outcomes, and facilitate the development of more stringent public health regulations and interventions, it is important to determine to which extent these associations reflect causal relationships. To establish causal links, researchers are advocating the use of a pluralistic approach in terms of study design, to reduce the potential harm due to typical epidemiological bias such as confounding or selection bias, as well in terms of statistical methodologies for causal inference (<span class="citation"><a href="#ref-vandenbroucke2016causality" role="doc-biblioref">Vandenbroucke, Broadbent, and Pearce</a> (<a href="#ref-vandenbroucke2016causality" role="doc-biblioref">2016</a>)</span>), (<span class="citation"><a href="#ref-dominici2017best" role="doc-biblioref">Dominici and Zigler</a> (<a href="#ref-dominici2017best" role="doc-biblioref">2017</a>)</span>). In the specific case of environmental exposures, this switch from association to causation has to account for the co-occurrence of multiple components or constituents, present in the real world as a complex mixture. At this time, regulatory policies are still mostly designed to regulate one pollutant or chemical at the time, thus hampering the implementation of integrated policies and possibly resulting in uncertainties about the exact impact of regulations. For this reasons, several researchers, as well as and both governmental and private institutions, are increasingly advocating for more research that could improve our understanding of the causal effects of environmental mixtures evaluated as a complex exposure situation of high-dimensional data.</p>
+<p>The first step to improve findings interpretation towards a causal perspective is to focus on study design and pre-analytic considerations. The paper from <span class="citation"><a href="#ref-dominici2017best" role="doc-biblioref">Dominici and Zigler</a> (<a href="#ref-dominici2017best" role="doc-biblioref">2017</a>)</span> provides an excellent introduction that tackles these issues in the context of air pollution epidemiology, but can easily be extended to any set of environmental exposures. Another important contribution in terms of pre-analytic aspects was provided by Weisskopf and Webster (<span class="citation"><a href="#ref-weisskopf2018bias" role="doc-biblioref">Weisskopf, Seals, and Webster</a> (<a href="#ref-weisskopf2018bias" role="doc-biblioref">2018</a>)</span>),(<span class="citation"><a href="#ref-webster2020epidemiology" role="doc-biblioref">Webster and Weisskopf</a> (<a href="#ref-webster2020epidemiology" role="doc-biblioref">2020</a>)</span>) who have discussed the issue of bias amplification when evaluating environmental mixtures. Their work directly addresses issues of co-confounding related bias, presenting direct acyclic graphs (DAGs) in different contexts of interest.</p>
+<p>After these pre-analytic aspects have been taken into consideration, the focus can be transferred to the statistical approaches that can be used to improve the causal understanding of mixture-outcome associations. Here several points should be mentioned:</p>
+<ul>
+<li><p>As the exposures mixture gets more and more complex, the time spent on the pre-processing phase (unsupervised analysis) will be more and more important.</p></li>
+<li><p>After this pre-processing phase, the assessment of the mixture-outcome effect should be conducted in two stages. First, by using some of the techniques described here (WQS, BKMR, tree-based methods …) one can identify a set of exposures (and interactions) that can be included in a causal model that will later be investigated in a secondary step.</p></li>
+<li><p>This 2-stages approach is highly recommended because most of the available methodologies for causal inference are based on extensions of regression techniques (e.g. propensity score, difference in differences, marginal structural models, inverse probability weighting). If the setting is not too complex (i.e. those settings where multiple regression is a potentially good choice), one can directly build the regression-based causal inference technique. A good introduction of causal inference techniques based on regression that can be useful in environmental epidemiology was provided by <span class="citation"><a href="#ref-bind2019causal" role="doc-biblioref">Bind</a> (<a href="#ref-bind2019causal" role="doc-biblioref">2019</a>)</span>.</p></li>
+<li><p>Out of the possible methods for causal inference, a versatile option in the context of environmental mixtures is the multivariate version of the generalized propensity score (<a href="https://github.com/williazo/mvGPS">mvGPS</a>), which we have applied and described in the context of air pollution epidemiology in a recent publication (Traini et al. under review).</p></li>
+<li><p>Finally, it is useful to remember that one of the recent extensions of WQS (quantile G-comp) was developed with the aim of improving the causal interpretation of the estimated weights and overall effect and could be used to provide a validation of the cumulative mixture effect from a causal perspective.</p></li>
+</ul>
+</div>
+<div id="binary-and-zero-inflated-exposures" class="section level2" number="6.2">
+<h2><span class="header-section-number">6.2</span> Binary and zero-inflated exposures</h2>
+<p>The common setting that we have described so far was making the implicit assumption that we are dealing with a set of multiple continuous exposures (e.g. concentrations of chemicals or pollutants) of joint interest. One important caveat, however, is that continuous exposures evaluated in this context are usually highly skewed (they are strictly non-negative). Log-transformation are commonly used, but these are ineffective where several values are zero. Zero-inflated exposures are skewed covariates with a lot of zeros, typically occurring in environmental epidemiology when several individuals have values below the limit of detection. Removing those individuals from the study (that is, considering this as missing) might reduce power and, most importantly, does not reflect real levels of exposures (it would silence all effects occurring at low levels of exposures). Common alternative options include dicothomization of each exposure into detected/non detected, the use of categorical exposures, or imputation of non-detected values. Even in the latter, however, in the presence of a high number of zeros we would end up getting inflated covariates with a large proportion of individuals with the same exposure value (in practical terms, we might find it hard to really consider the exposure as continuous). If one wants to include zero-inflated covariates in the mixture without any transformation, available techniques include zero inflated poisson models (ZIP), zero-inflated negative binomial models (ZINB), or <a href="https://data.library.virginia.edu/getting-started-with-hurdle-models/">hurdle models</a>.</p>
+<p>When exposures are instead dicothomized (or, in general, when the interest is to evaluate multiple binary exposures), some additional techniques can be considered:</p>
+<ul>
+<li>First of all, evaluating the crude association between binary exposures, as we presented earlier with the correlation matrix, can be done using the <span class="math inline">\(\phi\)</span> coefficients, with <span class="math inline">\(\phi=\chi^2/n\)</span>.</li>
+<li>Correspondence analysis: This will graphically display all covariates based on their proximity. We can think of this approach as an unsupervised method to investigate and depict patterns of exposures</li>
+<li>Hierarchical models and penalized methods can be used with binary exposures. If all covariates are binary, you may prefer not to standardize in order to improve interpretation.<br />
+</li>
+<li>For high dimensional data, extensions of the regression and classification tree approaches for binary data have been developed, both unsupervised and supervised (e.g. CART/MARS, logic regression). BRT can be used with binary exposures.</li>
+</ul>
+</div>
+<div id="mediation-analysis" class="section level2" number="6.3">
+<h2><span class="header-section-number">6.3</span> Mediation analysis</h2>
+<p>Mediation analysis is a common approach to investigate causal pathways relating the exposure(s) and the outcome of interest. When evaluating environmental mixtures, there are several settings where our mixture of interest is only a component of an even larger picture.
+For example, we may want to integrate sources of exposures, or evaluate the contribution of environmental chemicals to health disparities. Our mixture, in these cases, is a mediator of a given <span class="math inline">\(X-Y\)</span> association
+In other settings, we might be interested in the mechanisms through which the mixture affects the outcome. The mixture here is the exposure in a mediation model.
+We can also have several mixtures affecting each other, or potential causal dependencies within the mixture.</p>
+<p>In the general framework of exposome analysis, the underlying hypothesis is that a set of multiple exogenous exposures (the external exposome) affects the complex set of biomarkers at the microbiome level (the internal exposome), thus contributing to the development of health effects. This structure is explicitly making assumptions in terms of mediation:</p>
+<div class="figure">
+<img src="images/exposome.jpg" alt="" />
+<p class="caption">Vrijheid et al. Thorax. 2014</p>
+</div>
+<p>The following DAG presents an integrative framework for environmental exposures (E), lifestyle and behavioral factors (B), and social constructs (X), which may be complex but has the potential to elucidate mechanisms through which diseases are caused, which we presented in an introductory publication (<span class="citation"><a href="#ref-bellavia2018multiple" role="doc-biblioref">Bellavia et al.</a> (<a href="#ref-bellavia2018multiple" role="doc-biblioref">2018</a>)</span>).</p>
+<div class="figure">
+<img src="images/mediation.png" alt="" />
+<p class="caption">Bellavia et al. Env. Epi. 2018</p>
+</div>
+<p>Integrating methods for environmental exposures into mediation analysis has been the goal of several recent papers, which the reader could refer to for further details (<span class="citation"><a href="#ref-bellavia2019approaches" role="doc-biblioref">Bellavia, James-Todd, and Williams</a> (<a href="#ref-bellavia2019approaches" role="doc-biblioref">2019</a>)</span>), (<span class="citation"><a href="#ref-blum2020challenges" role="doc-biblioref">Blum et al.</a> (<a href="#ref-blum2020challenges" role="doc-biblioref">2020</a>)</span>), (<span class="citation"><a href="#ref-devick2018bayesian" role="doc-biblioref">Devick et al.</a> (<a href="#ref-devick2018bayesian" role="doc-biblioref">2018</a>)</span>). These methods have been largely unexplored in applied studies and may represent a critical tool to further identify the mechanisms through which the exposome affects human health. A recent R function was also developed to integrate BKMR into a mediation analysis context (<span class="citation"><a href="#ref-wang2020bkmr" role="doc-biblioref">Wang et al.</a> (<a href="#ref-wang2020bkmr" role="doc-biblioref">2020</a>)</span>).</p>
+</div>
+<div id="conclusion" class="section level2" number="6.4">
+<h2><span class="header-section-number">6.4</span> Conclusion</h2>
+<p>The goal of this introductory course was to discuss the challenges involved in the study of environmental mixtures as they relate to health outcomes and introduce the most common statistical approaches that can help addressing some of these challenges. The core points of the discussion were the following:</p>
+<ul>
+<li><p>Environmental mixtures represent the way environmental exposures occur and operate in real life and, as such, should be integrated and evaluated in environmental epidemiology studies. This involves a series of analytic and statistical issues that should be carefully addressed and taken into account.</p></li>
+<li><p>A first critical classification of statistical methodologies it the one between supervised and unsupervised approaches. It is always recommended to begin the analyses with a thorough pre-processing phase that involves unsupervised techniques. These will help identifying clustering and groupings of exposures, high levels of correlations, missingness, and the presence of inflated covariates, crucially guiding subsequent steps.</p></li>
+<li><p>When incorporating the outcome into the picture (supervised approaches) it it always recommended to begin with regression-based approaches. These provide unique advantages and most of the times will provide a good fit to the question of interest.</p></li>
+<li><p>Specific methods have been developed to address environmental mixtures when regression techniques are of little use or more flexible approaches are required. This occurs, for example, when high-dimensional interactions are of interests, if most associations are non-linear, or if the primary interest is in retrieving the cumulative mixture effect. Generally, all techniques come with some limitations and it is always recommended to test several methods and validate results providing different perspectives.</p></li>
+<li><p>With a very large number of exposures and/or interaction, machine learning (ML) techniques should be considered. Recent extensions of random forests such as gradient boosting machines (or boosted regression trees) provide several advantages in this context. Proceeding with different layers of analysis, using ML results to build a second-step regression model is recommended.</p></li>
+<li><p>Most current methods are available and well documented/presented in the statistical software R.</p></li>
+<li><p>In general, when dealing with environmental exposures, the choice of the methods should be drive by the research question of interest.</p>
+<ul>
+<li>Are there exposure patterns? (unsupervised analysis, e.g. PCA)</li>
+<li>What are the effects of individual exposures within the mixture? (regression methods, BKMR)</li>
+<li>What are the most important contributors to the association? (PIPs in BKMR, weights from WQS, selected covariates in elastic net …)</li>
+<li>What is the overall (cumulative) effect of the mixture? (regression methods, WQS)</li>
+<li>Are there interactions (or even synergy) between chemicals? (tree-based modeling, BKMR, regression methods)</li>
+</ul></li>
+</ul>
+<p>Several papers have been presented discussing all these techniques and providing further guidance to choose the correct approach (<span class="citation"><a href="#ref-hamra2018environmental" role="doc-biblioref">Hamra and Buckley</a> (<a href="#ref-hamra2018environmental" role="doc-biblioref">2018</a>)</span>),(<span class="citation"><a href="#ref-stafoggia2017statistical" role="doc-biblioref">Stafoggia et al.</a> (<a href="#ref-stafoggia2017statistical" role="doc-biblioref">2017</a>)</span>),(<span class="citation"><a href="#ref-gibson2019overview" role="doc-biblioref">Gibson et al.</a> (<a href="#ref-gibson2019overview" role="doc-biblioref">2019</a>)</span>). Finally, it is useful to remind that the material here presented is just a selection of topics out of a wide and fast-growing research area. Methodological extensions and new applications are continuously published and it is crucial for researchers working in this area to keep up with the literature.</p>
+
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-bellavia2019approaches" class="csl-entry">
+Bellavia, Andrea, Tamarra James-Todd, and Paige L Williams. 2019. <span>“Approaches for Incorporating Environmental Mixtures as Mediators in Mediation Analysis.”</span> <em>Environment International</em> 123: 368–74.
+</div>
+<div id="ref-bellavia2018multiple" class="csl-entry">
+Bellavia, Andrea, Ami R Zota, Linda Valeri, and Tamarra James-Todd. 2018. <span>“Multiple Mediators Approach to Study Environmental Chemicals as Determinants of Health Disparities.”</span> <em>Environmental Epidemiology (Philadelphia, Pa.)</em> 2 (2).
+</div>
+<div id="ref-bind2019causal" class="csl-entry">
+Bind, Marie-Abèle. 2019. <span>“Causal Modeling in Environmental Health.”</span> <em>Annual Review of Public Health</em> 40: 23–43.
+</div>
+<div id="ref-blum2020challenges" class="csl-entry">
+Blum, Michaël GB, Linda Valeri, Olivier François, Solène Cadiou, Valérie Siroux, Johanna Lepeule, and Rémy Slama. 2020. <span>“Challenges Raised by Mediation Analysis in a High-Dimension Setting.”</span> <em>Environmental Health Perspectives</em> 128 (5): 055001.
+</div>
+<div id="ref-devick2018bayesian" class="csl-entry">
+Devick, Katrina L, Jennifer F Bobb, Maitreyi Mazumdar, Birgit Claus Henn, David C Bellinger, David C Christiani, Robert O Wright, Paige L Williams, Brent A Coull, and Linda Valeri. 2018. <span>“Bayesian Kernel Machine Regression-Causal Mediation Analysis.”</span> <em>arXiv Preprint arXiv:1811.10453</em>.
+</div>
+<div id="ref-dominici2017best" class="csl-entry">
+Dominici, Francesca, and Corwin Zigler. 2017. <span>“Best Practices for Gauging Evidence of Causality in Air Pollution Epidemiology.”</span> <em>American Journal of Epidemiology</em> 186 (12): 1303–9.
+</div>
+<div id="ref-gibson2019overview" class="csl-entry">
+Gibson, Elizabeth A, Yanelli Nunez, Ahlam Abuawad, Ami R Zota, Stefano Renzetti, Katrina L Devick, Chris Gennings, Jeff Goldsmith, Brent A Coull, and Marianthi-Anna Kioumourtzoglou. 2019. <span>“An Overview of Methods to Address Distinct Research Questions on Environmental Mixtures: An Application to Persistent Organic Pollutants and Leukocyte Telomere Length.”</span> <em>Environmental Health</em> 18 (1): 1–16.
+</div>
+<div id="ref-hamra2018environmental" class="csl-entry">
+Hamra, Ghassan B, and Jessie P Buckley. 2018. <span>“Environmental Exposure Mixtures: Questions and Methods to Address Them.”</span> <em>Current Epidemiology Reports</em> 5 (2): 160–65.
+</div>
+<div id="ref-stafoggia2017statistical" class="csl-entry">
+Stafoggia, Massimo, Susanne Breitner, Regina Hampel, and Xavier Basagaña. 2017. <span>“Statistical Approaches to Address Multi-Pollutant Mixtures and Multiple Exposures: The State of the Science.”</span> <em>Current Environmental Health Reports</em> 4 (4): 481–90.
+</div>
+<div id="ref-vandenbroucke2016causality" class="csl-entry">
+Vandenbroucke, Jan P, Alex Broadbent, and Neil Pearce. 2016. <span>“Causality and Causal Inference in Epidemiology: The Need for a Pluralistic Approach.”</span> <em>International Journal of Epidemiology</em> 45 (6): 1776–86.
+</div>
+<div id="ref-wang2020bkmr" class="csl-entry">
+Wang, A, KL Devick, JF Bobbs, A Navas-Acien, BA Coull, and L Valeri. 2020. <span>“BKMR-CMA: A Novel r Command for Mediation Analysis in Environmental Mixture Studies.”</span> In <em>ISEE Conference Abstracts</em>. Vol. 2020. 1.
+</div>
+<div id="ref-webster2020epidemiology" class="csl-entry">
+Webster, Thomas F, and Marc G Weisskopf. 2020. <span>“Epidemiology of Exposure to Mixtures: We Cant Be Casual about Causality When Using or Testing Methods.”</span> <em>arXiv Preprint arXiv:2007.01370</em>.
+</div>
+<div id="ref-weisskopf2018bias" class="csl-entry">
+Weisskopf, Marc G, Ryan M Seals, and Thomas F Webster. 2018. <span>“Bias Amplification in Epidemiologic Analysis of Exposure to Mixtures.”</span> <em>Environmental Health Perspectives</em> 126 (4): 047003.
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="flexible-approaches-for-complex-settings.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="references.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["bookdown-demo.pdf"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

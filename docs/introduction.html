@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 1 Introduction | Statistical Methods for Environmental Mixtures</title>
+  <meta name="description" content="Humans are simultaneously exposed to a large number of environmental hazards. To allow a more accurate identification of the risks associated with environmental exposures and developing more targeted public health interventions, it is crucial that population-based studies account for the complexity of such exposures as environmental mixtures. This poses several analytic challenges and often requires the use of extensions of standard regression approaches or more flexible techinques for high-dimensional data. This document presents an extended version of the class material that was used in an introductory two-weeks course on statistical approaches for environmental mixtures. The main challanges and limitations of standard regression techniques are outlined, and recent methodological developments are introduced in a rigorous yet non-theoretical way. The course was designed for students and postdocs in environmental health with basic preliminary knoweldge on linear and logistic regression models. Sources and code examples to conduct a thorough analysis in R are also included." />
+  <meta name="generator" content="bookdown 0.22 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 1 Introduction | Statistical Methods for Environmental Mixtures" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="Humans are simultaneously exposed to a large number of environmental hazards. To allow a more accurate identification of the risks associated with environmental exposures and developing more targeted public health interventions, it is crucial that population-based studies account for the complexity of such exposures as environmental mixtures. This poses several analytic challenges and often requires the use of extensions of standard regression approaches or more flexible techinques for high-dimensional data. This document presents an extended version of the class material that was used in an introductory two-weeks course on statistical approaches for environmental mixtures. The main challanges and limitations of standard regression techniques are outlined, and recent methodological developments are introduced in a rigorous yet non-theoretical way. The course was designed for students and postdocs in environmental health with basic preliminary knoweldge on linear and logistic regression models. Sources and code examples to conduct a thorough analysis in R are also included." />
+  <meta name="github-repo" content="andreabellavia/mixtures" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 1 Introduction | Statistical Methods for Environmental Mixtures" />
+  
+  <meta name="twitter:description" content="Humans are simultaneously exposed to a large number of environmental hazards. To allow a more accurate identification of the risks associated with environmental exposures and developing more targeted public health interventions, it is crucial that population-based studies account for the complexity of such exposures as environmental mixtures. This poses several analytic challenges and often requires the use of extensions of standard regression approaches or more flexible techinques for high-dimensional data. This document presents an extended version of the class material that was used in an introductory two-weeks course on statistical approaches for environmental mixtures. The main challanges and limitations of standard regression techniques are outlined, and recent methodological developments are introduced in a rigorous yet non-theoretical way. The course was designed for students and postdocs in environmental health with basic preliminary knoweldge on linear and logistic regression models. Sources and code examples to conduct a thorough analysis in R are also included." />
+  
+
+<meta name="author" content="Andrea Bellavia" />
+
+
+<meta name="date" content="2021-11-04" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="about-the-author.html"/>
+<link rel="next" href="unsupervised-analysis.html"/>
+<script src="libs/header-attrs-2.9/header-attrs.js"></script>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+<link href="libs/table1-1.0/table1_defaults.css" rel="stylesheet" />
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
+<li class="chapter" data-level="" data-path="about-the-author.html"><a href="about-the-author.html"><i class="fa fa-check"></i>About the Author</a></li>
+<li class="chapter" data-level="1" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>1</b> Introduction</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="introduction.html"><a href="introduction.html#the-exposome"><i class="fa fa-check"></i><b>1.1</b> The Exposome</a></li>
+<li class="chapter" data-level="1.2" data-path="introduction.html"><a href="introduction.html#why-focusing-on-multiple-exposures"><i class="fa fa-check"></i><b>1.2</b> Why focusing on multiple exposures?</a></li>
+<li class="chapter" data-level="1.3" data-path="introduction.html"><a href="introduction.html#what-is-your-research-question"><i class="fa fa-check"></i><b>1.3</b> What is your research question?</a></li>
+<li class="chapter" data-level="1.4" data-path="introduction.html"><a href="introduction.html#broad-classifications-of-statistical-approaches"><i class="fa fa-check"></i><b>1.4</b> Broad classification(s) of statistical approaches</a></li>
+<li class="chapter" data-level="1.5" data-path="introduction.html"><a href="introduction.html#introduction-to-r-and-the-simulated-data"><i class="fa fa-check"></i><b>1.5</b> Introduction to R and the simulated data</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html"><i class="fa fa-check"></i><b>2</b> Unsupervised analysis</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#pre-processing"><i class="fa fa-check"></i><b>2.1</b> Pre-processing</a></li>
+<li class="chapter" data-level="2.2" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#correlation-analysis"><i class="fa fa-check"></i><b>2.2</b> Correlation analysis</a></li>
+<li class="chapter" data-level="2.3" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#weighted-correlation-network-analysis"><i class="fa fa-check"></i><b>2.3</b> Weighted correlation network analysis</a></li>
+<li class="chapter" data-level="2.4" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#principal-component-analysis"><i class="fa fa-check"></i><b>2.4</b> Principal component analysis</a>
+<ul>
+<li class="chapter" data-level="2.4.1" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#fitting-a-pca-in-r"><i class="fa fa-check"></i><b>2.4.1</b> Fitting a PCA in R</a></li>
+<li class="chapter" data-level="2.4.2" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#choosing-the-number-of-components"><i class="fa fa-check"></i><b>2.4.2</b> Choosing the number of components</a></li>
+<li class="chapter" data-level="2.4.3" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#getting-sense-of-components-interpretation"><i class="fa fa-check"></i><b>2.4.3</b> Getting sense of components interpretation</a></li>
+<li class="chapter" data-level="2.4.4" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#using-principal-components-in-subsequent-analyses"><i class="fa fa-check"></i><b>2.4.4</b> Using principal components in subsequent analyses</a></li>
+<li class="chapter" data-level="2.4.5" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#pca-in-practice"><i class="fa fa-check"></i><b>2.4.5</b> PCA in practice</a></li>
+</ul></li>
+<li class="chapter" data-level="2.5" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#cluster-analysis"><i class="fa fa-check"></i><b>2.5</b> Cluster analysis</a>
+<ul>
+<li class="chapter" data-level="2.5.1" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#k-means-clustering"><i class="fa fa-check"></i><b>2.5.1</b> K-means clustering</a></li>
+<li class="chapter" data-level="2.5.2" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#k-means-in-r"><i class="fa fa-check"></i><b>2.5.2</b> K-means in R</a></li>
+<li class="chapter" data-level="2.5.3" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#cluster-analysis-to-simplify-descriptive-statistics-presentation"><i class="fa fa-check"></i><b>2.5.3</b> Cluster analysis to simplify descriptive statistics presentation</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html"><i class="fa fa-check"></i><b>3</b> Regression-based approaches</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#ols-regression"><i class="fa fa-check"></i><b>3.1</b> OLS regression</a>
+<ul>
+<li class="chapter" data-level="3.1.1" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#single-regression-ewas"><i class="fa fa-check"></i><b>3.1.1</b> Single regression (EWAS)</a></li>
+<li class="chapter" data-level="3.1.2" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#multiple-regression"><i class="fa fa-check"></i><b>3.1.2</b> Multiple regression</a></li>
+<li class="chapter" data-level="3.1.3" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#the-problem-of-multicollinearity"><i class="fa fa-check"></i><b>3.1.3</b> The problem of Multicollinearity</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#penalized-regression-approaches"><i class="fa fa-check"></i><b>3.2</b> Penalized regression approaches</a>
+<ul>
+<li class="chapter" data-level="3.2.1" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#bias-variance-tradeoff"><i class="fa fa-check"></i><b>3.2.1</b> Bias-variance tradeoff</a></li>
+<li class="chapter" data-level="3.2.2" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#ridge-regression"><i class="fa fa-check"></i><b>3.2.2</b> Ridge regression</a></li>
+<li class="chapter" data-level="3.2.3" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#lasso"><i class="fa fa-check"></i><b>3.2.3</b> LASSO</a></li>
+<li class="chapter" data-level="3.2.4" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#elastic-net"><i class="fa fa-check"></i><b>3.2.4</b> Elastic net</a></li>
+<li class="chapter" data-level="3.2.5" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#additional-notes"><i class="fa fa-check"></i><b>3.2.5</b> Additional notes</a></li>
+<li class="chapter" data-level="3.2.6" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#elastic-net-and-environmental-mixtures"><i class="fa fa-check"></i><b>3.2.6</b> Elastic Net and environmental mixtures</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#other-regression-based-approaches"><i class="fa fa-check"></i><b>3.3</b> Other regression-based approaches</a>
+<ul>
+<li class="chapter" data-level="3.3.1" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#hierarchical-linear-models"><i class="fa fa-check"></i><b>3.3.1</b> Hierarchical linear models</a></li>
+<li class="chapter" data-level="3.3.2" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#partial-least-square-regression"><i class="fa fa-check"></i><b>3.3.2</b> Partial least square regression</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#advantages-and-limitations-of-regression-approaches"><i class="fa fa-check"></i><b>3.4</b> Advantages and limitations of regression approaches</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><i class="fa fa-check"></i><b>4</b> Assessing the overall (cumulative) effect of multiple exposures</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#unsupervised-summary-scores"><i class="fa fa-check"></i><b>4.1</b> Unsupervised summary scores</a></li>
+<li class="chapter" data-level="4.2" data-path="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#weighted-quantile-sum"><i class="fa fa-check"></i><b>4.2</b> Weighted quantile sum</a>
+<ul>
+<li class="chapter" data-level="4.2.1" data-path="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#model-definition-and-estimation"><i class="fa fa-check"></i><b>4.2.1</b> Model definition and estimation</a></li>
+<li class="chapter" data-level="4.2.2" data-path="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#the-unidirectionality-assumption"><i class="fa fa-check"></i><b>4.2.2</b> The unidirectionality assumption</a></li>
+<li class="chapter" data-level="4.2.3" data-path="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#extensions-of-the-original-wqs-regression"><i class="fa fa-check"></i><b>4.2.3</b> Extensions of the original WQS regression</a></li>
+<li class="chapter" data-level="4.2.4" data-path="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#quantile-g-computation"><i class="fa fa-check"></i><b>4.2.4</b> Quantile G-computation</a></li>
+<li class="chapter" data-level="4.2.5" data-path="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#wqs-regression-in-r"><i class="fa fa-check"></i><b>4.2.5</b> WQS regression in R</a></li>
+<li class="chapter" data-level="4.2.6" data-path="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#example-from-the-literature"><i class="fa fa-check"></i><b>4.2.6</b> Example from the literature</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html"><i class="fa fa-check"></i><b>5</b> Flexible approaches for complex settings</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#bayesian-kernel-machine-regression"><i class="fa fa-check"></i><b>5.1</b> Bayesian Kernel Machine Regression</a>
+<ul>
+<li class="chapter" data-level="5.1.1" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#introduction-1"><i class="fa fa-check"></i><b>5.1.1</b> Introduction</a></li>
+<li class="chapter" data-level="5.1.2" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#estimation"><i class="fa fa-check"></i><b>5.1.2</b> Estimation</a></li>
+<li class="chapter" data-level="5.1.3" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#trace-plots-and-burning-phase"><i class="fa fa-check"></i><b>5.1.3</b> Trace plots and burning phase</a></li>
+<li class="chapter" data-level="5.1.4" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#visualizing-results"><i class="fa fa-check"></i><b>5.1.4</b> Visualizing results</a></li>
+<li class="chapter" data-level="5.1.5" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#hierarchical-selection"><i class="fa fa-check"></i><b>5.1.5</b> Hierarchical selection</a></li>
+<li class="chapter" data-level="5.1.6" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#extensions"><i class="fa fa-check"></i><b>5.1.6</b> Extensions</a></li>
+<li class="chapter" data-level="5.1.7" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#practical-considerations-and-discussion"><i class="fa fa-check"></i><b>5.1.7</b> Practical considerations and discussion</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#assessing-interactions"><i class="fa fa-check"></i><b>5.2</b> Assessing interactions</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#tree-based-modeling"><i class="fa fa-check"></i><b>5.2.1</b> Tree-based modeling</a></li>
+<li class="chapter" data-level="5.2.2" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#interaction-screening-and-regression-approaches"><i class="fa fa-check"></i><b>5.2.2</b> Interaction screening and regression approaches</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="additional-topics-and-final-remarks.html"><a href="additional-topics-and-final-remarks.html"><i class="fa fa-check"></i><b>6</b> Additional topics and final remarks</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="additional-topics-and-final-remarks.html"><a href="additional-topics-and-final-remarks.html#causal-mixture-effects"><i class="fa fa-check"></i><b>6.1</b> Causal mixture effects</a></li>
+<li class="chapter" data-level="6.2" data-path="additional-topics-and-final-remarks.html"><a href="additional-topics-and-final-remarks.html#binary-and-zero-inflated-exposures"><i class="fa fa-check"></i><b>6.2</b> Binary and zero-inflated exposures</a></li>
+<li class="chapter" data-level="6.3" data-path="additional-topics-and-final-remarks.html"><a href="additional-topics-and-final-remarks.html#mediation-analysis"><i class="fa fa-check"></i><b>6.3</b> Mediation analysis</a></li>
+<li class="chapter" data-level="6.4" data-path="additional-topics-and-final-remarks.html"><a href="additional-topics-and-final-remarks.html#conclusion"><i class="fa fa-check"></i><b>6.4</b> Conclusion</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Statistical Methods for Environmental Mixtures</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="introduction" class="section level1" number="1">
+<h1><span class="header-section-number">Chapter 1</span> Introduction</h1>
+<div id="the-exposome" class="section level2" number="1.1">
+<h2><span class="header-section-number">1.1</span> The Exposome</h2>
+<p>A major goal of public health research is the study of the complex mechanisms leading to the development of diseases in humans, and the identification of potentially modifiable risk factors that could be targeted to reduce the burden of diseases in the overall population or in specific subgroups at high risk. A considerable number of potentially modifiable risk factors have been thoroughly studied, including dietary constituents, environmental factors such as chemicals and pollutants, lifestyle, social, and other ecological factors. Nevertheless, throughout their lifetime, humans are exposed to hundreds of these factors, which jointly contribute to the development of a given disease with complex mechanisms that can also involve antagonistic or synergistic interactions. This complex set of exposure is commonly referred to as “exposome” <span class="citation">(<a href="#ref-vermeulen2020exposome" role="doc-biblioref">Vermeulen et al. 2020</a>)</span>.</p>
+<div class="figure">
+<img src="images/exposome.png" alt="" />
+<p class="caption">The exposome (figure from Vermeulen et al. 2020)</p>
+</div>
+<p>Even restricting our interest to environmental exposures, a substantial component of the exposome, it is recognized that we are simultaneously exposed to hundreds of chemicals and pollutants, and it has been shown that a given blood or urine sample taken from a random American will contain some concentration of at least 400 different chemicals. A group of 3 or more chemicals/pollutants, simultaneously present in nature or in the human body, is commonly defined as an environmental mixture.</p>
+</div>
+<div id="why-focusing-on-multiple-exposures" class="section level2" number="1.2">
+<h2><span class="header-section-number">1.2</span> Why focusing on multiple exposures?</h2>
+<p>Common approaches that have been used on a daily basis in environmental epidemiology might fail to capture the complexity of exposures in our world. For several years, despite recognizing that individuals are commonly exposed to multiple environmental factors, the “one-at-the-time” approach has remained the standard practice in most epidemiological research. To better understand what we mean by “one-at-the-time” approach, and its limitations, let’s think of a study where we want to evaluate the effects of parabens - endocrine disrupting chemicals commonly used in the production of personal care products and cosmetics - on diabetes in a population of 1000 individuals. Let’s assume that through urine samples analysis we were able to detect concentrations of three common parabens compounds (metylparaben, butylparaben, propylparaben) in most of our individuals. The “one-at-the-time” approach would build 3 independent statistical models (these could even be very sophisticated models that account for any level of data complexity), one for each parabens compound, adjusting for potential confounders of the associations but without taking into account the other 2 detected compounds. When this approach is chosen we encounter three main limitations:</p>
+<ul>
+<li><p>We know that individuals are exposed to multiple factors, and we might want to estimate the joint (also knows as cumulative) effects of these chemicals. A “one-at-the-time” approach does not allow responding to this question.</p></li>
+<li><p>Is there any interaction between the three compounds in predicting diabetes? A “one-at-the-time” approach does not allow responding to this question.</p></li>
+<li><p>Last but not least, this approach is making strong assumptions with regards to the causal structure underlying the data. Specifically, we are assuming that, very unrealistically, the association between each compound and the outcome is not confounded by the presence of any of the other compounds.</p></li>
+</ul>
+<p>To overcome these 3 major limitations we need to evaluate exposure to parabens as a mixture of the three evaluated compounds, building a single statistical model that could jointly evaluate the three exposures and possibly accounting for co-confounding, interactions, and other specific features of the data. Obtaining such statistical model is not easy, and things would only get more complex if we wanted to account for a larger mixture of chemicals, or even to incorporate several groups of exposures in an exposome-wide analysis. Over the last decade or so, many researchers have focused their effort on developing statistical approaches for environmental mixtures, adapting techniques from other fields or developing new methodologies from scratch. The National Institute of Environmental Health Sciences (NIEHS) launched a specific initiative, called Powering Research Through Innovative Methods for Mixtures in Epidemiology (PRIME), to encourage methods developments in this direction, and organized workshops and symposiums on the topics. An important symposium in 2015 identified several available approaches and discussed advantages and limitations for each <span class="citation">(<a href="#ref-taylor2016statistical" role="doc-biblioref">Taylor et al. 2016</a>)</span>.</p>
+<div class="figure">
+<img src="images/table.png" alt="" />
+<p class="caption">Approaches discussed by NIEHS in 2015 (from Taylor et al. 2016)</p>
+</div>
+<p>Five years later the number of available approaches has multiplied, and several of the discussed methodologies has been extended, revised, and presented to the public. The field of environmental epidemiology is gradually moving to a multi-pollutants or multi-chemical framework as a default <span class="citation">(<a href="#ref-dominici2010protecting" role="doc-biblioref">Dominici et al. 2010</a>)</span>, leading the ground in exposome research, and more and more papers are published within this topic.</p>
+<p>The goal of this class is to present and discuss some of these approaches, presenting their advantages and limitations and, most importantly, discussing what research question they target and when they should be chosen to evaluate environmental mixtures. While it is impossible to cover all available techniques, we will provide a set of references for alternative methodologies that are not discussed here. Finally, most of the examples and discussion will focus on environmental exposures. It comes without saying that extension of these approaches into other fields of exposome research (e.g. evaluating multiple nutrients, multiple lifestyle factors ) is recommended and would provide enormous benefits.</p>
+</div>
+<div id="what-is-your-research-question" class="section level2" number="1.3">
+<h2><span class="header-section-number">1.3</span> What is your research question?</h2>
+<p>When evaluating a set of environmental factors detected in a given population as an environmental mixture, a critical step is the identification of the research question of interest. The discussion of the different methodologies presented in the aforementioned NIEHS workshop concluded that we do not have an optimal approach, but that each method performed well under a specific research question. Here are some of the most common questions that we may want to address:</p>
+<ol style="list-style-type: decimal">
+<li>Do we have recurrent patterns of exposures?</li>
+</ol>
+<p>With several factors at play, it is often of interest to understand whether specific components of the mixture are clustered into smaller subgroups, based on similar characteristics, shared sources, or other features.</p>
+<ol start="2" style="list-style-type: decimal">
+<li>What is the overall effect of the mixture on a given outcome?</li>
+</ol>
+<p>From our previous example, we may be interested in evaluating the overall effects of parabens exposure on the risk of diabetes. We are not really interested in the specific role of each compound but only on the cumulative effect of the several components.</p>
+<ol start="3" style="list-style-type: decimal">
+<li>Who are the bad actors? What are the individual effects within the mixture?</li>
+</ol>
+<p>Let’s assume that we have identified a potentially harmful effect of our mixture on the outcome of interest, and therefore we want to reduce the levels of exposures in our population. If question 1 has identified common patterns due to shared sources, we could simply target these sources, disregarding the actual effects of these chemicals. Alternatively, we could try to identify which component of the mixture is responsible for the effect observed in question 2. In our parabens example, if we had observed a positive association we may want to further investigate whether it is MP, PP, BP, or more than one of them, driving the association between the mixture and the outcome.</p>
+<ol start="4" style="list-style-type: decimal">
+<li>Is there any interaction between chemicals in predicting the outcome?</li>
+</ol>
+<p>When more than one mixture component contributes to a given mixture-outcome association, it is reasonable to expect that some kind of interaction between the 2 will be present.</p>
+<p>In general, one might have one or more research questions in mind, or simply want to evaluate the mixture in an exploratory way. No matter what, it will always be recommended to explore different techniques and thoroughly compare and validate results.</p>
+</div>
+<div id="broad-classifications-of-statistical-approaches" class="section level2" number="1.4">
+<h2><span class="header-section-number">1.4</span> Broad classification(s) of statistical approaches</h2>
+<p>Over the last few years several papers have reviewed the existing literature on statistical methods for mixtures and provide different criteria for their classifications <span class="citation">(<a href="#ref-hamra2018environmental" role="doc-biblioref">Hamra and Buckley 2018</a>)</span>, <span class="citation">(<a href="#ref-stafoggia2017statistical" role="doc-biblioref">Stafoggia et al. 2017</a>)</span>. Simple and relevant classification criteria are the following:</p>
+<ol style="list-style-type: decimal">
+<li>Supervised vs unsupervised procedures</li>
+</ol>
+<p>This first distinction refers to whether or not the mixture is evaluated by taking into account its association with a given outcome of interest. We will see in Section 2 that, before evaluating the effects of our exposures on health outcomes, it is important to carefully assess the structure of the mixture, especially when this is composed by several components, investigating its correlations structure and identifying the presence of subgroups or clusters of exposures. To this end, unsupervised techniques directly focus on characterizing the complex mixture of exposures without any reference to a given outcome of interest. Supervised techniques, on the other hand, attempt to account for the complex nature of exposures while investigating a given mixture-outcome association.</p>
+<ol start="2" style="list-style-type: decimal">
+<li>Data reduction vs variable selection techniques.</li>
+</ol>
+<p>The goal of all techniques we will cover is to reduce the complexity of the data to be able to assess mixtures-outcome associations, while maintaining as much information as possible. This is broadly done in two way: by summarizing the original exposures into fewer and easier to deal with covariates, or by selecting targeted elements of the mixture. We can use the term “data reduction approaches” to describe those techniques that reduce the dimension of the mixture by generating new variables (scores, components, indexes ). On the other hand, “variable selection approaches” are those that select specific elements of the mixture that are directly evaluated with respect to the outcome.</p>
+</div>
+<div id="introduction-to-r-and-the-simulated-data" class="section level2" number="1.5">
+<h2><span class="header-section-number">1.5</span> Introduction to R and the simulated data</h2>
+<p>All methods that we will present can be used in the R statistical software. An introduction to R, for those unfamiliar with the software, can be found here: <a href="https://rpubs.com/alecri/intro-epiR" class="uri">https://rpubs.com/alecri/intro-epiR</a>. R is a free statistical software environment that allows you to write your own code and packages, sharing them as open sources. For this reason, it is common that any newly developed statistical method will first be implemented in R. As such, several recently developed approaches for environmental mixtures are only available in R. Most R packages are accompanied by online tutorials and vignettes that describe all features of the library and provide illustrative examples and explanations. We refer to those documents for the technical information of the R packages, and only focus here on methods implementation and results interpretation. The following packages will be used:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="introduction.html#cb1-1" aria-hidden="true" tabindex="-1"></a>Packages <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;readxl&quot;</span>, <span class="st">&quot;bkmr&quot;</span>, <span class="st">&quot;qgraph&quot;</span>, <span class="st">&quot;gWQS&quot;</span>, <span class="st">&quot;qgcomp&quot;</span>, <span class="st">&quot;corrplot&quot;</span>, <span class="st">&quot;cluster&quot;</span>,<span class="st">&quot;factoextra&quot;</span>,<span class="st">&quot;gridExtra&quot;</span>,<span class="st">&quot;table1&quot;</span>,<span class="st">&quot;glmnet&quot;</span>)</span>
+<span id="cb1-2"><a href="introduction.html#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">lapply</span>(Packages, library, <span class="at">character.only =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<p>As an illustrative example we will use a simulated dataset that was developed for the 2015 NIEHS workshop previously mentioned and made publicly available. The dataset is available here (under Data Set #2 <a href="https://www.niehs.nih.gov/news/events/pastmtg/2015/statistical/index.cfm" class="uri">https://www.niehs.nih.gov/news/events/pastmtg/2015/statistical/index.cfm</a>) and a description of the data structure is also provided. Specifically, the data includes a mixture of 14 continuous exposures, (<span class="math inline">\(X_1-X_{14}\)</span>), a continuous outcome <span class="math inline">\(Y\)</span>, and 3 additional covariates (<span class="math inline">\(Z_1-Z_3\)</span>).</p>
+<table>
+<caption>
+<span id="tab:unnamed-chunk-3">Table 1.1: </span>First rows of the dataset
+</caption>
+<thead>
+<tr>
+<th style="text-align:right;">
+Obs
+</th>
+<th style="text-align:right;">
+y
+</th>
+<th style="text-align:right;">
+x1
+</th>
+<th style="text-align:right;">
+x2
+</th>
+<th style="text-align:right;">
+x3
+</th>
+<th style="text-align:right;">
+x4
+</th>
+<th style="text-align:right;">
+x5
+</th>
+<th style="text-align:right;">
+x6
+</th>
+<th style="text-align:right;">
+x7
+</th>
+<th style="text-align:right;">
+x8
+</th>
+<th style="text-align:right;">
+x9
+</th>
+<th style="text-align:right;">
+x10
+</th>
+<th style="text-align:right;">
+x11
+</th>
+<th style="text-align:right;">
+x12
+</th>
+<th style="text-align:right;">
+x13
+</th>
+<th style="text-align:right;">
+x14
+</th>
+<th style="text-align:right;">
+z1
+</th>
+<th style="text-align:right;">
+z2
+</th>
+<th style="text-align:right;">
+z3
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+3.35244
+</td>
+<td style="text-align:right;">
+0.48719
+</td>
+<td style="text-align:right;">
+-2.81309
+</td>
+<td style="text-align:right;">
+-0.15955
+</td>
+<td style="text-align:right;">
+0.95293
+</td>
+<td style="text-align:right;">
+-0.83727
+</td>
+<td style="text-align:right;">
+-0.00003
+</td>
+<td style="text-align:right;">
+0.97400
+</td>
+<td style="text-align:right;">
+2.13765
+</td>
+<td style="text-align:right;">
+1.39604
+</td>
+<td style="text-align:right;">
+3.56099
+</td>
+<td style="text-align:right;">
+4.26839
+</td>
+<td style="text-align:right;">
+0.45545
+</td>
+<td style="text-align:right;">
+0.72929
+</td>
+<td style="text-align:right;">
+0.57650
+</td>
+<td style="text-align:right;">
+0.98552
+</td>
+<td style="text-align:right;">
+8.695
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+3.69033
+</td>
+<td style="text-align:right;">
+0.82919
+</td>
+<td style="text-align:right;">
+-2.55938
+</td>
+<td style="text-align:right;">
+2.68266
+</td>
+<td style="text-align:right;">
+3.77467
+</td>
+<td style="text-align:right;">
+1.81320
+</td>
+<td style="text-align:right;">
+1.91995
+</td>
+<td style="text-align:right;">
+1.18520
+</td>
+<td style="text-align:right;">
+2.66005
+</td>
+<td style="text-align:right;">
+0.96977
+</td>
+<td style="text-align:right;">
+2.71796
+</td>
+<td style="text-align:right;">
+4.95887
+</td>
+<td style="text-align:right;">
+0.60921
+</td>
+<td style="text-align:right;">
+0.52988
+</td>
+<td style="text-align:right;">
+1.96180
+</td>
+<td style="text-align:right;">
+3.71546
+</td>
+<td style="text-align:right;">
+43.606
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+3.57359
+</td>
+<td style="text-align:right;">
+0.95442
+</td>
+<td style="text-align:right;">
+-1.68660
+</td>
+<td style="text-align:right;">
+0.90617
+</td>
+<td style="text-align:right;">
+1.53099
+</td>
+<td style="text-align:right;">
+-0.52228
+</td>
+<td style="text-align:right;">
+0.66634
+</td>
+<td style="text-align:right;">
+0.91016
+</td>
+<td style="text-align:right;">
+2.79356
+</td>
+<td style="text-align:right;">
+1.77319
+</td>
+<td style="text-align:right;">
+3.60018
+</td>
+<td style="text-align:right;">
+6.34345
+</td>
+<td style="text-align:right;">
+0.52247
+</td>
+<td style="text-align:right;">
+0.28810
+</td>
+<td style="text-align:right;">
+1.51987
+</td>
+<td style="text-align:right;">
+-0.26049
+</td>
+<td style="text-align:right;">
+35.179
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+4.08506
+</td>
+<td style="text-align:right;">
+0.44262
+</td>
+<td style="text-align:right;">
+-2.32889
+</td>
+<td style="text-align:right;">
+2.87066
+</td>
+<td style="text-align:right;">
+3.69266
+</td>
+<td style="text-align:right;">
+2.23544
+</td>
+<td style="text-align:right;">
+0.96392
+</td>
+<td style="text-align:right;">
+0.45412
+</td>
+<td style="text-align:right;">
+4.38613
+</td>
+<td style="text-align:right;">
+0.45019
+</td>
+<td style="text-align:right;">
+3.39090
+</td>
+<td style="text-align:right;">
+5.23588
+</td>
+<td style="text-align:right;">
+-0.13227
+</td>
+<td style="text-align:right;">
+-0.15786
+</td>
+<td style="text-align:right;">
+1.29478
+</td>
+<td style="text-align:right;">
+3.50177
+</td>
+<td style="text-align:right;">
+53.850
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+4.32196
+</td>
+<td style="text-align:right;">
+0.90320
+</td>
+<td style="text-align:right;">
+-2.64624
+</td>
+<td style="text-align:right;">
+1.85611
+</td>
+<td style="text-align:right;">
+2.66537
+</td>
+<td style="text-align:right;">
+0.66575
+</td>
+<td style="text-align:right;">
+1.22047
+</td>
+<td style="text-align:right;">
+2.13394
+</td>
+<td style="text-align:right;">
+3.25436
+</td>
+<td style="text-align:right;">
+1.68486
+</td>
+<td style="text-align:right;">
+3.35262
+</td>
+<td style="text-align:right;">
+5.76463
+</td>
+<td style="text-align:right;">
+0.71263
+</td>
+<td style="text-align:right;">
+0.86847
+</td>
+<td style="text-align:right;">
+1.49974
+</td>
+<td style="text-align:right;">
+2.48495
+</td>
+<td style="text-align:right;">
+46.692
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:right;">
+4.48195
+</td>
+<td style="text-align:right;">
+2.19892
+</td>
+<td style="text-align:right;">
+-2.82971
+</td>
+<td style="text-align:right;">
+2.77514
+</td>
+<td style="text-align:right;">
+3.93696
+</td>
+<td style="text-align:right;">
+1.15633
+</td>
+<td style="text-align:right;">
+1.15479
+</td>
+<td style="text-align:right;">
+1.33877
+</td>
+<td style="text-align:right;">
+1.65140
+</td>
+<td style="text-align:right;">
+1.21884
+</td>
+<td style="text-align:right;">
+2.65061
+</td>
+<td style="text-align:right;">
+5.38122
+</td>
+<td style="text-align:right;">
+0.46648
+</td>
+<td style="text-align:right;">
+0.45505
+</td>
+<td style="text-align:right;">
+1.09930
+</td>
+<td style="text-align:right;">
+3.25059
+</td>
+<td style="text-align:right;">
+33.677
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+</tbody>
+</table>
+<p>By actually knowing the actual associations we will be able to evaluate how well each method performs with respect to the several research questions of interest. Specifically, chemical concentrations were generated based on the correlation between log-transformed PCBs, dioxins, and furans, from NHANES data. Two clusters of highly-correlated covariates were present (<span class="math inline">\(X_3-X_4-X_5\)</span>, and <span class="math inline">\(X_{12}- X_{13}\)</span>, while low to moderate correlations were simulated between other covariates. <span class="math inline">\(Z_1\)</span> and <span class="math inline">\(Z_2\)</span> were simulated based on poverty index and age, both assumed to be confounders of the association. <span class="math inline">\(Z_3\)</span> was simulated based on gender distribution, and assumed to be an effect modifier. The outcome was generated with the following functions for male and female, respectively:</p>
+<p><span class="math display">\[Z_3=0: E[Y]=3 + 0.05*X_4 + 0.1*X_6 + 0.1*X_{11} + 0.5*X_{12} + 0.1*X_{14} + 0.01*Z_1 + 0.003*Z_2  \]</span>
+<span class="math display">\[Z_3=1: E[Y]=3 + 0.01*X_1 + 0.05*X_4 + 0.1*X_{11} + 0.1*X_{14} + 0.01*Z_1 + 0.003*Z_2 – 0.32*(Z_3=1) \]</span></p>
+<p>Thus, for <span class="math inline">\(Z_3=0\)</span> only <span class="math inline">\(X_4, X_6, X_{11}, X_{12}\)</span> and <span class="math inline">\(X_{14}\)</span> are positively associated with <span class="math inline">\(Y\)</span>. When <span class="math inline">\(Z_3=1\)</span>, only <span class="math inline">\(X_1, X_4, X_{11}\)</span> and <span class="math inline">\(X_{14}\)</span> are associated with <span class="math inline">\(Y\)</span>. Interactions between chemicals were not considered.</p>
+
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-dominici2010protecting" class="csl-entry">
+Dominici, Francesca, Roger D Peng, Christopher D Barr, and Michelle L Bell. 2010. <span>“Protecting Human Health from Air Pollution: Shifting from a Single-Pollutant to a Multi-Pollutant Approach.”</span> <em>Epidemiology (Cambridge, Mass.)</em> 21 (2): 187.
+</div>
+<div id="ref-hamra2018environmental" class="csl-entry">
+Hamra, Ghassan B, and Jessie P Buckley. 2018. <span>“Environmental Exposure Mixtures: Questions and Methods to Address Them.”</span> <em>Current Epidemiology Reports</em> 5 (2): 160–65.
+</div>
+<div id="ref-stafoggia2017statistical" class="csl-entry">
+Stafoggia, Massimo, Susanne Breitner, Regina Hampel, and Xavier Basagaña. 2017. <span>“Statistical Approaches to Address Multi-Pollutant Mixtures and Multiple Exposures: The State of the Science.”</span> <em>Current Environmental Health Reports</em> 4 (4): 481–90.
+</div>
+<div id="ref-taylor2016statistical" class="csl-entry">
+Taylor, Kyla W, Bonnie R Joubert, Joe M Braun, Caroline Dilworth, Chris Gennings, Russ Hauser, Jerry J Heindel, Cynthia V Rider, Thomas F Webster, and Danielle J Carlin. 2016. <span>“Statistical Approaches for Assessing Health Effects of Environmental Chemical Mixtures in Epidemiology: Lessons from an Innovative Workshop.”</span> <em>Environmental Health Perspectives</em> 124 (12): A227–29.
+</div>
+<div id="ref-vermeulen2020exposome" class="csl-entry">
+Vermeulen, Roel, Emma L Schymanski, Albert-László Barabási, and Gary W Miller. 2020. <span>“The Exposome and Health: Where Chemistry Meets Biology.”</span> <em>Science</em> 367 (6476): 392–96.
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="about-the-author.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="unsupervised-analysis.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["bookdown-demo.pdf"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

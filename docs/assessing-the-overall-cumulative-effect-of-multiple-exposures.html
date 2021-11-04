@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 4 Assessing the overall (cumulative) effect of multiple exposures | Statistical Methods for Environmental Mixtures</title>
+  <meta name="description" content="Humans are simultaneously exposed to a large number of environmental hazards. To allow a more accurate identification of the risks associated with environmental exposures and developing more targeted public health interventions, it is crucial that population-based studies account for the complexity of such exposures as environmental mixtures. This poses several analytic challenges and often requires the use of extensions of standard regression approaches or more flexible techinques for high-dimensional data. This document presents an extended version of the class material that was used in an introductory two-weeks course on statistical approaches for environmental mixtures. The main challanges and limitations of standard regression techniques are outlined, and recent methodological developments are introduced in a rigorous yet non-theoretical way. The course was designed for students and postdocs in environmental health with basic preliminary knoweldge on linear and logistic regression models. Sources and code examples to conduct a thorough analysis in R are also included." />
+  <meta name="generator" content="bookdown 0.22 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 4 Assessing the overall (cumulative) effect of multiple exposures | Statistical Methods for Environmental Mixtures" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="Humans are simultaneously exposed to a large number of environmental hazards. To allow a more accurate identification of the risks associated with environmental exposures and developing more targeted public health interventions, it is crucial that population-based studies account for the complexity of such exposures as environmental mixtures. This poses several analytic challenges and often requires the use of extensions of standard regression approaches or more flexible techinques for high-dimensional data. This document presents an extended version of the class material that was used in an introductory two-weeks course on statistical approaches for environmental mixtures. The main challanges and limitations of standard regression techniques are outlined, and recent methodological developments are introduced in a rigorous yet non-theoretical way. The course was designed for students and postdocs in environmental health with basic preliminary knoweldge on linear and logistic regression models. Sources and code examples to conduct a thorough analysis in R are also included." />
+  <meta name="github-repo" content="andreabellavia/mixtures" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 4 Assessing the overall (cumulative) effect of multiple exposures | Statistical Methods for Environmental Mixtures" />
+  
+  <meta name="twitter:description" content="Humans are simultaneously exposed to a large number of environmental hazards. To allow a more accurate identification of the risks associated with environmental exposures and developing more targeted public health interventions, it is crucial that population-based studies account for the complexity of such exposures as environmental mixtures. This poses several analytic challenges and often requires the use of extensions of standard regression approaches or more flexible techinques for high-dimensional data. This document presents an extended version of the class material that was used in an introductory two-weeks course on statistical approaches for environmental mixtures. The main challanges and limitations of standard regression techniques are outlined, and recent methodological developments are introduced in a rigorous yet non-theoretical way. The course was designed for students and postdocs in environmental health with basic preliminary knoweldge on linear and logistic regression models. Sources and code examples to conduct a thorough analysis in R are also included." />
+  
+
+<meta name="author" content="Andrea Bellavia" />
+
+
+<meta name="date" content="2021-11-04" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="regression-based-approaches.html"/>
+<link rel="next" href="flexible-approaches-for-complex-settings.html"/>
+<script src="libs/header-attrs-2.9/header-attrs.js"></script>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+<link href="libs/table1-1.0/table1_defaults.css" rel="stylesheet" />
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
+<li class="chapter" data-level="" data-path="about-the-author.html"><a href="about-the-author.html"><i class="fa fa-check"></i>About the Author</a></li>
+<li class="chapter" data-level="1" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>1</b> Introduction</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="introduction.html"><a href="introduction.html#the-exposome"><i class="fa fa-check"></i><b>1.1</b> The Exposome</a></li>
+<li class="chapter" data-level="1.2" data-path="introduction.html"><a href="introduction.html#why-focusing-on-multiple-exposures"><i class="fa fa-check"></i><b>1.2</b> Why focusing on multiple exposures?</a></li>
+<li class="chapter" data-level="1.3" data-path="introduction.html"><a href="introduction.html#what-is-your-research-question"><i class="fa fa-check"></i><b>1.3</b> What is your research question?</a></li>
+<li class="chapter" data-level="1.4" data-path="introduction.html"><a href="introduction.html#broad-classifications-of-statistical-approaches"><i class="fa fa-check"></i><b>1.4</b> Broad classification(s) of statistical approaches</a></li>
+<li class="chapter" data-level="1.5" data-path="introduction.html"><a href="introduction.html#introduction-to-r-and-the-simulated-data"><i class="fa fa-check"></i><b>1.5</b> Introduction to R and the simulated data</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html"><i class="fa fa-check"></i><b>2</b> Unsupervised analysis</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#pre-processing"><i class="fa fa-check"></i><b>2.1</b> Pre-processing</a></li>
+<li class="chapter" data-level="2.2" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#correlation-analysis"><i class="fa fa-check"></i><b>2.2</b> Correlation analysis</a></li>
+<li class="chapter" data-level="2.3" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#weighted-correlation-network-analysis"><i class="fa fa-check"></i><b>2.3</b> Weighted correlation network analysis</a></li>
+<li class="chapter" data-level="2.4" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#principal-component-analysis"><i class="fa fa-check"></i><b>2.4</b> Principal component analysis</a>
+<ul>
+<li class="chapter" data-level="2.4.1" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#fitting-a-pca-in-r"><i class="fa fa-check"></i><b>2.4.1</b> Fitting a PCA in R</a></li>
+<li class="chapter" data-level="2.4.2" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#choosing-the-number-of-components"><i class="fa fa-check"></i><b>2.4.2</b> Choosing the number of components</a></li>
+<li class="chapter" data-level="2.4.3" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#getting-sense-of-components-interpretation"><i class="fa fa-check"></i><b>2.4.3</b> Getting sense of components interpretation</a></li>
+<li class="chapter" data-level="2.4.4" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#using-principal-components-in-subsequent-analyses"><i class="fa fa-check"></i><b>2.4.4</b> Using principal components in subsequent analyses</a></li>
+<li class="chapter" data-level="2.4.5" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#pca-in-practice"><i class="fa fa-check"></i><b>2.4.5</b> PCA in practice</a></li>
+</ul></li>
+<li class="chapter" data-level="2.5" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#cluster-analysis"><i class="fa fa-check"></i><b>2.5</b> Cluster analysis</a>
+<ul>
+<li class="chapter" data-level="2.5.1" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#k-means-clustering"><i class="fa fa-check"></i><b>2.5.1</b> K-means clustering</a></li>
+<li class="chapter" data-level="2.5.2" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#k-means-in-r"><i class="fa fa-check"></i><b>2.5.2</b> K-means in R</a></li>
+<li class="chapter" data-level="2.5.3" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#cluster-analysis-to-simplify-descriptive-statistics-presentation"><i class="fa fa-check"></i><b>2.5.3</b> Cluster analysis to simplify descriptive statistics presentation</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html"><i class="fa fa-check"></i><b>3</b> Regression-based approaches</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#ols-regression"><i class="fa fa-check"></i><b>3.1</b> OLS regression</a>
+<ul>
+<li class="chapter" data-level="3.1.1" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#single-regression-ewas"><i class="fa fa-check"></i><b>3.1.1</b> Single regression (EWAS)</a></li>
+<li class="chapter" data-level="3.1.2" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#multiple-regression"><i class="fa fa-check"></i><b>3.1.2</b> Multiple regression</a></li>
+<li class="chapter" data-level="3.1.3" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#the-problem-of-multicollinearity"><i class="fa fa-check"></i><b>3.1.3</b> The problem of Multicollinearity</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#penalized-regression-approaches"><i class="fa fa-check"></i><b>3.2</b> Penalized regression approaches</a>
+<ul>
+<li class="chapter" data-level="3.2.1" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#bias-variance-tradeoff"><i class="fa fa-check"></i><b>3.2.1</b> Bias-variance tradeoff</a></li>
+<li class="chapter" data-level="3.2.2" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#ridge-regression"><i class="fa fa-check"></i><b>3.2.2</b> Ridge regression</a></li>
+<li class="chapter" data-level="3.2.3" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#lasso"><i class="fa fa-check"></i><b>3.2.3</b> LASSO</a></li>
+<li class="chapter" data-level="3.2.4" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#elastic-net"><i class="fa fa-check"></i><b>3.2.4</b> Elastic net</a></li>
+<li class="chapter" data-level="3.2.5" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#additional-notes"><i class="fa fa-check"></i><b>3.2.5</b> Additional notes</a></li>
+<li class="chapter" data-level="3.2.6" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#elastic-net-and-environmental-mixtures"><i class="fa fa-check"></i><b>3.2.6</b> Elastic Net and environmental mixtures</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#other-regression-based-approaches"><i class="fa fa-check"></i><b>3.3</b> Other regression-based approaches</a>
+<ul>
+<li class="chapter" data-level="3.3.1" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#hierarchical-linear-models"><i class="fa fa-check"></i><b>3.3.1</b> Hierarchical linear models</a></li>
+<li class="chapter" data-level="3.3.2" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#partial-least-square-regression"><i class="fa fa-check"></i><b>3.3.2</b> Partial least square regression</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#advantages-and-limitations-of-regression-approaches"><i class="fa fa-check"></i><b>3.4</b> Advantages and limitations of regression approaches</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><i class="fa fa-check"></i><b>4</b> Assessing the overall (cumulative) effect of multiple exposures</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#unsupervised-summary-scores"><i class="fa fa-check"></i><b>4.1</b> Unsupervised summary scores</a></li>
+<li class="chapter" data-level="4.2" data-path="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#weighted-quantile-sum"><i class="fa fa-check"></i><b>4.2</b> Weighted quantile sum</a>
+<ul>
+<li class="chapter" data-level="4.2.1" data-path="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#model-definition-and-estimation"><i class="fa fa-check"></i><b>4.2.1</b> Model definition and estimation</a></li>
+<li class="chapter" data-level="4.2.2" data-path="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#the-unidirectionality-assumption"><i class="fa fa-check"></i><b>4.2.2</b> The unidirectionality assumption</a></li>
+<li class="chapter" data-level="4.2.3" data-path="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#extensions-of-the-original-wqs-regression"><i class="fa fa-check"></i><b>4.2.3</b> Extensions of the original WQS regression</a></li>
+<li class="chapter" data-level="4.2.4" data-path="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#quantile-g-computation"><i class="fa fa-check"></i><b>4.2.4</b> Quantile G-computation</a></li>
+<li class="chapter" data-level="4.2.5" data-path="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#wqs-regression-in-r"><i class="fa fa-check"></i><b>4.2.5</b> WQS regression in R</a></li>
+<li class="chapter" data-level="4.2.6" data-path="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#example-from-the-literature"><i class="fa fa-check"></i><b>4.2.6</b> Example from the literature</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html"><i class="fa fa-check"></i><b>5</b> Flexible approaches for complex settings</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#bayesian-kernel-machine-regression"><i class="fa fa-check"></i><b>5.1</b> Bayesian Kernel Machine Regression</a>
+<ul>
+<li class="chapter" data-level="5.1.1" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#introduction-1"><i class="fa fa-check"></i><b>5.1.1</b> Introduction</a></li>
+<li class="chapter" data-level="5.1.2" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#estimation"><i class="fa fa-check"></i><b>5.1.2</b> Estimation</a></li>
+<li class="chapter" data-level="5.1.3" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#trace-plots-and-burning-phase"><i class="fa fa-check"></i><b>5.1.3</b> Trace plots and burning phase</a></li>
+<li class="chapter" data-level="5.1.4" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#visualizing-results"><i class="fa fa-check"></i><b>5.1.4</b> Visualizing results</a></li>
+<li class="chapter" data-level="5.1.5" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#hierarchical-selection"><i class="fa fa-check"></i><b>5.1.5</b> Hierarchical selection</a></li>
+<li class="chapter" data-level="5.1.6" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#extensions"><i class="fa fa-check"></i><b>5.1.6</b> Extensions</a></li>
+<li class="chapter" data-level="5.1.7" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#practical-considerations-and-discussion"><i class="fa fa-check"></i><b>5.1.7</b> Practical considerations and discussion</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#assessing-interactions"><i class="fa fa-check"></i><b>5.2</b> Assessing interactions</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#tree-based-modeling"><i class="fa fa-check"></i><b>5.2.1</b> Tree-based modeling</a></li>
+<li class="chapter" data-level="5.2.2" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#interaction-screening-and-regression-approaches"><i class="fa fa-check"></i><b>5.2.2</b> Interaction screening and regression approaches</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="additional-topics-and-final-remarks.html"><a href="additional-topics-and-final-remarks.html"><i class="fa fa-check"></i><b>6</b> Additional topics and final remarks</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="additional-topics-and-final-remarks.html"><a href="additional-topics-and-final-remarks.html#causal-mixture-effects"><i class="fa fa-check"></i><b>6.1</b> Causal mixture effects</a></li>
+<li class="chapter" data-level="6.2" data-path="additional-topics-and-final-remarks.html"><a href="additional-topics-and-final-remarks.html#binary-and-zero-inflated-exposures"><i class="fa fa-check"></i><b>6.2</b> Binary and zero-inflated exposures</a></li>
+<li class="chapter" data-level="6.3" data-path="additional-topics-and-final-remarks.html"><a href="additional-topics-and-final-remarks.html#mediation-analysis"><i class="fa fa-check"></i><b>6.3</b> Mediation analysis</a></li>
+<li class="chapter" data-level="6.4" data-path="additional-topics-and-final-remarks.html"><a href="additional-topics-and-final-remarks.html#conclusion"><i class="fa fa-check"></i><b>6.4</b> Conclusion</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Statistical Methods for Environmental Mixtures</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="assessing-the-overall-cumulative-effect-of-multiple-exposures" class="section level1" number="4">
+<h1><span class="header-section-number">Chapter 4</span> Assessing the overall (cumulative) effect of multiple exposures</h1>
+<p>Extensions of linear regression presented in the previous chapter address the complexity of the mixture-outcome association by selecting relevant predictors within the mixture, thus removing covariates that would create problems due to high collinearity, or simply by reducing the dimension of the exposure matrix thus improving the fit of the model. This approach, however, also comes with relevant drawbacks.</p>
+<p>Let’s think of the group of highly correlated exposures from our hypothetical example (<span class="math inline">\(X_3-X_4-X_5\)</span>), where penalized approaches recommended only selecting <span class="math inline">\(X_4\)</span>. This allowed evaluating the independent effect of <span class="math inline">\(X_4\)</span> on the outcome without being troubled by the high levels of correlation between this covariate and the other 2 of the cluster. This same selection, however, is preventing us to address other important questions. For example, what if there is an interaction between <span class="math inline">\(X_3\)</span> and <span class="math inline">\(X_4\)</span> (this can happen even if <span class="math inline">\(X_3\)</span> does not have an independent effect on the outcome, but only an effect that is triggered in the presence of the other co-exposure)? By removing <span class="math inline">\(X_3\)</span> from the model, we will not be able to evaluate this interaction. Moreover, we will not be able to correctly quantify the joint effect of <span class="math inline">\(X_3\)</span> and <span class="math inline">\(X_4\)</span>, which is the sum of the two main effects and their 2-way interaction. As discussed in the first chapter, this is a very important research question: the three correlated exposures might for instance come from the same source, and quantifying their joint effect would in this case provide useful information on the public health benefits of reducing exposure to the source.</p>
+<p>The question that we will address in this section is the following: how do we quantify the joint effect of several exposures, possibly highly correlated, when regression techniques are not functional?</p>
+<div id="unsupervised-summary-scores" class="section level2" number="4.1">
+<h2><span class="header-section-number">4.1</span> Unsupervised summary scores</h2>
+<p>A very intuitive approach is to create one or more summary score(s) that summarize individual levels of exposure to the mixture, thus reducing the numbers of covariates that are going to be evaluated. A very common example of such approach is used by investigators working on phthalates. In this context, analyses are often hampered by the presence of extreme correlation between metabolites of Di(2-ethylhexyl)phthalate (DEHP), and researchers are commonly summarizing this information into a molar sum of DEHP. <span class="citation"><a href="#ref-li2019serum" role="doc-biblioref">Li et al.</a> (<a href="#ref-li2019serum" role="doc-biblioref">2019</a>)</span> writes, for example “we calculated the molar sum of DEHP metabolites (ΣDEHP) by dividing
+each metabolite concentration by its molecular weight and then
+summing: ΣDEHP=[MEHP (μg/L)×(1/278.34 (g/mol))]+[MEHHP
+(μg/L) × (1/294.34 (g/mol))] + [MEOHP (μg/L) × (1/292.33 (g/
+mol))] + [MECPP (μg/L) × (1/308.33 (g/mol))].” Note that, with this approach, the score targets a selected sub-sample of exposures (the highly-correlated cluster creating problems), and other phthalates metabolites are included in the model without any transformation.</p>
+<p>Another common approach is to use components derived from PCA, as described in section 3. PCA allows identifying continuous covariates that summarize the variability of the mixture exposure. Including these derived components into a regression model has the great advantage that all collinearity issues will be resolved, as the components are uncorrelated by definition. On the other hand, the validity of this approach is severely affected by whether the obtained components have clear biological interpretation. A good example of this approach can be found in <span class="citation"><a href="#ref-souter2020urinary" role="doc-biblioref">Souter et al.</a> (<a href="#ref-souter2020urinary" role="doc-biblioref">2020</a>)</span>.</p>
+</div>
+<div id="weighted-quantile-sum" class="section level2" number="4.2">
+<h2><span class="header-section-number">4.2</span> Weighted quantile sum</h2>
+<p>Taking one step further, researchers might be interested in taking into account the relationship between the exposures and the outcome while summarizing the complex exposure to the mixture of interest. The weighted quantile sum (WQS), developed specifically for the context of environmental mixtures analysis, is an increasingly common approach that allows evaluating a mixture-outcome association by creating a summary score of the mixture in a supervised fashion (<span class="citation"><a href="#ref-czarnota2015assessment" role="doc-biblioref">Czarnota, Gennings, and Wheeler</a> (<a href="#ref-czarnota2015assessment" role="doc-biblioref">2015</a>)</span>), (<span class="citation"><a href="#ref-carrico2015characterization" role="doc-biblioref">Carrico et al.</a> (<a href="#ref-carrico2015characterization" role="doc-biblioref">2015</a>)</span>). Specifically, WQS is a statistical model for multivariate regression in high-dimensional dataset that operates in a supervised framework, creating a single score (the weighted quantile sum) that summarizes the overall exposure to the mixture, and by including this score in a regression model to evaluate the overall effect of the mixture on the outcome of interest. The score is calculated as a weighted sum (so that exposures with weaker effects on the outcome have lower weight in the index) of all exposures categorized into quartiles, or more groups (so that extreme values have less impact on the weight estimation.</p>
+<div id="model-definition-and-estimation" class="section level3" number="4.2.1">
+<h3><span class="header-section-number">4.2.1</span> Model definition and estimation</h3>
+<p>Most of what follows in this subsection is taken from the excellent introductory material shared online by Dr. Renzetti at this <a href="https://cran.r-project.org/web/packages/gWQS/vignettes/gwqs-vignette.html">link</a>, which should be referred to for further details on the technique.</p>
+<p>The WQS model takes the following form:</p>
+<p><span class="math display">\[\begin{equation} \label{eq:wqs}
+g(\mu) = \beta_0 + \beta_1\Bigg(\sum_{i=1}^{c}w_iq_i\Bigg) + \boldsymbol{z&#39;\varphi}
+\end{equation}\]</span></p>
+<p>The <span class="math inline">\((\sum_{i=1}^{c}w_iq_i)\)</span> term represents the index that weights and sums the components included in the mixture. As such, <span class="math inline">\(\beta_1\)</span> will be the parameter summarizing the overall effect to the (weighted) mixture. In addition, the model will also provide an estimate of the individual weights <span class="math inline">\(w_i\)</span> that indicate the relative importance of each exposure in the mixture-outcome association.</p>
+<p>To estimate the model, the data may be split in a training and a validation dataset: the first one to be used for the weight estimation, the second one to test for the significance of the final WQS index. The weights are estimated through a bootstrap and constrained to sum to one and bounded between zero and one: <span class="math inline">\(\sum_{i=1}^{c}w_i=1\)</span> and <span class="math inline">\(0 \leq w_i \leq 1\)</span>. For each bootstrap sample (usually <span class="math inline">\(B=100\)</span> total samples) a dataset is created sampling with replacement from the training dataset and the parameters of the model are estimated through an optimization algorithm.An inequality constraint is also applied in order to impose that <span class="math inline">\(0 \leq w_i \leq 1\)</span>.</p>
+<p>Once the weights are estimated, the model is fitted in order to find the regression coefficients in each ensemble step. After the bootstrap ensemble is completed, the estimated weights are averaged across bootstrap samples to obtain the WQS index:</p>
+<p><span class="math display">\[WQS = \sum_{i=1}^c \bar{w}_iq_i\]</span></p>
+<p>Typically weights are estimated in a training set then used to construct a WQS index in a validation set, which can be used to test for the association between the mixture and the health outcome in a standard generalized linear model, as:</p>
+<p><span class="math display">\[g(\mu) = \beta_0 + \beta_1WQS + \boldsymbol{z&#39;\varphi}\]</span></p>
+<p>After the final model is fitted one can test the significance of the <span class="math inline">\(\beta_1\)</span> to see if there is an association between the WQS index and the outcome. In the case the coefficient is significantly different from 0 then we can interpret the weights: the highest values identify the associated components as the relevant contributors in the association. A selection threshold can be decided a priori as <span class="math inline">\(\tau = 1/c\)</span> to identify those chemicals that have a significant weight in the index.</p>
+</div>
+<div id="the-unidirectionality-assumption" class="section level3" number="4.2.2">
+<h3><span class="header-section-number">4.2.2</span> The unidirectionality assumption</h3>
+<p>WQS makes an important assumption of uni-direction (either a positive or a negative) of all exposures with respect to the outcome. The model is inherently one-directional, in that it tests only for mixture effects positively or negatively associated with a given outcome. In practice analyses should therefore be run twice to test for associations in either direction.</p>
+<p>The one-directional index allows not to incur in the reversal paradox when we have highly correlated variables thus improving the identification of bad actors.</p>
+</div>
+<div id="extensions-of-the-original-wqs-regression" class="section level3" number="4.2.3">
+<h3><span class="header-section-number">4.2.3</span> Extensions of the original WQS regression</h3>
+<ul>
+<li>Dependent variables</li>
+</ul>
+<p>The WQS regression can be generalized and applied to multiple types of dependent variables. In particular, WQS regression has been adapted to four different cases: logistic, multinomial, Poisson and negative binomial regression. For these last two cases it is also possible to fit zero-inflated models keeping the same objective function used to estimate the weights as for the Poisson and negative binomial regression but taking into account the zero inflation fitting the final model.</p>
+<ul>
+<li>Random selection</li>
+</ul>
+<p>A novel implementation of WQS regression for high-dimensional mixtures with highly correlated components was proposed in <span class="citation"><a href="#ref-curtin2021random" role="doc-biblioref">Curtin et al.</a> (<a href="#ref-curtin2021random" role="doc-biblioref">2021</a>)</span>. This approach applies a random selection of a subset of the variables included in the mixture instead of the bootstrapping for parameter estimation. Through this method we are able to generate a more de-correlated subsets of variables and reduce the variance of the parameter estimates compared to a single analysis. This novel statistical methodology was shown to be more effective compared to WQS in modeling contexts with large predictor sets, complex correlation structures, or where the numbers of predictors exceeds the number of subjects.</p>
+<ul>
+<li>Repeated holdout validation for WQS regression</li>
+</ul>
+<p>One limit of WQS is the reduced statistical power caused by the necessity to split the dataset in training and validation sets. This partition can also lead to unrepresentative sets of data and unstable parameter estimates. A recent work from <span class="citation"><a href="#ref-tanner2019repeated" role="doc-biblioref">Tanner, Bornehag, and Gennings</a> (<a href="#ref-tanner2019repeated" role="doc-biblioref">2019</a>)</span> showed that conducing a WQS on the full dataset without splitting in training and validation produces optimistic results and proposed to apply a repeated holdout validation combining cross-validation and bootstrap resampling. They suggested to repeatedly split the data 100 times with replacement and fit a WQS regression on each partitioned dataset. Through this procedure we obtain an approximately normal distribution of the weights and the regression parameters and we can apply the mean or the median to estimate the final parameters. A limit of this approach is the higher computational intensity.</p>
+<ul>
+<li>Additional approaches</li>
+</ul>
+<p>To complete the set of currently available extensions of this approach, it is finally worthy to mention the Bayesian WQS (<span class="citation"><a href="#ref-colicino2020per" role="doc-biblioref">Colicino et al.</a> (<a href="#ref-colicino2020per" role="doc-biblioref">2020</a>)</span>), which also allows relaxing the uni-directional assumption, and the lagged WQS (<span class="citation"><a href="#ref-gennings2020lagged" role="doc-biblioref">Gennings et al.</a> (<a href="#ref-gennings2020lagged" role="doc-biblioref">2020</a>)</span>), which deals with time-varying mixtures of exposures to understand the role of exposure timing.</p>
+</div>
+<div id="quantile-g-computation" class="section level3" number="4.2.4">
+<h3><span class="header-section-number">4.2.4</span> Quantile G-computation</h3>
+<p>A recent paper by <span class="citation"><a href="#ref-keil2020quantile" role="doc-biblioref">Keil et al.</a> (<a href="#ref-keil2020quantile" role="doc-biblioref">2020</a>)</span> introduced an additional modeling technique for environmental mixture that builds up on WQS regression integrating its estimation procedure with g-computation. This approach, called Quantile-based g-Computation estimates the overall mixture effect with the same procedure used by WQS, but estimating the parameters of a marginal structural model, rather than a standard regression. In this way, under common assumptions in causal inference such as exchangeability, causal consistency, positivity, no interference, and correct model specification, this model will also improve the causal interpretation of the overall effect. Importantly, the procedure also allegedly overcomes the assumption of uni-direction, and the flexibility of marginal structural models also allows incorporating non-linearities in the contribution of each exposure to the score. Additional details on the models can be found on the original paper or in this useful R <a href="https://cran.r-project.org/web/packages/qgcomp/vignettes/qgcomp-vignette.html">vignette</a>.</p>
+</div>
+<div id="wqs-regression-in-r" class="section level3" number="4.2.5">
+<h3><span class="header-section-number">4.2.5</span> WQS regression in R</h3>
+<p>WQS is available in the R package <code>gWQS</code> (standing for generalized WQS). Documentation and guidelines can be found <a href="https://cran.r-project.org/web/packages/gWQS/gWQS.pdf">here</a>. Note that if you are working on a mac with a OS different than OS 10.5 through 10.7, you may have to install X Quartz at <a href="https://www.xquartz.org" class="uri">https://www.xquartz.org</a>, before being able to load the <code>gWQS</code> library. The recently developed quantile G-computation approach is instead available in the <code>qgcomp</code> package.</p>
+<p>Fitting WQS in R will require some additional data management. First of all, both <code>gWQS</code> and <code>qgcomp</code> will require an object with the <strong>names</strong> of the exposures, rather than a matrix with the exposures themselves.</p>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#cb48-1" aria-hidden="true" tabindex="-1"></a>exposure<span class="ot">&lt;-</span> <span class="fu">names</span>(data2[,<span class="dv">3</span><span class="sc">:</span><span class="dv">16</span>])</span></code></pre></div>
+<p>The following lines will fit a WQS regression model for the positive direction, with a 40-60 training validation split, and without adjusting for covariates. The reader can refer to the link above for details on all available options.</p>
+<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#cb49-1" aria-hidden="true" tabindex="-1"></a>results1 <span class="ot">&lt;-</span> <span class="fu">gwqs</span>(y <span class="sc">~</span> wqs, <span class="at">mix_name =</span> exposure, <span class="at">data =</span> data2, <span class="at">q =</span> <span class="dv">4</span>, <span class="at">validation =</span> <span class="fl">0.6</span>,</span>
+<span id="cb49-2"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#cb49-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">b =</span> <span class="dv">10</span>, <span class="at">b1_pos =</span> T, <span class="at">b1_constr =</span> F, <span class="at">family =</span> <span class="st">&quot;gaussian&quot;</span>, </span>
+<span id="cb49-3"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#cb49-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">seed =</span> <span class="dv">123</span>)</span></code></pre></div>
+<p>After fitting the model, this set of lines will produce a barplot with the weights as well as the summary of results (overall effect and weights estimation)</p>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gwqs_barplot</span>(results1, <span class="at">tau=</span><span class="cn">NULL</span>)</span></code></pre></div>
+<div class="figure" style="text-align: center"><span id="fig:figureenetadjx"></span>
+<img src="bookdown-demo_files/figure-html/figureenetadjx-1.png" alt="WQS: weights estimation" width="80%" />
+<p class="caption">
+Figure 4.1: WQS: weights estimation
+</p>
+</div>
+Here the actual estimates that are being plotted:
+<table>
+<caption>
+<span id="tab:unnamed-chunk-22">Table 4.1: </span>WQS: weights estimation
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:left;">
+mix_name
+</th>
+<th style="text-align:right;">
+mean_weight
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+x12
+</td>
+<td style="text-align:left;">
+x12
+</td>
+<td style="text-align:right;">
+0.2080444
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x5
+</td>
+<td style="text-align:left;">
+x5
+</td>
+<td style="text-align:right;">
+0.1990505
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x4
+</td>
+<td style="text-align:left;">
+x4
+</td>
+<td style="text-align:right;">
+0.1860921
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x6
+</td>
+<td style="text-align:left;">
+x6
+</td>
+<td style="text-align:right;">
+0.1190146
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x8
+</td>
+<td style="text-align:left;">
+x8
+</td>
+<td style="text-align:right;">
+0.1120772
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x2
+</td>
+<td style="text-align:left;">
+x2
+</td>
+<td style="text-align:right;">
+0.0586329
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x1
+</td>
+<td style="text-align:left;">
+x1
+</td>
+<td style="text-align:right;">
+0.0518465
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x9
+</td>
+<td style="text-align:left;">
+x9
+</td>
+<td style="text-align:right;">
+0.0295788
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x14
+</td>
+<td style="text-align:left;">
+x14
+</td>
+<td style="text-align:right;">
+0.0224343
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x7
+</td>
+<td style="text-align:left;">
+x7
+</td>
+<td style="text-align:right;">
+0.0074698
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x13
+</td>
+<td style="text-align:left;">
+x13
+</td>
+<td style="text-align:right;">
+0.0057590
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x3
+</td>
+<td style="text-align:left;">
+x3
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x10
+</td>
+<td style="text-align:left;">
+x10
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x11
+</td>
+<td style="text-align:left;">
+x11
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+</tr>
+</tbody>
+</table>
+<p>To estimate the negative index, still without direct constraint on the actual <span class="math inline">\(\beta\)</span>, we change the <code>b1_pos</code> option to FALSE. In this situation, all bootstrap samples provide a positive coefficient. This suggests that we are in a situation where all covariates have a positive (or null) effect. Even constraining the coefficient would likely not make any difference in this case - coefficients would either be all around 0, or the model will not converge. For the next points, therefore, we will only focus on the positive index.</p>
+<p>To adjust for covariates we can add them in the model as presented here:</p>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#cb51-1" aria-hidden="true" tabindex="-1"></a>results1_0_adj <span class="ot">&lt;-</span> <span class="fu">gwqs</span>(y <span class="sc">~</span> wqs<span class="sc">+</span>z1<span class="sc">+</span>z2<span class="sc">+</span>z3, <span class="at">mix_name =</span> exposure, <span class="at">data =</span> data2, <span class="at">q =</span> <span class="dv">4</span>, <span class="at">validation =</span> <span class="fl">0.6</span>,</span>
+<span id="cb51-2"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#cb51-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">b =</span> <span class="dv">10</span>, <span class="at">b1_pos =</span> T, <span class="at">b1_constr =</span> F, <span class="at">family =</span> <span class="st">&quot;gaussian&quot;</span>, </span>
+<span id="cb51-3"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#cb51-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">seed =</span> <span class="dv">123</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gwqs_barplot</span>(results1_0_adj, <span class="at">tau=</span><span class="cn">NULL</span>)</span></code></pre></div>
+<div class="figure" style="text-align: center"><span id="fig:figureenetadj"></span>
+<img src="bookdown-demo_files/figure-html/figureenetadj-1.png" alt="WQS: weights estimation with covariates adjustment" width="80%" />
+<p class="caption">
+Figure 4.2: WQS: weights estimation with covariates adjustment
+</p>
+</div>
+<p>After adjustment the association is largely attenuated, and the weights of the most important contributors change both in magnitude as well as in ranking. This implies that the three confounders have a different effect on each of the components (e.g. the contribution of <span class="math inline">\(X_6\)</span> was attenuated before adjusting, while the contribution of <span class="math inline">\(X_4\)</span> was overestimated).</p>
+<p>The following lines will fit a quantile G-computation model. What we have to specify in the command is the list of exposures, the name of the mixture object, the data, the type of outcome (continuous here), and whether we want quartiles or other categorizations.</p>
+<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#cb53-1" aria-hidden="true" tabindex="-1"></a>qc <span class="ot">&lt;-</span> <span class="fu">qgcomp</span>(y <span class="sc">~</span> x1<span class="sc">+</span>x2<span class="sc">+</span>x3<span class="sc">+</span>x4<span class="sc">+</span>x5<span class="sc">+</span>x6<span class="sc">+</span>x7<span class="sc">+</span>x8<span class="sc">+</span>x9<span class="sc">+</span>x10<span class="sc">+</span>x11<span class="sc">+</span>x12<span class="sc">+</span>x13<span class="sc">+</span>x14</span>
+<span id="cb53-2"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#cb53-2" aria-hidden="true" tabindex="-1"></a>                         <span class="sc">+</span>z1<span class="sc">+</span>z2<span class="sc">+</span>z3,</span>
+<span id="cb53-3"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#cb53-3" aria-hidden="true" tabindex="-1"></a>                         <span class="at">expnms=</span>exposure,</span>
+<span id="cb53-4"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#cb53-4" aria-hidden="true" tabindex="-1"></a>                         data2, <span class="at">family=</span><span class="fu">gaussian</span>(), <span class="at">q=</span><span class="dv">4</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(qc)</span></code></pre></div>
+<div class="figure" style="text-align: center"><span id="fig:figureenetadja"></span>
+<img src="bookdown-demo_files/figure-html/figureenetadja-1.png" alt="qgcomp: weights estimation with covariates adjustment" width="80%" />
+<p class="caption">
+Figure 4.3: qgcomp: weights estimation with covariates adjustment
+</p>
+</div>
+<p>The Authors also recommended fitting the model using bootstrap, which can be achieved with the following command. Note that the number of iterations, her set to 10, should be at least 200. The plot from this model will provide the estimate of the overall effect of the mixture.</p>
+<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#cb55-1" aria-hidden="true" tabindex="-1"></a>qc.boot <span class="ot">&lt;-</span> <span class="fu">qgcomp.boot</span>(y <span class="sc">~</span> x1<span class="sc">+</span>x2<span class="sc">+</span>x3<span class="sc">+</span>x4<span class="sc">+</span>x5<span class="sc">+</span>x6<span class="sc">+</span>x7<span class="sc">+</span>x8<span class="sc">+</span>x9<span class="sc">+</span>x10<span class="sc">+</span>x11<span class="sc">+</span>x12<span class="sc">+</span>x13<span class="sc">+</span>x14</span>
+<span id="cb55-2"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#cb55-2" aria-hidden="true" tabindex="-1"></a>                         <span class="sc">+</span>z1<span class="sc">+</span>z2<span class="sc">+</span>z3,</span>
+<span id="cb55-3"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#cb55-3" aria-hidden="true" tabindex="-1"></a>                         <span class="at">expnms=</span>exposure,</span>
+<span id="cb55-4"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#cb55-4" aria-hidden="true" tabindex="-1"></a>                         data2, <span class="at">family=</span><span class="fu">gaussian</span>(), <span class="at">q=</span><span class="dv">4</span>, <span class="at">B=</span><span class="dv">10</span>, <span class="at">seed=</span><span class="dv">123</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(qc.boot)</span></code></pre></div>
+<div class="figure" style="text-align: center"><span id="fig:figureenetadjsZCV"></span>
+<img src="bookdown-demo_files/figure-html/figureenetadjsZCV-1.png" alt="qgcomp: overall effect" width="80%" />
+<p class="caption">
+Figure 4.4: qgcomp: overall effect
+</p>
+</div>
+<p>It is interesting to note that in this situation of high-collinearity, qgcomp’s results are still affected as we see a strikingly high (and, as we know since data are simulated, wrong) negative weight for <span class="math inline">\(X_3\)</span>.</p>
+<p>A final note: both packages are very recent and constantly updated and revised. You should always refer to the vignette and documentation provided above for updates and eventual modification in the syntax.</p>
+</div>
+<div id="example-from-the-literature" class="section level3" number="4.2.6">
+<h3><span class="header-section-number">4.2.6</span> Example from the literature</h3>
+<p>Thanks for its easy implementation in statistical software and the development of the several discussed extensions, WQS is rapidly becoming one of the most common techniques used by investigators to evaluate environmental mixtures.</p>
+<p>As an illustrative example on how methods and results can be presented the reade can refer to , we can use the paper from <span class="citation"><a href="#ref-deyssenroth2018intrauterine" role="doc-biblioref">Deyssenroth et al.</a> (<a href="#ref-deyssenroth2018intrauterine" role="doc-biblioref">2018</a>)</span>, evaluating the association between 16 trace metals, measured in post-partum maternal toe nails in about 200 pregnant women from the Rhode Island Child Health Study, and small for gestational age (SGA) status. before fitting WQS the Authors conduct a preliminary analysis using conditional logistic regression, which indicates that effects seem to operate in both directions.</p>
+<p><img src="images/deyslog.png" alt="Conditional logistic regression results from Deyssenroth et al." />
+As a consequence, WQS results are presented for both the positive and negative directions, summarizing both weights estimates and total effects in a clear and informative figure.</p>
+<div class="figure">
+<img src="images/deys.png" alt="" />
+<p class="caption">WQS results from Deyssenroth et al.</p>
+</div>
+
+</div>
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-carrico2015characterization" class="csl-entry">
+Carrico, Caroline, Chris Gennings, David C Wheeler, and Pam Factor-Litvak. 2015. <span>“Characterization of Weighted Quantile Sum Regression for Highly Correlated Data in a Risk Analysis Setting.”</span> <em>Journal of Agricultural, Biological, and Environmental Statistics</em> 20 (1): 100–120.
+</div>
+<div id="ref-colicino2020per" class="csl-entry">
+Colicino, Elena, Nicolo Foppa Pedretti, Stefanie A Busgang, and Chris Gennings. 2020. <span>“Per-and Poly-Fluoroalkyl Substances and Bone Mineral Density: Results from the Bayesian Weighted Quantile Sum Regression.”</span> <em>Environmental Epidemiology (Philadelphia, Pa.)</em> 4 (3).
+</div>
+<div id="ref-curtin2021random" class="csl-entry">
+Curtin, Paul, Joshua Kellogg, Nadja Cech, and Chris Gennings. 2021. <span>“A Random Subset Implementation of Weighted Quantile Sum (WQSRS) Regression for Analysis of High-Dimensional Mixtures.”</span> <em>Communications in Statistics-Simulation and Computation</em> 50 (4): 1119–34.
+</div>
+<div id="ref-czarnota2015assessment" class="csl-entry">
+Czarnota, Jenna, Chris Gennings, and David C Wheeler. 2015. <span>“Assessment of Weighted Quantile Sum Regression for Modeling Chemical Mixtures and Cancer Risk.”</span> <em>Cancer Informatics</em> 14: CIN–S17295.
+</div>
+<div id="ref-deyssenroth2018intrauterine" class="csl-entry">
+Deyssenroth, Maya A, Chris Gennings, Shelley H Liu, Shouneng Peng, Ke Hao, Luca Lambertini, Brian P Jackson, Margaret R Karagas, Carmen J Marsit, and Jia Chen. 2018. <span>“Intrauterine Multi-Metal Exposure Is Associated with Reduced Fetal Growth Through Modulation of the Placental Gene Network.”</span> <em>Environment International</em> 120: 373–81.
+</div>
+<div id="ref-gennings2020lagged" class="csl-entry">
+Gennings, Chris, Paul Curtin, Ghalib Bello, Robert Wright, Manish Arora, and Christine Austin. 2020. <span>“Lagged WQS Regression for Mixtures with Many Components.”</span> <em>Environmental Research</em> 186: 109529.
+</div>
+<div id="ref-keil2020quantile" class="csl-entry">
+Keil, Alexander P, Jessie P Buckley, Katie M O’Brien, Kelly K Ferguson, Shanshan Zhao, and Alexandra J White. 2020. <span>“A Quantile-Based g-Computation Approach to Addressing the Effects of Exposure Mixtures.”</span> <em>Environmental Health Perspectives</em> 128 (4): 047004.
+</div>
+<div id="ref-li2019serum" class="csl-entry">
+Li, Ming-Chieh, Lidia Mı́nguez-Alarcón, Andrea Bellavia, Paige L Williams, Tamarra James-Todd, Russ Hauser, Jorge E Chavarro, and Yu-Han Chiu. 2019. <span>“Serum Beta-Carotene Modifies the Association Between Phthalate Mixtures and Insulin Resistance: The National Health and Nutrition Examination Survey 2003–2006.”</span> <em>Environmental Research</em> 178: 108729.
+</div>
+<div id="ref-souter2020urinary" class="csl-entry">
+Souter, Irene, Andrea Bellavia, Paige L Williams, TIM Korevaar, John D Meeker, Joseph M Braun, Ralph A de Poortere, et al. 2020. <span>“Urinary Concentrations of Phthalate Metabolite Mixtures in Relation to Serum Biomarkers of Thyroid Function and Autoimmunity Among Women from a Fertility Center.”</span> <em>Environmental Health Perspectives</em> 128 (6): 067007.
+</div>
+<div id="ref-tanner2019repeated" class="csl-entry">
+Tanner, Eva M, Carl-Gustaf Bornehag, and Chris Gennings. 2019. <span>“Repeated Holdout Validation for Weighted Quantile Sum Regression.”</span> <em>MethodsX</em> 6: 2855–60.
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="regression-based-approaches.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="flexible-approaches-for-complex-settings.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["bookdown-demo.pdf"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

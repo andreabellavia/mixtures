@@ -1,0 +1,1970 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 3 Regression-based approaches | Statistical Methods for Environmental Mixtures</title>
+  <meta name="description" content="Humans are simultaneously exposed to a large number of environmental hazards. To allow a more accurate identification of the risks associated with environmental exposures and developing more targeted public health interventions, it is crucial that population-based studies account for the complexity of such exposures as environmental mixtures. This poses several analytic challenges and often requires the use of extensions of standard regression approaches or more flexible techinques for high-dimensional data. This document presents an extended version of the class material that was used in an introductory two-weeks course on statistical approaches for environmental mixtures. The main challanges and limitations of standard regression techniques are outlined, and recent methodological developments are introduced in a rigorous yet non-theoretical way. The course was designed for students and postdocs in environmental health with basic preliminary knoweldge on linear and logistic regression models. Sources and code examples to conduct a thorough analysis in R are also included." />
+  <meta name="generator" content="bookdown 0.22 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 3 Regression-based approaches | Statistical Methods for Environmental Mixtures" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="Humans are simultaneously exposed to a large number of environmental hazards. To allow a more accurate identification of the risks associated with environmental exposures and developing more targeted public health interventions, it is crucial that population-based studies account for the complexity of such exposures as environmental mixtures. This poses several analytic challenges and often requires the use of extensions of standard regression approaches or more flexible techinques for high-dimensional data. This document presents an extended version of the class material that was used in an introductory two-weeks course on statistical approaches for environmental mixtures. The main challanges and limitations of standard regression techniques are outlined, and recent methodological developments are introduced in a rigorous yet non-theoretical way. The course was designed for students and postdocs in environmental health with basic preliminary knoweldge on linear and logistic regression models. Sources and code examples to conduct a thorough analysis in R are also included." />
+  <meta name="github-repo" content="andreabellavia/mixtures" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 3 Regression-based approaches | Statistical Methods for Environmental Mixtures" />
+  
+  <meta name="twitter:description" content="Humans are simultaneously exposed to a large number of environmental hazards. To allow a more accurate identification of the risks associated with environmental exposures and developing more targeted public health interventions, it is crucial that population-based studies account for the complexity of such exposures as environmental mixtures. This poses several analytic challenges and often requires the use of extensions of standard regression approaches or more flexible techinques for high-dimensional data. This document presents an extended version of the class material that was used in an introductory two-weeks course on statistical approaches for environmental mixtures. The main challanges and limitations of standard regression techniques are outlined, and recent methodological developments are introduced in a rigorous yet non-theoretical way. The course was designed for students and postdocs in environmental health with basic preliminary knoweldge on linear and logistic regression models. Sources and code examples to conduct a thorough analysis in R are also included." />
+  
+
+<meta name="author" content="Andrea Bellavia" />
+
+
+<meta name="date" content="2021-11-04" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="unsupervised-analysis.html"/>
+<link rel="next" href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"/>
+<script src="libs/header-attrs-2.9/header-attrs.js"></script>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+<link href="libs/table1-1.0/table1_defaults.css" rel="stylesheet" />
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
+<li class="chapter" data-level="" data-path="about-the-author.html"><a href="about-the-author.html"><i class="fa fa-check"></i>About the Author</a></li>
+<li class="chapter" data-level="1" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>1</b> Introduction</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="introduction.html"><a href="introduction.html#the-exposome"><i class="fa fa-check"></i><b>1.1</b> The Exposome</a></li>
+<li class="chapter" data-level="1.2" data-path="introduction.html"><a href="introduction.html#why-focusing-on-multiple-exposures"><i class="fa fa-check"></i><b>1.2</b> Why focusing on multiple exposures?</a></li>
+<li class="chapter" data-level="1.3" data-path="introduction.html"><a href="introduction.html#what-is-your-research-question"><i class="fa fa-check"></i><b>1.3</b> What is your research question?</a></li>
+<li class="chapter" data-level="1.4" data-path="introduction.html"><a href="introduction.html#broad-classifications-of-statistical-approaches"><i class="fa fa-check"></i><b>1.4</b> Broad classification(s) of statistical approaches</a></li>
+<li class="chapter" data-level="1.5" data-path="introduction.html"><a href="introduction.html#introduction-to-r-and-the-simulated-data"><i class="fa fa-check"></i><b>1.5</b> Introduction to R and the simulated data</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html"><i class="fa fa-check"></i><b>2</b> Unsupervised analysis</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#pre-processing"><i class="fa fa-check"></i><b>2.1</b> Pre-processing</a></li>
+<li class="chapter" data-level="2.2" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#correlation-analysis"><i class="fa fa-check"></i><b>2.2</b> Correlation analysis</a></li>
+<li class="chapter" data-level="2.3" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#weighted-correlation-network-analysis"><i class="fa fa-check"></i><b>2.3</b> Weighted correlation network analysis</a></li>
+<li class="chapter" data-level="2.4" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#principal-component-analysis"><i class="fa fa-check"></i><b>2.4</b> Principal component analysis</a>
+<ul>
+<li class="chapter" data-level="2.4.1" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#fitting-a-pca-in-r"><i class="fa fa-check"></i><b>2.4.1</b> Fitting a PCA in R</a></li>
+<li class="chapter" data-level="2.4.2" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#choosing-the-number-of-components"><i class="fa fa-check"></i><b>2.4.2</b> Choosing the number of components</a></li>
+<li class="chapter" data-level="2.4.3" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#getting-sense-of-components-interpretation"><i class="fa fa-check"></i><b>2.4.3</b> Getting sense of components interpretation</a></li>
+<li class="chapter" data-level="2.4.4" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#using-principal-components-in-subsequent-analyses"><i class="fa fa-check"></i><b>2.4.4</b> Using principal components in subsequent analyses</a></li>
+<li class="chapter" data-level="2.4.5" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#pca-in-practice"><i class="fa fa-check"></i><b>2.4.5</b> PCA in practice</a></li>
+</ul></li>
+<li class="chapter" data-level="2.5" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#cluster-analysis"><i class="fa fa-check"></i><b>2.5</b> Cluster analysis</a>
+<ul>
+<li class="chapter" data-level="2.5.1" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#k-means-clustering"><i class="fa fa-check"></i><b>2.5.1</b> K-means clustering</a></li>
+<li class="chapter" data-level="2.5.2" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#k-means-in-r"><i class="fa fa-check"></i><b>2.5.2</b> K-means in R</a></li>
+<li class="chapter" data-level="2.5.3" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#cluster-analysis-to-simplify-descriptive-statistics-presentation"><i class="fa fa-check"></i><b>2.5.3</b> Cluster analysis to simplify descriptive statistics presentation</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html"><i class="fa fa-check"></i><b>3</b> Regression-based approaches</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#ols-regression"><i class="fa fa-check"></i><b>3.1</b> OLS regression</a>
+<ul>
+<li class="chapter" data-level="3.1.1" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#single-regression-ewas"><i class="fa fa-check"></i><b>3.1.1</b> Single regression (EWAS)</a></li>
+<li class="chapter" data-level="3.1.2" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#multiple-regression"><i class="fa fa-check"></i><b>3.1.2</b> Multiple regression</a></li>
+<li class="chapter" data-level="3.1.3" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#the-problem-of-multicollinearity"><i class="fa fa-check"></i><b>3.1.3</b> The problem of Multicollinearity</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#penalized-regression-approaches"><i class="fa fa-check"></i><b>3.2</b> Penalized regression approaches</a>
+<ul>
+<li class="chapter" data-level="3.2.1" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#bias-variance-tradeoff"><i class="fa fa-check"></i><b>3.2.1</b> Bias-variance tradeoff</a></li>
+<li class="chapter" data-level="3.2.2" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#ridge-regression"><i class="fa fa-check"></i><b>3.2.2</b> Ridge regression</a></li>
+<li class="chapter" data-level="3.2.3" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#lasso"><i class="fa fa-check"></i><b>3.2.3</b> LASSO</a></li>
+<li class="chapter" data-level="3.2.4" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#elastic-net"><i class="fa fa-check"></i><b>3.2.4</b> Elastic net</a></li>
+<li class="chapter" data-level="3.2.5" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#additional-notes"><i class="fa fa-check"></i><b>3.2.5</b> Additional notes</a></li>
+<li class="chapter" data-level="3.2.6" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#elastic-net-and-environmental-mixtures"><i class="fa fa-check"></i><b>3.2.6</b> Elastic Net and environmental mixtures</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#other-regression-based-approaches"><i class="fa fa-check"></i><b>3.3</b> Other regression-based approaches</a>
+<ul>
+<li class="chapter" data-level="3.3.1" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#hierarchical-linear-models"><i class="fa fa-check"></i><b>3.3.1</b> Hierarchical linear models</a></li>
+<li class="chapter" data-level="3.3.2" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#partial-least-square-regression"><i class="fa fa-check"></i><b>3.3.2</b> Partial least square regression</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#advantages-and-limitations-of-regression-approaches"><i class="fa fa-check"></i><b>3.4</b> Advantages and limitations of regression approaches</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><i class="fa fa-check"></i><b>4</b> Assessing the overall (cumulative) effect of multiple exposures</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#unsupervised-summary-scores"><i class="fa fa-check"></i><b>4.1</b> Unsupervised summary scores</a></li>
+<li class="chapter" data-level="4.2" data-path="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#weighted-quantile-sum"><i class="fa fa-check"></i><b>4.2</b> Weighted quantile sum</a>
+<ul>
+<li class="chapter" data-level="4.2.1" data-path="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#model-definition-and-estimation"><i class="fa fa-check"></i><b>4.2.1</b> Model definition and estimation</a></li>
+<li class="chapter" data-level="4.2.2" data-path="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#the-unidirectionality-assumption"><i class="fa fa-check"></i><b>4.2.2</b> The unidirectionality assumption</a></li>
+<li class="chapter" data-level="4.2.3" data-path="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#extensions-of-the-original-wqs-regression"><i class="fa fa-check"></i><b>4.2.3</b> Extensions of the original WQS regression</a></li>
+<li class="chapter" data-level="4.2.4" data-path="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#quantile-g-computation"><i class="fa fa-check"></i><b>4.2.4</b> Quantile G-computation</a></li>
+<li class="chapter" data-level="4.2.5" data-path="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#wqs-regression-in-r"><i class="fa fa-check"></i><b>4.2.5</b> WQS regression in R</a></li>
+<li class="chapter" data-level="4.2.6" data-path="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#example-from-the-literature"><i class="fa fa-check"></i><b>4.2.6</b> Example from the literature</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html"><i class="fa fa-check"></i><b>5</b> Flexible approaches for complex settings</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#bayesian-kernel-machine-regression"><i class="fa fa-check"></i><b>5.1</b> Bayesian Kernel Machine Regression</a>
+<ul>
+<li class="chapter" data-level="5.1.1" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#introduction-1"><i class="fa fa-check"></i><b>5.1.1</b> Introduction</a></li>
+<li class="chapter" data-level="5.1.2" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#estimation"><i class="fa fa-check"></i><b>5.1.2</b> Estimation</a></li>
+<li class="chapter" data-level="5.1.3" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#trace-plots-and-burning-phase"><i class="fa fa-check"></i><b>5.1.3</b> Trace plots and burning phase</a></li>
+<li class="chapter" data-level="5.1.4" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#visualizing-results"><i class="fa fa-check"></i><b>5.1.4</b> Visualizing results</a></li>
+<li class="chapter" data-level="5.1.5" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#hierarchical-selection"><i class="fa fa-check"></i><b>5.1.5</b> Hierarchical selection</a></li>
+<li class="chapter" data-level="5.1.6" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#extensions"><i class="fa fa-check"></i><b>5.1.6</b> Extensions</a></li>
+<li class="chapter" data-level="5.1.7" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#practical-considerations-and-discussion"><i class="fa fa-check"></i><b>5.1.7</b> Practical considerations and discussion</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#assessing-interactions"><i class="fa fa-check"></i><b>5.2</b> Assessing interactions</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#tree-based-modeling"><i class="fa fa-check"></i><b>5.2.1</b> Tree-based modeling</a></li>
+<li class="chapter" data-level="5.2.2" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#interaction-screening-and-regression-approaches"><i class="fa fa-check"></i><b>5.2.2</b> Interaction screening and regression approaches</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="additional-topics-and-final-remarks.html"><a href="additional-topics-and-final-remarks.html"><i class="fa fa-check"></i><b>6</b> Additional topics and final remarks</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="additional-topics-and-final-remarks.html"><a href="additional-topics-and-final-remarks.html#causal-mixture-effects"><i class="fa fa-check"></i><b>6.1</b> Causal mixture effects</a></li>
+<li class="chapter" data-level="6.2" data-path="additional-topics-and-final-remarks.html"><a href="additional-topics-and-final-remarks.html#binary-and-zero-inflated-exposures"><i class="fa fa-check"></i><b>6.2</b> Binary and zero-inflated exposures</a></li>
+<li class="chapter" data-level="6.3" data-path="additional-topics-and-final-remarks.html"><a href="additional-topics-and-final-remarks.html#mediation-analysis"><i class="fa fa-check"></i><b>6.3</b> Mediation analysis</a></li>
+<li class="chapter" data-level="6.4" data-path="additional-topics-and-final-remarks.html"><a href="additional-topics-and-final-remarks.html#conclusion"><i class="fa fa-check"></i><b>6.4</b> Conclusion</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Statistical Methods for Environmental Mixtures</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="regression-based-approaches" class="section level1" number="3">
+<h1><span class="header-section-number">Chapter 3</span> Regression-based approaches</h1>
+<p>The previous section described a set of unsupervised techniques for the analysis of environmental mixtures, used to process the complex data before further analyses and to address well defined research questions related to the identification of common patterns of exposures or clustering of individuals based on exposure profiles. In the context of environmental health studies, however, this only represents the first (yet critical) step of analysis. The ultimate goal of most research in the field is in fact to investigate whether exposure to mixtures of environmental factors are associated with a given health outcome, and possibly whether these associations represent causal effects. Epidemiologists are usually trained to address these questions using regression-based techniques such as generalized linear models, for binary and continuous outcomes, or parametric and semi-parametric regression techniques for survival data, with time-to-event outcomes. Nevertheless, environmental exposures often present complex settings that require handling regression with care. The goal of this section is to present the use of classical regression techniques (i.e. ordinary least squares (OLS)) in mixtures modeling, its limitations, and introduce some important extensions of OLS that allow overcoming these shortcomings.</p>
+<div id="ols-regression" class="section level2" number="3.1">
+<h2><span class="header-section-number">3.1</span> OLS regression</h2>
+<div id="single-regression-ewas" class="section level3" number="3.1.1">
+<h3><span class="header-section-number">3.1.1</span> Single regression (EWAS)</h3>
+<p>A simple way to assess the association between a set of <span class="math inline">\(p\)</span> environmental exposures (<span class="math inline">\(X_1 - X_p\)</span>) and a given outcome <span class="math inline">\(Y\)</span> is to build <span class="math inline">\(p\)</span> different regression models, one for each exposure (the approach that we previously described as “one-at-the-time”). Each model can be further adjusted for potential confounders of each exposure-outcome association. For example, is <span class="math inline">\(Y\)</span> was a continuous exposure, we could fit a set of linear regression models such as: <span class="math inline">\(E[Y|X_1,C]=\beta_0+\beta_1 \cdot X_1 + \beta\cdot C\)</span>. The implicit assumption of this modeling procedure is that, for each element of the mixture, the other components do not act as confounders of the exposure-outcome association, as depicted in this DAG:
+<img src="images/dag1.png" alt="DAG for 5 exposures" /></p>
+<p>When evaluating a set of environmental exposures, this procedure of fitting a set of independent regression models is usually referred to as environment-wide association study (EWAS, Patel et al. 2010). This approach usually requires correcting for multiple comparisons using wither the Bonferroni approach or the false discovery rate (FDR).</p>
+<p>The following table reports results from fitting independent linear regression models (here without any adjustment for multiple comparisons) in our illustrative example with 14 exposures:</p>
+<table style="text-align:center">
+<tr>
+<td colspan="3" style="border-bottom: 1px solid black">
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td colspan="2">
+<em>Dependent variable:</em>
+</td>
+</tr>
+<tr>
+<td>
+</td>
+<td colspan="2" style="border-bottom: 1px solid black">
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td colspan="2">
+y
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+(1)
+</td>
+<td>
+(2)
+</td>
+</tr>
+<tr>
+<td colspan="3" style="border-bottom: 1px solid black">
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+x12
+</td>
+<td>
+0.294<sup>***</sup> (0.169, 0.420)
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+x13
+</td>
+<td>
+</td>
+<td>
+0.238<sup>***</sup> (0.112, 0.364)
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+z1
+</td>
+<td>
+-0.010 (-0.036, 0.016)
+</td>
+<td>
+-0.010 (-0.037, 0.016)
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+z2
+</td>
+<td>
+0.013<sup>***</sup> (0.011, 0.015)
+</td>
+<td>
+0.013<sup>***</sup> (0.011, 0.015)
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+z3
+</td>
+<td>
+-0.610<sup>***</sup> (-0.694, -0.525)
+</td>
+<td>
+-0.612<sup>***</sup> (-0.698, -0.527)
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+Constant
+</td>
+<td>
+3.712<sup>***</sup> (3.592, 3.833)
+</td>
+<td>
+3.725<sup>***</sup> (3.596, 3.854)
+</td>
+</tr>
+<tr>
+<td colspan="3" style="border-bottom: 1px solid black">
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+Observations
+</td>
+<td>
+500
+</td>
+<td>
+500
+</td>
+</tr>
+<tr>
+<td colspan="3" style="border-bottom: 1px solid black">
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+<em>Note:</em>
+</td>
+<td colspan="2" style="text-align:right">
+<sup><em></sup>p&lt;0.1; <sup><strong></sup>p&lt;0.05; <sup></strong></em></sup>p&lt;0.01
+</td>
+</tr>
+</table>
+<p>These results seem to indicate that all exposures are independently associated with the outcome (many coefficients fail to reach the conventional threshold of statistical significance, but we will stick on the magnitude and direction of the associations for this illustrative example).</p>
+</div>
+<div id="multiple-regression" class="section level3" number="3.1.2">
+<h3><span class="header-section-number">3.1.2</span> Multiple regression</h3>
+<p>Results from independent linear regression are hampered by the strong assumption that mixture components do not act as confounders of the association between each other component and the outcome of interest. This assumption, however, is very seldom met in practice. A common situation, for example, is that two or more constituents of the mixture share one or more source, which usually results in moderate to high levels of correlation between exposures. Using DAGs, we can depict this situation with the following:</p>
+<div class="figure">
+<img src="images/dag2.png" alt="" />
+<p class="caption">DAG for 2 exposures</p>
+</div>
+<p>In this situation, a statistical model evaluating the association between <span class="math inline">\(X_1\)</span> and <span class="math inline">\(Y\)</span> will need to adjust for <span class="math inline">\(X_2\)</span> to reduce the impact of bias due to residual confounding. In general, when any level of correlation exists between two mixture components, we do expect them to act as confounders of the association between the other exposure and the outcome. This implies that results from independent linear regressions are likely biased due to uncontrolled confounding. In our illustrative example, for instance, we know that <span class="math inline">\(X_{12}\)</span> and <span class="math inline">\(X_{13}\)</span> are highly correlated; results from independent linear regressions indicated that both exposures are positively associated with the outcome, but we now know that these coefficients are probably biased. Mutually adjusting for the two exposures in the same statistical model is therefore required to account for such confounding and possibly identify whether both exposures are really associated with the outcome, or if the real driver of the association is just one of the two. Note that both situations are realistic: we might have settings where a specific exposure is biologically harmful (say <span class="math inline">\(X_{12}\)</span>), and the association between the correlated one (<span class="math inline">\(X_{13}\)</span>) and the outcome was a spurious result due to this high correlation, as well as settings where both exposures are really associated with the outcome (maybe because it is the source of exposure to have a direct effect). We need statistical methodologies to be able to detect and distinguish these possible scenarios.</p>
+<p>The most intuitive way to account for co-confounding between mixture components is to mutually adjust for all exposures in the same regression model:</p>
+<p><span class="math display">\[E[Y|X,C]=\beta_0+\sum_{i=1}^p\beta_i \cdot X_i + \beta \cdot C\]</span></p>
+<p>The following table presents results from a multiple regression that includes the 14 exposures in our example, as well as results from the independent models for <span class="math inline">\(X_{12}\)</span> and <span class="math inline">\(X_{13}\)</span> for comparison</p>
+<p>We can compare results from different models using the stargazer package. Let’s use it to compare results from the full model, and the models for <span class="math inline">\(X_{12}\)</span> and <span class="math inline">\(X_{13}\)</span> alone:</p>
+<table style="text-align:center">
+<tr>
+<td colspan="4" style="border-bottom: 1px solid black">
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td colspan="3">
+<em>Dependent variable:</em>
+</td>
+</tr>
+<tr>
+<td>
+</td>
+<td colspan="3" style="border-bottom: 1px solid black">
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td colspan="3">
+y
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+(1)
+</td>
+<td>
+(2)
+</td>
+<td>
+(3)
+</td>
+</tr>
+<tr>
+<td colspan="4" style="border-bottom: 1px solid black">
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+x1
+</td>
+<td>
+0.058<sup>*</sup> (-0.007, 0.123)
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+x2
+</td>
+<td>
+0.018 (-0.043, 0.080)
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+x3
+</td>
+<td>
+-0.030 (-0.232, 0.173)
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+x4
+</td>
+<td>
+0.053 (-0.170, 0.275)
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+x5
+</td>
+<td>
+0.004 (-0.080, 0.088)
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+x6
+</td>
+<td>
+0.060<sup>**</sup> (0.001, 0.119)
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+x7
+</td>
+<td>
+-0.031 (-0.153, 0.091)
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+x8
+</td>
+<td>
+0.017 (-0.063, 0.097)
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+x9
+</td>
+<td>
+0.025 (-0.090, 0.140)
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+x10
+</td>
+<td>
+0.052 (-0.039, 0.144)
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+x11
+</td>
+<td>
+0.049 (-0.052, 0.151)
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+x12
+</td>
+<td>
+0.222 (-0.071, 0.515)
+</td>
+<td>
+0.294<sup>***</sup> (0.169, 0.420)
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+x13
+</td>
+<td>
+-0.083 (-0.382, 0.216)
+</td>
+<td>
+</td>
+<td>
+0.238<sup>***</sup> (0.112, 0.364)
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+x14
+</td>
+<td>
+0.054 (-0.047, 0.154)
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+z1
+</td>
+<td>
+0.006 (-0.021, 0.032)
+</td>
+<td>
+-0.010 (-0.036, 0.016)
+</td>
+<td>
+-0.010 (-0.037, 0.016)
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+z2
+</td>
+<td>
+0.006<sup>***</sup> (0.003, 0.010)
+</td>
+<td>
+0.013<sup>***</sup> (0.011, 0.015)
+</td>
+<td>
+0.013<sup>***</sup> (0.011, 0.015)
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+z3
+</td>
+<td>
+-0.609<sup>***</sup> (-0.696, -0.522)
+</td>
+<td>
+-0.610<sup>***</sup> (-0.694, -0.525)
+</td>
+<td>
+-0.612<sup>***</sup> (-0.698, -0.527)
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+Constant
+</td>
+<td>
+3.265<sup>***</sup> (2.800, 3.730)
+</td>
+<td>
+3.712<sup>***</sup> (3.592, 3.833)
+</td>
+<td>
+3.725<sup>***</sup> (3.596, 3.854)
+</td>
+</tr>
+<tr>
+<td colspan="4" style="border-bottom: 1px solid black">
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+Observations
+</td>
+<td>
+500
+</td>
+<td>
+500
+</td>
+<td>
+500
+</td>
+</tr>
+<tr>
+<td colspan="4" style="border-bottom: 1px solid black">
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+<em>Note:</em>
+</td>
+<td colspan="3" style="text-align:right">
+<sup><em></sup>p&lt;0.1; <sup><strong></sup>p&lt;0.05; <sup></strong></em></sup>p&lt;0.01
+</td>
+</tr>
+</table>
+</div>
+<div id="the-problem-of-multicollinearity" class="section level3" number="3.1.3">
+<h3><span class="header-section-number">3.1.3</span> The problem of Multicollinearity</h3>
+<p>Results from the multiple regression are not consistent with those obtained from independent regression models, especially (and unsurprisingly) for those exposures that showed high levels of correlations. For example, within the exposure cluster <span class="math inline">\(X_{12}-X_{13}\)</span>, the multiple regression model suggests that only <span class="math inline">\(X_{12}\)</span> is associated with the outcome, while the coefficient of <span class="math inline">\(X_{13}\)</span> is strongly reduced. Something similar happens for the <span class="math inline">\(X_3-X_4-X_5\)</span> cluster, where only <span class="math inline">\(X_4\)</span> remains associated with <span class="math inline">\(Y\)</span>. Can we safely conclude that <span class="math inline">\(X_{12}\)</span> and <span class="math inline">\(X_4\)</span> are associated with <span class="math inline">\(Y\)</span> and that the other results were biased due to uncontrolled confounders? Before addressing this question, let’s take a look at this published paper where we evaluated the performance of several statistical models to evaluate the association between a mixture of 8 phthalate metabolites and birth weight in a pregnancy cohort (<span class="citation"><a href="#ref-chiu2018evaluating" role="doc-biblioref">Chiu et al.</a> (<a href="#ref-chiu2018evaluating" role="doc-biblioref">2018</a>)</span>). The following table presents results from 8 independent regressions and a multiple regression model. The next figure presents instead the correlation plot of the 8 metabolites.</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Metabolite</th>
+<th align="center"><span class="math inline">\(\beta\)</span> (one at the time)</th>
+<th align="right">p-value</th>
+<th align="right"><span class="math inline">\(\beta\)</span> (mutually adjusted)</th>
+<th align="right">p-value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">MiBP</td>
+<td align="center">-20.0</td>
+<td align="right">0.51</td>
+<td align="right">-6.8</td>
+<td align="right">0.84</td>
+</tr>
+<tr class="even">
+<td align="left">MBzP</td>
+<td align="center">-24.7</td>
+<td align="right">0.34</td>
+<td align="right">-18.7</td>
+<td align="right">0.53</td>
+</tr>
+<tr class="odd">
+<td align="left">MEOHP</td>
+<td align="center">-23.7</td>
+<td align="right">0.33</td>
+<td align="right">247.1</td>
+<td align="right">0.11</td>
+</tr>
+<tr class="even">
+<td align="left">MnBP</td>
+<td align="center">-28.5</td>
+<td align="right">0.31</td>
+<td align="right">-6.5</td>
+<td align="right">0.86</td>
+</tr>
+<tr class="odd">
+<td align="left">MEHHP</td>
+<td align="center">-28.2</td>
+<td align="right">0.24</td>
+<td align="right">-127.4</td>
+<td align="right">0.36</td>
+</tr>
+<tr class="even">
+<td align="left">MECPP</td>
+<td align="center">-32.6</td>
+<td align="right">0.20</td>
+<td align="right">-82.8</td>
+<td align="right">0.32</td>
+</tr>
+<tr class="odd">
+<td align="left">MEP</td>
+<td align="center">-27.1</td>
+<td align="right">0.18</td>
+<td align="right">25.0</td>
+<td align="right">0.24</td>
+</tr>
+<tr class="even">
+<td align="left">MEHP</td>
+<td align="center">-36.8</td>
+<td align="right">0.10</td>
+<td align="right">-59.0</td>
+<td align="right">0.18</td>
+</tr>
+</tbody>
+</table>
+<div class="figure">
+<img src="images/Rplot02.png" alt="" />
+<p class="caption">Correlation plot from Chiu et al.</p>
+</div>
+<p>While we were expecting results from the two approaches to be different in the presence of high correlations, the coefficients obtained from the multiple regression leave room to a lot of skepticism. For example, the coefficients for MEOHP and MEHHP, when evaluated together, change respectively from -24 to 247, and from -28 to -127. Are these results reliable? Are we getting any improvement from to the biased results that we obtained from independent linear regressions?</p>
+<p>The most common problem that arises when using multiple regression to investigate mixture-outcome association is multicollinearity (or simply collinearity). This occurs when independent variables in a regression model are correlated, with stronger consequences the higher the correlation. More specifically, a high correlation between two predictors simultaneously included in a regression model will decrease the precision of their estimates and increase their standard errors. If the correlation between two covariates (say <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span>) is very high, then one is a pretty accurate linear predictor of the other. Collinearity does not influence the overall performance of the model, but has an important impact on individual predictors. In general (as a rule of thumb), given two predictors <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span> that are associated with the outcome (<span class="math inline">\(\beta=0.2\)</span> for both) when their correlation is equal to 0, the estimates in a linear model will be impacted by <span class="math inline">\(\rho(X_1, X_2)\)</span> as in this figure:
+<img src="images/revparadox.png" alt="reverse paradox from tu et al" /></p>
+<p>This issue, usually referred to as reverse paradox (the coefficients of 2 correlated covariates will inflate in opposite directions), is clearly affecting results from the paper presented above (the coefficients of highly correlated phthalate metabolites are either extremely large or extremely small), and possibly also results from the illustrative example (coefficients from correlated variables have opposite signs). Nevertheless, it should be noted that high correlation does not automatically imply that coefficients will be inflated. In another example (<span class="citation"><a href="#ref-bellavia2019urinary" role="doc-biblioref">Bellavia et al.</a> (<a href="#ref-bellavia2019urinary" role="doc-biblioref">2019</a>)</span>), for instance, we evaluated a mixture of three highly correlated parabens compounds, yet results from multiple regression were in line to those obtained from other mixture modeling techniques.</p>
+<p>To quantify the severity of multicollinearity in a regression analysis one should calculate the Variance Inflation Factor (VIF). The VIF provides a measure of how much the variance of an estimated regression coefficient is increased because of collinearity. For example, if the VIF for a given predictors were 4, than the standard error of that predictors is 2 times larger than if that predictor had 0 correlation with other variables. As a rule of thumb, VIFs above 4 should set the alarm off, as they indicate that those coefficients are likely affected by the high correlations between them and other covariates in the model. The following table shows VIFs in our illustrative example, indicating that our results are deeply affected by multicollinearity. In this situation, alternative modeling options should be pursued.</p>
+<table>
+<caption>
+<span id="tab:unnamed-chunk-15">Table 3.1: </span>VIFs
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+x1
+</td>
+<td style="text-align:right;">
+1.235658
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x2
+</td>
+<td style="text-align:right;">
+1.317951
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x3
+</td>
+<td style="text-align:right;">
+49.479946
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x4
+</td>
+<td style="text-align:right;">
+58.241935
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x5
+</td>
+<td style="text-align:right;">
+11.256382
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x6
+</td>
+<td style="text-align:right;">
+2.271043
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x7
+</td>
+<td style="text-align:right;">
+2.722583
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x8
+</td>
+<td style="text-align:right;">
+3.892965
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x9
+</td>
+<td style="text-align:right;">
+2.553431
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x10
+</td>
+<td style="text-align:right;">
+2.810535
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x11
+</td>
+<td style="text-align:right;">
+3.694404
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x12
+</td>
+<td style="text-align:right;">
+6.085748
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x13
+</td>
+<td style="text-align:right;">
+6.557098
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x14
+</td>
+<td style="text-align:right;">
+3.152092
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+z1
+</td>
+<td style="text-align:right;">
+1.139690
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+z2
+</td>
+<td style="text-align:right;">
+4.784064
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+z3
+</td>
+<td style="text-align:right;">
+1.135437
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="penalized-regression-approaches" class="section level2" number="3.2">
+<h2><span class="header-section-number">3.2</span> Penalized regression approaches</h2>
+<p>An important set of models that can be very useful in the context of environmental mixtures are penalized regression approaches. These methods are directly built as extensions of standard OLS by incorporating a penalty in the loss function (hence the name). Their popularity in environmental epidemiology is due to the fact that this penalization procedure tends to decrease the influence of collinearity by targeting the overall variability of the model, thus improving the performance of the regression in the presence of high levels of correlations between included covariates. As always, however, everything comes for a price, and the improvement in the variance is achieved by introducing some bias (specifically, coefficients will be shrinked towards zero, reason why these approaches are also referred to as shrinkage procedures).</p>
+<div id="bias-variance-tradeoff" class="section level3" number="3.2.1">
+<h3><span class="header-section-number">3.2.1</span> Bias-variance tradeoff</h3>
+<p>The word bias usually triggers epidemiologists’ ears, so it is important to understand what we mean by “introducing some bias” and how this can be beneficial in our context. To do so, let’s begin by refreshing the basic math behind the estimation of a classical multiple regression. In linear regression modeling, we aim at predicting <span class="math inline">\(n\)</span> observations of the response variable, <span class="math inline">\(Y\)</span>, with a linear combination of <span class="math inline">\(m\)</span> predictor variables, <span class="math inline">\(X\)</span>, and a normally distributed error term with variance <span class="math inline">\(\sigma^2\)</span>:
+<span class="math display">\[Y=X\beta+\epsilon\]</span>
+<span class="math display">\[\epsilon\sim N(0, \sigma^2)\]</span></p>
+<p>We need a rule to estimate the parameters, <span class="math inline">\(\beta\)</span>, from the sample, and a standard choice to do so is by using ordinary least square (OLS), which produce estimates <span class="math inline">\(\hat{\beta}\)</span> by minimizing the sum of squares of residuals is as small as possible. In other words, we minimize the following loss function:</p>
+<p><span class="math display">\[L_{OLS}(\hat{\beta})=\sum_{i=1}^n(y_i-x_i&#39;\hat{\beta})^2=\|y-X\hat{\beta}\|^2\]</span></p>
+<p>Using matrix notation, the estimate turns out to be :</p>
+<p><span class="math display">\[\hat{\beta}_{OLS}=(X&#39;X)^{-1}(X&#39;Y)\]</span></p>
+<p>To evaluate the performance of an estimator, there are two critical characteristics to be considered: its bias and its variance. The bias of an estimator measures the accuracy of the estimates:</p>
+<p><span class="math display">\[Bias(\hat{\beta}_{OLS})=E(\hat{\beta}_{OLS})-\beta\]</span></p>
+<p>The variance, on the other hand, measures the uncertainty of the estimates:</p>
+<p><span class="math display">\[Var(\hat{\beta}_{OLS})=\sigma^2(X&#39;X)^{-1}\]</span></p>
+<p>Think of the estimator as an olympic archer:
+<img src="images/archery.png" alt="Archery example" /></p>
+<p>The best performer will be an archer with low bias and low variance (top-left), who consistently aims the target for every estimate. An archer with low bias but high variance will be the one who will shoot inconsistently around the center (top-right), but we may also have an archer with high bias and low variance, who is extremely precise in consistently shooting at the wrong target (bottom-left). Now, the OLS estimator is an archer who is designed to be unbiased, but in certain situations might have a very high variance, situation that commonly happens when collinearity is a threat, as documented by the inflation in the variance calculated by the VIF.</p>
+<p>To assess the overall performance an estimator by taking into account both bias and variance, one can look at the Mean Squared Error (MSE), defined as the sum of Variance and squared Bias.</p>
+<p><span class="math display">\[MSE=\frac{1}{n}\sum_{i=1}^n(Y_i-\hat{Y_i})^2=Var(\hat{\beta})+Bias^2(\hat{\beta})\]</span></p>
+<p>The basic idea of bias-variance tradeoff is to introduce some bias in order to minimize the mean squared error in those situation where the performances of OLS are affected by high variance. This is achieved by augmenting the loss function by introducing a penalty. While there are several ways of achieving this, we will here focus on 3 common penalty functions that originate Ridge, LASSO, and Elastic-Net regression, with the latter being a generalized version of the previous 2.</p>
+</div>
+<div id="ridge-regression" class="section level3" number="3.2.2">
+<h3><span class="header-section-number">3.2.2</span> Ridge regression</h3>
+<p>Ridge regression augments the OLS loss function as to not only minimize the sum of squared residuals, but also penalize the size of the parameter estimates, shrinking them towards zero</p>
+<p><span class="math display">\[L_{ridge}(\hat{\beta})=\sum_{i=1}^n(y_i-x_i&#39;\hat{\beta})^2+\lambda\sum_{j=1}^m\hat{\beta}_j^2=\|y-X\hat{\beta}\|^2+\lambda\|\hat{\beta}\|^2\]</span></p>
+<p>Minimizing this equation provides this solution for the parameters estimation:
+<span class="math display">\[\hat{\beta}_{ridge}=(X&#39;X+\lambda I)^{-1}(X&#39;Y)\]</span>
+where <span class="math inline">\(\lambda\)</span> is the penalty and <span class="math inline">\(I\)</span> an identity matrix</p>
+<p>We can notice that: As <span class="math inline">\(\lambda\rightarrow 0\)</span>, <span class="math inline">\(\hat{\beta}_{ridge}\rightarrow\hat{\beta}_{OLS}\)</span>, while as <span class="math inline">\(\lambda\rightarrow \infty\)</span>, <span class="math inline">\(\hat{\beta}_{ridge}\rightarrow 0\)</span>. In words, setting <span class="math inline">\(\lambda\)</span> to 0 is like using OLS, while the larger its value, the stronger the penalization. The unique feature of Ridge regression, as compared to other penalization techniques, is that coefficients can be shrinked over and over but will never reach 0. In other words, all covariates will always remain the model, and Ridge does not provide any form of variable selection.</p>
+<p>It can be shown that as <span class="math inline">\(\lambda\)</span> becomes larger, the variance decreases and the bias increases. How much are we willing to trade?
+There are several approaches that can be used to choose for the best value of <span class="math inline">\(\lambda\)</span>:</p>
+<ul>
+<li>Choose the <span class="math inline">\(\lambda\)</span> that minimizes the MSE</li>
+<li>Use a traditional approach based on AIC or BIC criteria, to evaluate the performance of the model in fitting the data. While software tend to do the calculation automatically, it is important to remember that the degrees of freedom of a penalized model, needed to calculate such indexes, are different from the degrees of freedom of a OLS model with the same number of covariates/individuals.</li>
+<li>Finally, a recommended procedure is based on cross-validation, focusing more on the predictive performances of the model. More specifically, to avoid the the model perfectly fits our data with poor generalizability (situation commonly known as overfitting in the machine learning vocabulary), we tend to select the model corresponding to the largest <span class="math inline">\(\lambda\)</span> within one unit of standard deviation around the <span class="math inline">\(\lambda\)</span> that minimizes the MSE.</li>
+</ul>
+<p>Let’s turn to our illustrative example to see Ridge regression in practice. Given that both ridge and lasso are special cases of elastic net, we are going to use the <code>glmnet</code> package for all 3 approaches. Alternative approaches are available and could be considered. First,let’s define a set of potential values of <span class="math inline">\(\lambda\)</span> that we will then evaluate; the following chunk of code generates a set of potential value, in addition to defining outcome, exposures, and confounders, as well as a seed that will be required for the section of analyses involving cross validation.</p>
+<p>To select the optimal <span class="math inline">\(\lambda\)</span> we are going to use the 10-fold cross validation approach, which can be conducted with the <code>cv.glmnet</code> command. Note that with option <code>standardize=TRUE</code> exposure will be standardized; this can be set to FALSE if standardization has been already conducted. Also, the option <code>alpha=0</code> has to be chosen to conduct Ridge regression (we will see later that Ridge is an Elastic Net model where an <span class="math inline">\(\alpha\)</span> parameter is equal to 0)</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="regression-based-approaches.html#cb24-1" aria-hidden="true" tabindex="-1"></a>ridge_cv <span class="ot">&lt;-</span> <span class="fu">cv.glmnet</span>(X, Y, <span class="at">alpha =</span> <span class="dv">0</span>, <span class="at">lambda =</span> lambdas_to_try,</span>
+<span id="cb24-2"><a href="regression-based-approaches.html#cb24-2" aria-hidden="true" tabindex="-1"></a>                      <span class="at">standardize =</span> <span class="cn">TRUE</span>, <span class="at">nfolds =</span> <span class="dv">10</span>)</span></code></pre></div>
+<p>We can now plot the MSE at different levels of <span class="math inline">\(\lambda\)</span>. While the goal is to find the model that minimizes the MSE (<code>lambda.min</code>), we don’t want the model to overfit our data. For this reason we tend to select the model corresponding to the largest <span class="math inline">\(\lambda\)</span> within one unit of standard deviation around <code>lambda.min</code> (<code>lambda.1se</code>). The following figure shows the plot of MSE over levels of <span class="math inline">\(\lambda\)</span>, also indicating these 2 values of interest</p>
+<div class="figure" style="text-align: center"><span id="fig:figureridge"></span>
+<img src="bookdown-demo_files/figure-html/figureridge-1.png" alt="MSE vs lambda for ridge" width="80%" />
+<p class="caption">
+Figure 3.1: MSE vs lambda for ridge
+</p>
+</div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="regression-based-approaches.html#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># lowest lambda</span></span>
+<span id="cb25-2"><a href="regression-based-approaches.html#cb25-2" aria-hidden="true" tabindex="-1"></a>lambda_cv_min <span class="ot">&lt;-</span> ridge_cv<span class="sc">$</span>lambda.min</span>
+<span id="cb25-3"><a href="regression-based-approaches.html#cb25-3" aria-hidden="true" tabindex="-1"></a>lambda_cv_min</span></code></pre></div>
+<pre><code>## [1] 0.3199267</code></pre>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="regression-based-approaches.html#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Best cross-validated lambda</span></span>
+<span id="cb27-2"><a href="regression-based-approaches.html#cb27-2" aria-hidden="true" tabindex="-1"></a>lambda_cv <span class="ot">&lt;-</span> ridge_cv<span class="sc">$</span>lambda<span class="fl">.1</span>se</span>
+<span id="cb27-3"><a href="regression-based-approaches.html#cb27-3" aria-hidden="true" tabindex="-1"></a>lambda_cv</span></code></pre></div>
+<pre><code>## [1] 2.056512</code></pre>
+Another useful figure is the trajectory of coefficients at varying levels of <span class="math inline">\(\lambda\)</span>:
+<div class="figure" style="text-align: center"><span id="fig:figureridge2"></span>
+<img src="bookdown-demo_files/figure-html/figureridge2-1.png" alt="coefficients trajectories for ridge" width="80%" />
+<p class="caption">
+Figure 3.2: coefficients trajectories for ridge
+</p>
+</div>
+<p>The starting values on the left of the figure are the ones from OLS estimation, and then we see how coefficients get shrinked at increasingly higher levels of <span class="math inline">\(\lambda\)</span>. Note that the shrinkage is operated on the entire model, and for this reason individual trajectories are not necessarily forced to decrease (here some coefficients become larger before getting shrinked). Also, from the numbers plotted on top of the figure, indicating the number of coefficients that are still included in the model, we can see that coefficients only tend asymptotically to 0 but are never really removed from the model.</p>
+<p>Finally, we can summarize the results of our final model for the selected value of lambda:</p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="regression-based-approaches.html#cb29-1" aria-hidden="true" tabindex="-1"></a>model_cv <span class="ot">&lt;-</span> <span class="fu">glmnet</span>(X, Y, <span class="at">alpha =</span> <span class="dv">0</span>, <span class="at">lambda =</span> lambda_cv, <span class="at">standardize =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb29-2"><a href="regression-based-approaches.html#cb29-2" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(</span>
+<span id="cb29-3"><a href="regression-based-approaches.html#cb29-3" aria-hidden="true" tabindex="-1"></a> <span class="fu">summary</span>(model_cv<span class="sc">$</span>beta),</span>
+<span id="cb29-4"><a href="regression-based-approaches.html#cb29-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">caption =</span> <span class="st">&#39;Ridge&#39;</span></span>
+<span id="cb29-5"><a href="regression-based-approaches.html#cb29-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<table>
+<caption>
+<span id="tab:unnamed-chunk-16">Table 3.2: </span>Ridge
+</caption>
+<thead>
+<tr>
+<th style="text-align:right;">
+i
+</th>
+<th style="text-align:right;">
+j
+</th>
+<th style="text-align:right;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.0147047
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.0231112
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.0254830
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.0263153
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.0214385
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.0276044
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+7
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.0299720
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+8
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.0334388
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.0315407
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.0277843
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.0242869
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.0420859
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+13
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.0348748
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.0508906
+</td>
+</tr>
+</tbody>
+</table>
+<p>These results can provide some useful information but are of little use in our context. For example, we know from our VIF analysis that the coefficients for <span class="math inline">\(X_{12}\)</span> and <span class="math inline">\(X_{13}\)</span> are affected by high collinearity, but we would like to understand whether a real association exists for both exposures or whether one of the 2 is driving the cluster. To do so, we might prefer to operate some sort of variable selection, constructing a penalty so that non-influential covariates can be set to 0 (and therefore removed). This is what LASSO does.</p>
+</div>
+<div id="lasso" class="section level3" number="3.2.3">
+<h3><span class="header-section-number">3.2.3</span> LASSO</h3>
+<p>Lasso, standing for Least Absolute Shrinkage and Selection Operator, also adds a penalty to the loss function of OLS. However, instead of adding a penalty that penalizes sum of squared residuals (L2 penalty), Lasso penalizes the sum of their absolute values (L1 penalty). As a results, for high values of <span class="math inline">\(\lambda\)</span>, many coefficients are exactly zeroed under lasso, which is never the case in ridge regression (where 0s are the extreme case as <span class="math inline">\(\lambda\rightarrow\infty\)</span>). Specifically, the Lasso estimator can be written as
+\end{itemize}
+<span class="math display">\[L_{lasso}(\hat{\beta})=\sum_{i=1}^n(y_i-x_i&#39;\hat{\beta})^2+\lambda\sum_{j=1}^m|\hat{\beta}_j|\]</span>
+\end{frame}</p>
+<p>As before, let’s turn to our illustrative example to understand properties and interpretation. The procedure in R is exactly the same, with the only difference that the parameter <span class="math inline">\(\alpha\)</span> is set to 1. First, let’s identify the optimal value of <span class="math inline">\(\lambda\)</span> using the cross validation procedure,</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="regression-based-approaches.html#cb30-1" aria-hidden="true" tabindex="-1"></a>lasso_cv <span class="ot">&lt;-</span> <span class="fu">cv.glmnet</span>(X, Y, <span class="at">alpha =</span> <span class="dv">1</span>, <span class="at">lambda =</span> lambdas_to_try,</span>
+<span id="cb30-2"><a href="regression-based-approaches.html#cb30-2" aria-hidden="true" tabindex="-1"></a>                      <span class="at">standardize =</span> <span class="cn">TRUE</span>, <span class="at">nfolds =</span> <span class="dv">10</span>)</span></code></pre></div>
+<div class="figure" style="text-align: center"><span id="fig:figurelasso"></span>
+<img src="bookdown-demo_files/figure-html/figurelasso-1.png" alt="MSE vs lambda for lasso" width="80%" />
+<p class="caption">
+Figure 3.3: MSE vs lambda for lasso
+</p>
+</div>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="regression-based-approaches.html#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># lowest lambda</span></span>
+<span id="cb31-2"><a href="regression-based-approaches.html#cb31-2" aria-hidden="true" tabindex="-1"></a>lambda_cv_min_lasso <span class="ot">&lt;-</span> lasso_cv<span class="sc">$</span>lambda.min</span>
+<span id="cb31-3"><a href="regression-based-approaches.html#cb31-3" aria-hidden="true" tabindex="-1"></a>lambda_cv_min_lasso</span></code></pre></div>
+<pre><code>## [1] 0.01123324</code></pre>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="regression-based-approaches.html#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Best cross-validated lambda</span></span>
+<span id="cb33-2"><a href="regression-based-approaches.html#cb33-2" aria-hidden="true" tabindex="-1"></a>lambda_cv_lasso <span class="ot">&lt;-</span> lasso_cv<span class="sc">$</span>lambda<span class="fl">.1</span>se</span>
+<span id="cb33-3"><a href="regression-based-approaches.html#cb33-3" aria-hidden="true" tabindex="-1"></a>lambda_cv_lasso</span></code></pre></div>
+<pre><code>## [1] 0.07220809</code></pre>
+and then plot the coefficients trajectories.
+<div class="figure" style="text-align: center"><span id="fig:figurelasso2"></span>
+<img src="bookdown-demo_files/figure-html/figurelasso2-1.png" alt="coefficients trajectories for lasso" width="80%" />
+<p class="caption">
+Figure 3.4: coefficients trajectories for lasso
+</p>
+</div>
+<p>We see that, differently from what observed in Ridge regression, coefficients are shrinked to a point where they exactly equal 0, and are therefore excluded from the model. The numbers on top of Figure 3.4 show how many exposures are left in the model at higher levels of <span class="math inline">\(\lambda\)</span>. Finally, let’s take a look at the results of the optimal selected model.</p>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="regression-based-approaches.html#cb35-1" aria-hidden="true" tabindex="-1"></a>model_cv_lasso <span class="ot">&lt;-</span> <span class="fu">glmnet</span>(X, Y, <span class="at">alpha =</span> <span class="dv">1</span>, <span class="at">lambda =</span> lambda_cv_lasso, <span class="at">standardize =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb35-2"><a href="regression-based-approaches.html#cb35-2" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(</span>
+<span id="cb35-3"><a href="regression-based-approaches.html#cb35-3" aria-hidden="true" tabindex="-1"></a> <span class="fu">summary</span>(model_cv_lasso<span class="sc">$</span>beta),</span>
+<span id="cb35-4"><a href="regression-based-approaches.html#cb35-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">caption =</span> <span class="st">&#39;Lasso&#39;</span></span>
+<span id="cb35-5"><a href="regression-based-approaches.html#cb35-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<table>
+<caption>
+<span id="tab:unnamed-chunk-17">Table 3.3: </span>Lasso
+</caption>
+<thead>
+<tr>
+<th style="text-align:right;">
+i
+</th>
+<th style="text-align:right;">
+j
+</th>
+<th style="text-align:right;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.0115952
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.0930313
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.0210787
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+8
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.0483009
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.0100253
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.0436241
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.1242974
+</td>
+</tr>
+</tbody>
+</table>
+<p>The final model selects only 6 covariates, while all other 8 drop to 0. If we look at our 2 established groups of correlated exposures, <span class="math inline">\(X_4\)</span> and <span class="math inline">\(X_{12}\)</span> are selected, while the others are left out. In general, Lasso’s results may be very sensitive to weak associations, dropping coefficients that are not actually 0. Lasso can set some coefficients to zero, thus performing variable selection, while ridge regression cannot. The two methods solve multicollinearity differently: in ridge regression, the coefficients of correlated predictors are similar, while in lasso, one of the correlated predictors has a larger coefficient, while the rest are (nearly) zeroed. Lasso tends to do well if there are a small number of significant parameters and the others are close to zero (that is - when only a few predictors actually influence the response). Ridge works well if there are many large parameters of about the same value (that is - when most predictors impact the response).</p>
+</div>
+<div id="elastic-net" class="section level3" number="3.2.4">
+<h3><span class="header-section-number">3.2.4</span> Elastic net</h3>
+<p>Rather than debating which model is better, we can directly use Elastic Net, which has been designed as a compromise between Lasso and Ridge, attempting to overcome their limitations and performing variable selection in a less rigid way than Lasso. Elastic Net combines the penalties of ridge regression and Lasso, aiming at minimizing the following loss function</p>
+<p><span class="math display">\[L_{enet}(\hat{\beta})=\frac{\sum_{i=1}^n(y_i-x_i&#39;\hat{\beta})^2}{2n}+\lambda\left(\frac{1-\alpha}{2}\sum_{j=1}^m\hat{\beta}_j^2+\alpha\sum_{j=1}^m|\hat{\beta}_j|\right)\]</span></p>
+<p>where <span class="math inline">\(\alpha\)</span> is the mixing parameter between ridge (<span class="math inline">\(\alpha\)</span>=0) and lasso (<span class="math inline">\(\alpha\)</span>=1). How this loss function is derived, given the ridge and lasso ones, is described in <span class="citation"><a href="#ref-zou2005regularization" role="doc-biblioref">Zou and Hastie</a> (<a href="#ref-zou2005regularization" role="doc-biblioref">2005</a>)</span>. Procedures to simultaneously tune both <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\lambda\)</span> to retrieve the optimal combinations are available and developed in the R package <code>caret</code>. For simplicity we will here stick on <code>glmnet</code>, which requires pre-defining a value for <span class="math inline">\(\alpha\)</span>. One can of course fit several models and compare them with common indexes such as AIC or BIC. To ensure some variable selection, we may for example choose a value of <span class="math inline">\(\lambda\)</span> like 0.7, closer to Lasso than to Ridge. Let’s fit an Elastic Net model, with <span class="math inline">\(\alpha=0.7\)</span> in our example. First, we need to select the optimal value of <span class="math inline">\(\lambda\)</span>:</p>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="regression-based-approaches.html#cb36-1" aria-hidden="true" tabindex="-1"></a>enet_cv <span class="ot">&lt;-</span> <span class="fu">cv.glmnet</span>(X, Y, <span class="at">alpha =</span> <span class="fl">0.7</span>, <span class="at">lambda =</span> lambdas_to_try,</span>
+<span id="cb36-2"><a href="regression-based-approaches.html#cb36-2" aria-hidden="true" tabindex="-1"></a>                     <span class="at">standardize =</span> <span class="cn">TRUE</span>, <span class="at">nfolds =</span> <span class="dv">10</span>)</span></code></pre></div>
+<div class="figure" style="text-align: center"><span id="fig:figureenet"></span>
+<img src="bookdown-demo_files/figure-html/figureenet-1.png" alt="MSE vs lambda for elastic net" width="80%" />
+<p class="caption">
+Figure 3.5: MSE vs lambda for elastic net
+</p>
+</div>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="regression-based-approaches.html#cb37-1" aria-hidden="true" tabindex="-1"></a>lambda_cv_min_enet <span class="ot">&lt;-</span> enet_cv<span class="sc">$</span>lambda.min</span>
+<span id="cb37-2"><a href="regression-based-approaches.html#cb37-2" aria-hidden="true" tabindex="-1"></a>lambda_cv_min_enet</span></code></pre></div>
+<pre><code>## [1] 0.01963041</code></pre>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="regression-based-approaches.html#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Best cross-validated lambda</span></span>
+<span id="cb39-2"><a href="regression-based-approaches.html#cb39-2" aria-hidden="true" tabindex="-1"></a>lambda_cv_enet <span class="ot">&lt;-</span> enet_cv<span class="sc">$</span>lambda<span class="fl">.1</span>se</span>
+<span id="cb39-3"><a href="regression-based-approaches.html#cb39-3" aria-hidden="true" tabindex="-1"></a>lambda_cv_enet</span></code></pre></div>
+<pre><code>## [1] 0.1519911</code></pre>
+and plot the coefficients’ trajectories.
+<div class="figure" style="text-align: center"><span id="fig:figureenet2"></span>
+<img src="bookdown-demo_files/figure-html/figureenet2-1.png" alt="coefficients trajectories for elastic net" width="80%" />
+<p class="caption">
+Figure 3.6: coefficients trajectories for elastic net
+</p>
+</div>
+<p>We see that coefficients are shrinked to a point where they exactly equal 0, and therefore excluded from the model, but that this happens more conservatively as compared to Lasso (as documented from the numbers on top). Let’s take a look at the results of the optimal selected model.</p>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="regression-based-approaches.html#cb41-1" aria-hidden="true" tabindex="-1"></a>model_cv_enet <span class="ot">&lt;-</span> <span class="fu">glmnet</span>(X, Y, <span class="at">alpha =</span> <span class="fl">0.7</span>, <span class="at">lambda =</span> lambda_cv_enet, <span class="at">standardize =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb41-2"><a href="regression-based-approaches.html#cb41-2" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(</span>
+<span id="cb41-3"><a href="regression-based-approaches.html#cb41-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-4"><a href="regression-based-approaches.html#cb41-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model_cv_enet<span class="sc">$</span>beta),</span>
+<span id="cb41-5"><a href="regression-based-approaches.html#cb41-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">caption =</span> <span class="st">&#39;Lasso&#39;</span></span>
+<span id="cb41-6"><a href="regression-based-approaches.html#cb41-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<table>
+<caption>
+<span id="tab:unnamed-chunk-18">Table 3.4: </span>Lasso
+</caption>
+<thead>
+<tr>
+<th style="text-align:right;">
+i
+</th>
+<th style="text-align:right;">
+j
+</th>
+<th style="text-align:right;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.0209672
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.0465784
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.0090842
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.0123642
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+8
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.0430287
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.1098168
+</td>
+</tr>
+</tbody>
+</table>
+<p>As expected, less covariates are dropped to 0. Unfortunately, however, all components of the group of correlated covariates <span class="math inline">\(X_3-X_5\)</span> remain in the model, and we are not able to identify the key actor of that group. Before getting deeper into the discussion of these results, however, it is useful to incorporate the potential confounders available in the data. Including confounders can be done by specifying them in the model as we do in a regular OLS model. However, we may want them to be involved in the selection process. To such end, the best way is to include them in the matrix of covariates to be penalized, but inform the CV procedure that you don’t want their coefficients to be modified. The following chunk of code will do that:</p>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="regression-based-approaches.html#cb42-1" aria-hidden="true" tabindex="-1"></a>X<span class="ot">&lt;-</span><span class="fu">as.matrix</span>(data2[,<span class="dv">3</span><span class="sc">:</span><span class="dv">19</span>])</span>
+<span id="cb42-2"><a href="regression-based-approaches.html#cb42-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-3"><a href="regression-based-approaches.html#cb42-3" aria-hidden="true" tabindex="-1"></a>enet_cv_adj <span class="ot">&lt;-</span> <span class="fu">cv.glmnet</span>(X, Y, <span class="at">alpha =</span> <span class="fl">0.6</span>, <span class="at">lambda =</span> lambdas_to_try,</span>
+<span id="cb42-4"><a href="regression-based-approaches.html#cb42-4" aria-hidden="true" tabindex="-1"></a>                     <span class="at">standardize =</span> <span class="cn">TRUE</span>, <span class="at">nfolds =</span> <span class="dv">10</span>, <span class="at">penalty.factor=</span><span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">1</span>,<span class="fu">ncol</span>(X) <span class="sc">-</span> <span class="dv">3</span>),<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>))</span></code></pre></div>
+<div class="figure" style="text-align: center"><span id="fig:figureenetadjasdfasdf"></span>
+<img src="bookdown-demo_files/figure-html/figureenetadjasdfasdf-1.png" alt="MSE vs lambda for elastic net, adjusted for confounders" width="80%" />
+<p class="caption">
+Figure 3.7: MSE vs lambda for elastic net, adjusted for confounders
+</p>
+</div>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="regression-based-approaches.html#cb43-1" aria-hidden="true" tabindex="-1"></a>lambda_cv_min_enet_adj <span class="ot">&lt;-</span> enet_cv_adj<span class="sc">$</span>lambda.min</span>
+<span id="cb43-2"><a href="regression-based-approaches.html#cb43-2" aria-hidden="true" tabindex="-1"></a>lambda_cv_min_enet_adj</span></code></pre></div>
+<pre><code>## [1] 0.01629751</code></pre>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="regression-based-approaches.html#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Best cross-validated lambda</span></span>
+<span id="cb45-2"><a href="regression-based-approaches.html#cb45-2" aria-hidden="true" tabindex="-1"></a>lambda_cv_enet_adj <span class="ot">&lt;-</span> enet_cv_adj<span class="sc">$</span>lambda<span class="fl">.1</span>se</span>
+<span id="cb45-3"><a href="regression-based-approaches.html#cb45-3" aria-hidden="true" tabindex="-1"></a>lambda_cv_enet_adj</span></code></pre></div>
+<pre><code>## [1] 0.0869749</code></pre>
+<p>Note that, regardless of how large <span class="math inline">\(\lambda\)</span> will be, the three confounders will remain non-penalized in the model, as documented from the numbers on top. Here the final results:</p>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="regression-based-approaches.html#cb47-1" aria-hidden="true" tabindex="-1"></a>model_cv_enet_adj <span class="ot">&lt;-</span> <span class="fu">glmnet</span>(X, Y, <span class="at">alpha =</span> <span class="fl">0.6</span>, <span class="at">lambda =</span> lambda_cv_enet, <span class="at">standardize =</span> <span class="cn">TRUE</span>,<span class="at">penalty.factor=</span><span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">1</span>,<span class="fu">ncol</span>(X) <span class="sc">-</span> <span class="dv">3</span>),<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>))</span>
+<span id="cb47-2"><a href="regression-based-approaches.html#cb47-2" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(</span>
+<span id="cb47-3"><a href="regression-based-approaches.html#cb47-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-4"><a href="regression-based-approaches.html#cb47-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model_cv_enet_adj<span class="sc">$</span>beta),</span>
+<span id="cb47-5"><a href="regression-based-approaches.html#cb47-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">caption =</span> <span class="st">&#39;Lasso, adjusted&#39;</span></span>
+<span id="cb47-6"><a href="regression-based-approaches.html#cb47-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<table>
+<caption>
+<span id="tab:unnamed-chunk-19">Table 3.5: </span>Lasso, adjusted
+</caption>
+<thead>
+<tr>
+<th style="text-align:right;">
+i
+</th>
+<th style="text-align:right;">
+j
+</th>
+<th style="text-align:right;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+-0.0101247
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+16
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.0119696
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+17
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+-0.6454254
+</td>
+</tr>
+</tbody>
+</table>
+<p>In addition to the 3 confounders (now named <span class="math inline">\(X_{15}-X_{17}\)</span>) only 4 covariates did not drop to 0. Interestingly, we are now selecting none of the 3 covariates we wanted to distinguish. Results seem to agree with multiple regression in indicating <span class="math inline">\(X_6\)</span> and <span class="math inline">\(X_{12}\)</span> as the main predictors of the outcome.</p>
+</div>
+<div id="additional-notes" class="section level3" number="3.2.5">
+<h3><span class="header-section-number">3.2.5</span> Additional notes</h3>
+<p>We have covered the basic theory of penalized regression techniques (also referred to with other common terminology such as shrinkage procedures, or regularization processes). Before moving to the presentation of two examples of application of these techniques in environmental epidemiology, let’s mention some additional details.</p>
+<ul>
+<li>Replicate results in classical OLS</li>
+</ul>
+<p>When Elastic Net is used to describe associations in population-based studies, it is common practice to also present a final linear regression model that only includes those predictors that were selected from the penalized approach. This model will ensure better interpretation of the coefficients, and hopefully not be subject anymore to issues of collinearity that the selection should have addressed. Here are the results from such model in our illustrative example, based on covariates selected by the final adjusted elastic net model.</p>
+<table style="text-align:center">
+<tr>
+<td colspan="3" style="border-bottom: 1px solid black">
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td colspan="2">
+<em>Dependent variable:</em>
+</td>
+</tr>
+<tr>
+<td>
+</td>
+<td colspan="2" style="border-bottom: 1px solid black">
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td colspan="2">
+y
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+</td>
+<td>
+(1)
+</td>
+<td>
+(2)
+</td>
+</tr>
+<tr>
+<td colspan="3" style="border-bottom: 1px solid black">
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+x1
+</td>
+<td>
+</td>
+<td>
+0.058<sup>*</sup> (-0.007, 0.123)
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+x2
+</td>
+<td>
+</td>
+<td>
+0.018 (-0.043, 0.080)
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+x3
+</td>
+<td>
+</td>
+<td>
+-0.030 (-0.232, 0.173)
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+x4
+</td>
+<td>
+</td>
+<td>
+0.053 (-0.170, 0.275)
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+x5
+</td>
+<td>
+</td>
+<td>
+0.004 (-0.080, 0.088)
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+x6
+</td>
+<td>
+0.085<sup>***</sup> (0.031, 0.139)
+</td>
+<td>
+0.060<sup>**</sup> (0.001, 0.119)
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+x7
+</td>
+<td>
+</td>
+<td>
+-0.031 (-0.153, 0.091)
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+x8
+</td>
+<td>
+</td>
+<td>
+0.017 (-0.063, 0.097)
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+x9
+</td>
+<td>
+0.015 (-0.081, 0.111)
+</td>
+<td>
+0.025 (-0.090, 0.140)
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+x10
+</td>
+<td>
+0.085<sup>**</sup> (0.019, 0.152)
+</td>
+<td>
+0.052 (-0.039, 0.144)
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+x11
+</td>
+<td>
+</td>
+<td>
+0.049 (-0.052, 0.151)
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+x12
+</td>
+<td>
+0.224<sup>***</sup> (0.074, 0.374)
+</td>
+<td>
+0.222 (-0.071, 0.515)
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+x13
+</td>
+<td>
+</td>
+<td>
+-0.083 (-0.382, 0.216)
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+x14
+</td>
+<td>
+</td>
+<td>
+0.054 (-0.047, 0.154)
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+z1
+</td>
+<td>
+0.003 (-0.023, 0.030)
+</td>
+<td>
+0.006 (-0.021, 0.032)
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+z2
+</td>
+<td>
+0.009<sup>***</sup> (0.006, 0.011)
+</td>
+<td>
+0.006<sup>***</sup> (0.003, 0.010)
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+z3
+</td>
+<td>
+-0.617<sup>***</sup> (-0.700, -0.534)
+</td>
+<td>
+-0.609<sup>***</sup> (-0.696, -0.522)
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+Constant
+</td>
+<td>
+3.476<sup>***</sup> (3.272, 3.680)
+</td>
+<td>
+3.265<sup>***</sup> (2.800, 3.730)
+</td>
+</tr>
+<tr>
+<td colspan="3" style="border-bottom: 1px solid black">
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+Observations
+</td>
+<td>
+500
+</td>
+<td>
+500
+</td>
+</tr>
+<tr>
+<td colspan="3" style="border-bottom: 1px solid black">
+</td>
+</tr>
+<tr>
+<td style="text-align:left">
+<em>Note:</em>
+</td>
+<td colspan="2" style="text-align:right">
+<sup><em></sup>p&lt;0.1; <sup><strong></sup>p&lt;0.05; <sup></strong></em></sup>p&lt;0.01
+</td>
+</tr>
+</table>
+<ul>
+<li>Grouped Lasso</li>
+</ul>
+<p>In some settings, the predictors belong to pre-defined groups, or we might have observed well-defined subgroups of exposures from our PCA. In this situation one may want to shrink and select together the members of a given group, which can be achieved with grouped Lasso. The next section will provide alternative regression approaches where preliminary grouping information can be used to address some limitations of standard regression.</p>
+<ul>
+<li>Time-to-event outcomes</li>
+</ul>
+<p>Recent developments allow fitting Elastic Net with time-to-event outcomes, within the context of a regularized Cox regression model. Given the popularity of this method in epidemiology it is reasonable to expect that this approach will become more popular in the context of environmental mixture since (as we will see in next sections) methods that were built ad-hoc do not always account for these types of outcomes. A first R package was develop in 2011 (<code>coxnet</code>), fully documented <a href="https://cran.r-project.org/web/packages/glmnet/vignettes/Coxnet.pdf">here</a>, and those algorithms for right-censored data have also been included in the most recent version of <code>glmnet</code></p>
+<ul>
+<li>Non-linear associations</li>
+</ul>
+<p>An implicit assumption we have made so far is that each covariate included in the model has a linear (or log-linear) effect on the outcome of interest. We know that this is often not true (several environmental exposures, for example, have some kind of plateau effect) and we might want to be able to incorporate non-linearities in our analyses. While classical regression can flexibly allow incorporating non-linearities by means of techniques such as restricted cubic splines, this is not of straightforward application in penalized regression. In complex settings where strong departures from linearity are observed in preliminary linear regressions, one should probably consider more flexible techniques such as BKMR (Section 5).</p>
+</div>
+<div id="elastic-net-and-environmental-mixtures" class="section level3" number="3.2.6">
+<h3><span class="header-section-number">3.2.6</span> Elastic Net and environmental mixtures</h3>
+<p>Using Elastic Net to evaluate the association between a mixture of environemtanl exposures and a health outcome is becoming increasingly popular. A nice and rigorous application of the method can be found in <span class="citation"><a href="#ref-lenters2016prenatal" role="doc-biblioref">Lenters et al.</a> (<a href="#ref-lenters2016prenatal" role="doc-biblioref">2016</a>)</span>, evaluating co-exposure to 16 chemicals as they relate to birth weight in 1250 infants. Here the correlation plot from the manuscript,</p>
+<p>/<img src="images/corrplot.png" alt="Correlation plot from Lenters et al." /></p>
+<p>and here results presenting, respectively, the Elastic Net model, and the final OLS only including selected covariates.
+<img src="images/table2.png" alt="Table 2 from Lenters et al." /></p>
+<div class="figure">
+<img src="images/table3.png" alt="" />
+<p class="caption">Table 3 from Lenters et al.</p>
+</div>
+<p>Another application that thoroughly report methods presentation, stating all assumptions and clearly discussing the results, can be seen in <span class="citation"><a href="#ref-vriens2017neonatal" role="doc-biblioref">Vriens et al.</a> (<a href="#ref-vriens2017neonatal" role="doc-biblioref">2017</a>)</span>, evaluating environmental pollutants and placental mitochondrial DNA content in infants. This is the starting correlation plot reported in the paper:</p>
+<p><img src="images/corrplot2.png" alt="Correlation plot from Vriens et al." />
+Several detailed figures are used to present results providing the reader with all necessary tools to understand associations and provide clear interpretation.</p>
+<div class="figure">
+<img src="images/resgraph.png" alt="" />
+<p class="caption">Figure from Vriens et al.</p>
+</div>
+<div class="figure">
+<img src="images/restab.png" alt="" />
+<p class="caption">Table from Vriens et al.</p>
+</div>
+</div>
+</div>
+<div id="other-regression-based-approaches" class="section level2" number="3.3">
+<h2><span class="header-section-number">3.3</span> Other regression-based approaches</h2>
+<p>Before moving on to the a general discussion on advantages and limitations of regression-based approaches, and introduce and motivate further approaches for environmental mixtures, it is useful to provide a broad overview of some alternative approaches based on or derived from classical regression that have proven useful in this context.</p>
+<div id="hierarchical-linear-models" class="section level3" number="3.3.1">
+<h3><span class="header-section-number">3.3.1</span> Hierarchical linear models</h3>
+<p>Hierarchical modeling allows improving performances of a multiple regression model when clustering of exposures can be clearly identified. Application of this approach for multiple exposures was first introduced to evaluate the effect of antiretroviral treatments in HIV epidemiology, where several drugs belonging to clearly defined drug classes are usually defined (<span class="citation"><a href="#ref-correia2019hierarchical" role="doc-biblioref">Correia and Williams</a> (<a href="#ref-correia2019hierarchical" role="doc-biblioref">2019</a>)</span>). In brief, the model incorporates first-stage effects for each drug class, and second-stage effects for individual drugs, assuming that the effect of each drug is the summation of the (fixed) effect of its drug class and a residual effect specific to the individual drug. Assuming that we can identify (or observe from preliminary analysis such as a PCA) well characterized subgroups of environmental exposures, this modeling technique can be used to improve the performance of multiple regression when focusing on environmental mixtures. Potential advantages include the absence of variable selection and shrinkage,thus allowing a better interpretation of results.</p>
+</div>
+<div id="partial-least-square-regression" class="section level3" number="3.3.2">
+<h3><span class="header-section-number">3.3.2</span> Partial least square regression</h3>
+<p>The Partial least square (PLS) regression can be seen as a method that generalizes and combines PCA and multiple regression. PLS regression is very useful to predict dependent variables from a very large number of predictors that might be highly correlated. The PLS regression replaces the initial independent variable space (X) and the initial response variable space (Y) by smaller spaces that rely on a reduced number of variables named latent variables, which are included one by one in an iterative process. The sparse PLS (sPLS) regression, in particular, is an extension of PLS that aims at combining variable selection and modeling in a one-step procedure (<span class="citation"><a href="#ref-le2008sparse" role="doc-biblioref">Lê Cao et al.</a> (<a href="#ref-le2008sparse" role="doc-biblioref">2008</a>)</span>). Components are defined iteratively such that they explain as much of the remaining covariance between the predictors and the outcome as possible. The sPLS approach simultaneously yields good predictive performance and appropriate variable selection by creating sparse linear combinations of the original predictors. Sparsity is induced by including a penalty (η) in the estimation of the linear combination coefficients; that is to say, all coefficients with an absolute value lower than some fraction η of the maximum absolute coefficient are shrunk to zero. Only the first K components are included as covariates in a linear regression model, calibrating K and η by minimizing the RMSE using 5-fold cross-validation (the default implementation). sPLS is available in the R package <code>spls</code> , documented <a href="https://cran.r-project.org/web/packages/spls/vignettes/spls-example.pdf">here</a>. A good illustration of using sPLS in environmental epidemiology can be found in <span class="citation"><a href="#ref-lenters2015phthalates" role="doc-biblioref">Lenters et al.</a> (<a href="#ref-lenters2015phthalates" role="doc-biblioref">2015</a>)</span>.</p>
+</div>
+</div>
+<div id="advantages-and-limitations-of-regression-approaches" class="section level2" number="3.4">
+<h2><span class="header-section-number">3.4</span> Advantages and limitations of regression approaches</h2>
+<p>Together with underlying some of the limitations of single and multiple regression in evaluating the effects of environmental mixtures on health outcomes, primarily due to the main problem of multicollinearity, this Section has also introduced techniques that overcome such limitation while remaining embedded in a regression framework. Among these techniques, review articles and simulation studies agree in concluding that penalized regression consistently outperformed conventional approaches, and that the choice of what method to use should be selected based on one-by-one situation. I recommend reading this paper from <span class="citation"><a href="#ref-agier2016systematic" role="doc-biblioref">Agier et al.</a> (<a href="#ref-agier2016systematic" role="doc-biblioref">2016</a>)</span>, systematically comparing methods based on regression in exposome-health analyses.</p>
+<p>In practical settings, several research questions can be addressed by using multiple regression or its extensions. Nevertheless, there might be research questions that are beyond the reach of regression techniques and for which some additional methodologies should be considered.</p>
+<ul>
+<li>Assessing the overall mixture effect.</li>
+</ul>
+<p>Penalized approaches addressed the issues of collinearity and high-dimension by operating some sort of variable selection. While this allows retrieving information on the actual effects for each selected component, addressing other questions such as the ones related to the overall effect of the mixture can not be evaluated. As discussed in Section 1, this is a relevant research question that is often of primary interest. The next section will address this problem, introducing the weighted quantile sum (WQS) regression framework as a technique to evaluate the overall effect of an environmental mixture while taking into account high levels of correlation.</p>
+<ul>
+<li>Complex scenarios with several exposures and interactive mechanisms.</li>
+</ul>
+<p>When the mixture of interest is composed by several exposures, it is likely that the mixture-outcome association will involve non-linear and interactive mechanisms. As the number of potential predicors gets higher, so does the complexity of the model. In such situations the performances of regression-based approaches are generally weak, and more flexible algorithms should be taken into considerations. These problems will be assessed in section 6, introducing Bayesian kernel Machine Regression as a flexible non-parametric approach to estimate the mixture-outcome association in the presence of complex non-linear and interactive mechanisms, and then discussing techniques for the assessment of high-dimensional interactions, including machine learning algorithms based on trees modeling.</p>
+
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-agier2016systematic" class="csl-entry">
+Agier, Lydiane, Lützen Portengen, Marc Chadeau-Hyam, Xavier Basagaña, Lise Giorgis-Allemand, Valérie Siroux, Oliver Robinson, et al. 2016. <span>“A Systematic Comparison of Linear Regression–Based Statistical Methods to Assess Exposome-Health Associations.”</span> <em>Environmental Health Perspectives</em> 124 (12): 1848–56.
+</div>
+<div id="ref-bellavia2019urinary" class="csl-entry">
+Bellavia, Andrea, Yu-Han Chiu, Florence M Brown, Lidia Mı́nguez-Alarcón, Jennifer B Ford, Myra Keller, John Petrozza, et al. 2019. <span>“Urinary Concentrations of Parabens Mixture and Pregnancy Glucose Levels Among Women from a Fertility Clinic.”</span> <em>Environmental Research</em> 168: 389–96.
+</div>
+<div id="ref-chiu2018evaluating" class="csl-entry">
+Chiu, Yu-Han, Andrea Bellavia, Tamarra James-Todd, Katharine F Correia, Linda Valeri, Carmen Messerlian, Jennifer B Ford, et al. 2018. <span>“Evaluating Effects of Prenatal Exposure to Phthalate Mixtures on Birth Weight: A Comparison of Three Statistical Approaches.”</span> <em>Environment International</em> 113: 231–39.
+</div>
+<div id="ref-correia2019hierarchical" class="csl-entry">
+Correia, Katharine, and Paige L Williams. 2019. <span>“A Hierarchical Modeling Approach for Assessing the Safety of Exposure to Complex Antiretroviral Drug Regimens During Pregnancy.”</span> <em>Statistical Methods in Medical Research</em> 28 (2): 599–612.
+</div>
+<div id="ref-lenters2016prenatal" class="csl-entry">
+Lenters, Virissa, Lützen Portengen, Anna Rignell-Hydbom, Bo AG Jönsson, Christian H Lindh, Aldert H Piersma, Gunnar Toft, et al. 2016. <span>“Prenatal Phthalate, Perfluoroalkyl Acid, and Organochlorine Exposures and Term Birth Weight in Three Birth Cohorts: Multi-Pollutant Models Based on Elastic Net Regression.”</span> <em>Environmental Health Perspectives</em> 124 (3): 365–72.
+</div>
+<div id="ref-lenters2015phthalates" class="csl-entry">
+Lenters, Virissa, Lützen Portengen, Lidwien AM Smit, Bo AG Jönsson, Aleksander Giwercman, Lars Rylander, Christian H Lindh, et al. 2015. <span>“Phthalates, Perfluoroalkyl Acids, Metals and Organochlorines and Reproductive Function: A Multipollutant Assessment in Greenlandic, Polish and Ukrainian Men.”</span> <em>Occupational and Environmental Medicine</em> 72 (6): 385–93.
+</div>
+<div id="ref-le2008sparse" class="csl-entry">
+Lê Cao, Kim-Anh, Debra Rossouw, Christele Robert-Granié, and Philippe Besse. 2008. <span>“A Sparse PLS for Variable Selection When Integrating Omics Data.”</span> <em>Statistical Applications in Genetics and Molecular Biology</em> 7 (1).
+</div>
+<div id="ref-vriens2017neonatal" class="csl-entry">
+Vriens, Annette, Tim S Nawrot, Willy Baeyens, Elly Den Hond, Liesbeth Bruckers, Adrian Covaci, Kim Croes, et al. 2017. <span>“Neonatal Exposure to Environmental Pollutants and Placental Mitochondrial DNA Content: A Multi-Pollutant Approach.”</span> <em>Environment International</em> 106: 60–68.
+</div>
+<div id="ref-zou2005regularization" class="csl-entry">
+Zou, Hui, and Trevor Hastie. 2005. <span>“Regularization and Variable Selection via the Elastic Net.”</span> <em>Journal of the Royal Statistical Society: Series B (Statistical Methodology)</em> 67 (2): 301–20.
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="unsupervised-analysis.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["bookdown-demo.pdf"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

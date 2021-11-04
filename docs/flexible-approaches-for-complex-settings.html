@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 5 Flexible approaches for complex settings | Statistical Methods for Environmental Mixtures</title>
+  <meta name="description" content="Humans are simultaneously exposed to a large number of environmental hazards. To allow a more accurate identification of the risks associated with environmental exposures and developing more targeted public health interventions, it is crucial that population-based studies account for the complexity of such exposures as environmental mixtures. This poses several analytic challenges and often requires the use of extensions of standard regression approaches or more flexible techinques for high-dimensional data. This document presents an extended version of the class material that was used in an introductory two-weeks course on statistical approaches for environmental mixtures. The main challanges and limitations of standard regression techniques are outlined, and recent methodological developments are introduced in a rigorous yet non-theoretical way. The course was designed for students and postdocs in environmental health with basic preliminary knoweldge on linear and logistic regression models. Sources and code examples to conduct a thorough analysis in R are also included." />
+  <meta name="generator" content="bookdown 0.22 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 5 Flexible approaches for complex settings | Statistical Methods for Environmental Mixtures" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="Humans are simultaneously exposed to a large number of environmental hazards. To allow a more accurate identification of the risks associated with environmental exposures and developing more targeted public health interventions, it is crucial that population-based studies account for the complexity of such exposures as environmental mixtures. This poses several analytic challenges and often requires the use of extensions of standard regression approaches or more flexible techinques for high-dimensional data. This document presents an extended version of the class material that was used in an introductory two-weeks course on statistical approaches for environmental mixtures. The main challanges and limitations of standard regression techniques are outlined, and recent methodological developments are introduced in a rigorous yet non-theoretical way. The course was designed for students and postdocs in environmental health with basic preliminary knoweldge on linear and logistic regression models. Sources and code examples to conduct a thorough analysis in R are also included." />
+  <meta name="github-repo" content="andreabellavia/mixtures" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 5 Flexible approaches for complex settings | Statistical Methods for Environmental Mixtures" />
+  
+  <meta name="twitter:description" content="Humans are simultaneously exposed to a large number of environmental hazards. To allow a more accurate identification of the risks associated with environmental exposures and developing more targeted public health interventions, it is crucial that population-based studies account for the complexity of such exposures as environmental mixtures. This poses several analytic challenges and often requires the use of extensions of standard regression approaches or more flexible techinques for high-dimensional data. This document presents an extended version of the class material that was used in an introductory two-weeks course on statistical approaches for environmental mixtures. The main challanges and limitations of standard regression techniques are outlined, and recent methodological developments are introduced in a rigorous yet non-theoretical way. The course was designed for students and postdocs in environmental health with basic preliminary knoweldge on linear and logistic regression models. Sources and code examples to conduct a thorough analysis in R are also included." />
+  
+
+<meta name="author" content="Andrea Bellavia" />
+
+
+<meta name="date" content="2021-11-04" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"/>
+<link rel="next" href="additional-topics-and-final-remarks.html"/>
+<script src="libs/header-attrs-2.9/header-attrs.js"></script>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+<link href="libs/table1-1.0/table1_defaults.css" rel="stylesheet" />
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
+<li class="chapter" data-level="" data-path="about-the-author.html"><a href="about-the-author.html"><i class="fa fa-check"></i>About the Author</a></li>
+<li class="chapter" data-level="1" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>1</b> Introduction</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="introduction.html"><a href="introduction.html#the-exposome"><i class="fa fa-check"></i><b>1.1</b> The Exposome</a></li>
+<li class="chapter" data-level="1.2" data-path="introduction.html"><a href="introduction.html#why-focusing-on-multiple-exposures"><i class="fa fa-check"></i><b>1.2</b> Why focusing on multiple exposures?</a></li>
+<li class="chapter" data-level="1.3" data-path="introduction.html"><a href="introduction.html#what-is-your-research-question"><i class="fa fa-check"></i><b>1.3</b> What is your research question?</a></li>
+<li class="chapter" data-level="1.4" data-path="introduction.html"><a href="introduction.html#broad-classifications-of-statistical-approaches"><i class="fa fa-check"></i><b>1.4</b> Broad classification(s) of statistical approaches</a></li>
+<li class="chapter" data-level="1.5" data-path="introduction.html"><a href="introduction.html#introduction-to-r-and-the-simulated-data"><i class="fa fa-check"></i><b>1.5</b> Introduction to R and the simulated data</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html"><i class="fa fa-check"></i><b>2</b> Unsupervised analysis</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#pre-processing"><i class="fa fa-check"></i><b>2.1</b> Pre-processing</a></li>
+<li class="chapter" data-level="2.2" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#correlation-analysis"><i class="fa fa-check"></i><b>2.2</b> Correlation analysis</a></li>
+<li class="chapter" data-level="2.3" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#weighted-correlation-network-analysis"><i class="fa fa-check"></i><b>2.3</b> Weighted correlation network analysis</a></li>
+<li class="chapter" data-level="2.4" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#principal-component-analysis"><i class="fa fa-check"></i><b>2.4</b> Principal component analysis</a>
+<ul>
+<li class="chapter" data-level="2.4.1" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#fitting-a-pca-in-r"><i class="fa fa-check"></i><b>2.4.1</b> Fitting a PCA in R</a></li>
+<li class="chapter" data-level="2.4.2" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#choosing-the-number-of-components"><i class="fa fa-check"></i><b>2.4.2</b> Choosing the number of components</a></li>
+<li class="chapter" data-level="2.4.3" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#getting-sense-of-components-interpretation"><i class="fa fa-check"></i><b>2.4.3</b> Getting sense of components interpretation</a></li>
+<li class="chapter" data-level="2.4.4" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#using-principal-components-in-subsequent-analyses"><i class="fa fa-check"></i><b>2.4.4</b> Using principal components in subsequent analyses</a></li>
+<li class="chapter" data-level="2.4.5" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#pca-in-practice"><i class="fa fa-check"></i><b>2.4.5</b> PCA in practice</a></li>
+</ul></li>
+<li class="chapter" data-level="2.5" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#cluster-analysis"><i class="fa fa-check"></i><b>2.5</b> Cluster analysis</a>
+<ul>
+<li class="chapter" data-level="2.5.1" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#k-means-clustering"><i class="fa fa-check"></i><b>2.5.1</b> K-means clustering</a></li>
+<li class="chapter" data-level="2.5.2" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#k-means-in-r"><i class="fa fa-check"></i><b>2.5.2</b> K-means in R</a></li>
+<li class="chapter" data-level="2.5.3" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#cluster-analysis-to-simplify-descriptive-statistics-presentation"><i class="fa fa-check"></i><b>2.5.3</b> Cluster analysis to simplify descriptive statistics presentation</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html"><i class="fa fa-check"></i><b>3</b> Regression-based approaches</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#ols-regression"><i class="fa fa-check"></i><b>3.1</b> OLS regression</a>
+<ul>
+<li class="chapter" data-level="3.1.1" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#single-regression-ewas"><i class="fa fa-check"></i><b>3.1.1</b> Single regression (EWAS)</a></li>
+<li class="chapter" data-level="3.1.2" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#multiple-regression"><i class="fa fa-check"></i><b>3.1.2</b> Multiple regression</a></li>
+<li class="chapter" data-level="3.1.3" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#the-problem-of-multicollinearity"><i class="fa fa-check"></i><b>3.1.3</b> The problem of Multicollinearity</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#penalized-regression-approaches"><i class="fa fa-check"></i><b>3.2</b> Penalized regression approaches</a>
+<ul>
+<li class="chapter" data-level="3.2.1" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#bias-variance-tradeoff"><i class="fa fa-check"></i><b>3.2.1</b> Bias-variance tradeoff</a></li>
+<li class="chapter" data-level="3.2.2" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#ridge-regression"><i class="fa fa-check"></i><b>3.2.2</b> Ridge regression</a></li>
+<li class="chapter" data-level="3.2.3" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#lasso"><i class="fa fa-check"></i><b>3.2.3</b> LASSO</a></li>
+<li class="chapter" data-level="3.2.4" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#elastic-net"><i class="fa fa-check"></i><b>3.2.4</b> Elastic net</a></li>
+<li class="chapter" data-level="3.2.5" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#additional-notes"><i class="fa fa-check"></i><b>3.2.5</b> Additional notes</a></li>
+<li class="chapter" data-level="3.2.6" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#elastic-net-and-environmental-mixtures"><i class="fa fa-check"></i><b>3.2.6</b> Elastic Net and environmental mixtures</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#other-regression-based-approaches"><i class="fa fa-check"></i><b>3.3</b> Other regression-based approaches</a>
+<ul>
+<li class="chapter" data-level="3.3.1" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#hierarchical-linear-models"><i class="fa fa-check"></i><b>3.3.1</b> Hierarchical linear models</a></li>
+<li class="chapter" data-level="3.3.2" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#partial-least-square-regression"><i class="fa fa-check"></i><b>3.3.2</b> Partial least square regression</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#advantages-and-limitations-of-regression-approaches"><i class="fa fa-check"></i><b>3.4</b> Advantages and limitations of regression approaches</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><i class="fa fa-check"></i><b>4</b> Assessing the overall (cumulative) effect of multiple exposures</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#unsupervised-summary-scores"><i class="fa fa-check"></i><b>4.1</b> Unsupervised summary scores</a></li>
+<li class="chapter" data-level="4.2" data-path="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#weighted-quantile-sum"><i class="fa fa-check"></i><b>4.2</b> Weighted quantile sum</a>
+<ul>
+<li class="chapter" data-level="4.2.1" data-path="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#model-definition-and-estimation"><i class="fa fa-check"></i><b>4.2.1</b> Model definition and estimation</a></li>
+<li class="chapter" data-level="4.2.2" data-path="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#the-unidirectionality-assumption"><i class="fa fa-check"></i><b>4.2.2</b> The unidirectionality assumption</a></li>
+<li class="chapter" data-level="4.2.3" data-path="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#extensions-of-the-original-wqs-regression"><i class="fa fa-check"></i><b>4.2.3</b> Extensions of the original WQS regression</a></li>
+<li class="chapter" data-level="4.2.4" data-path="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#quantile-g-computation"><i class="fa fa-check"></i><b>4.2.4</b> Quantile G-computation</a></li>
+<li class="chapter" data-level="4.2.5" data-path="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#wqs-regression-in-r"><i class="fa fa-check"></i><b>4.2.5</b> WQS regression in R</a></li>
+<li class="chapter" data-level="4.2.6" data-path="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#example-from-the-literature"><i class="fa fa-check"></i><b>4.2.6</b> Example from the literature</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html"><i class="fa fa-check"></i><b>5</b> Flexible approaches for complex settings</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#bayesian-kernel-machine-regression"><i class="fa fa-check"></i><b>5.1</b> Bayesian Kernel Machine Regression</a>
+<ul>
+<li class="chapter" data-level="5.1.1" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#introduction-1"><i class="fa fa-check"></i><b>5.1.1</b> Introduction</a></li>
+<li class="chapter" data-level="5.1.2" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#estimation"><i class="fa fa-check"></i><b>5.1.2</b> Estimation</a></li>
+<li class="chapter" data-level="5.1.3" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#trace-plots-and-burning-phase"><i class="fa fa-check"></i><b>5.1.3</b> Trace plots and burning phase</a></li>
+<li class="chapter" data-level="5.1.4" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#visualizing-results"><i class="fa fa-check"></i><b>5.1.4</b> Visualizing results</a></li>
+<li class="chapter" data-level="5.1.5" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#hierarchical-selection"><i class="fa fa-check"></i><b>5.1.5</b> Hierarchical selection</a></li>
+<li class="chapter" data-level="5.1.6" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#extensions"><i class="fa fa-check"></i><b>5.1.6</b> Extensions</a></li>
+<li class="chapter" data-level="5.1.7" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#practical-considerations-and-discussion"><i class="fa fa-check"></i><b>5.1.7</b> Practical considerations and discussion</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#assessing-interactions"><i class="fa fa-check"></i><b>5.2</b> Assessing interactions</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#tree-based-modeling"><i class="fa fa-check"></i><b>5.2.1</b> Tree-based modeling</a></li>
+<li class="chapter" data-level="5.2.2" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#interaction-screening-and-regression-approaches"><i class="fa fa-check"></i><b>5.2.2</b> Interaction screening and regression approaches</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="additional-topics-and-final-remarks.html"><a href="additional-topics-and-final-remarks.html"><i class="fa fa-check"></i><b>6</b> Additional topics and final remarks</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="additional-topics-and-final-remarks.html"><a href="additional-topics-and-final-remarks.html#causal-mixture-effects"><i class="fa fa-check"></i><b>6.1</b> Causal mixture effects</a></li>
+<li class="chapter" data-level="6.2" data-path="additional-topics-and-final-remarks.html"><a href="additional-topics-and-final-remarks.html#binary-and-zero-inflated-exposures"><i class="fa fa-check"></i><b>6.2</b> Binary and zero-inflated exposures</a></li>
+<li class="chapter" data-level="6.3" data-path="additional-topics-and-final-remarks.html"><a href="additional-topics-and-final-remarks.html#mediation-analysis"><i class="fa fa-check"></i><b>6.3</b> Mediation analysis</a></li>
+<li class="chapter" data-level="6.4" data-path="additional-topics-and-final-remarks.html"><a href="additional-topics-and-final-remarks.html#conclusion"><i class="fa fa-check"></i><b>6.4</b> Conclusion</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Statistical Methods for Environmental Mixtures</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="flexible-approaches-for-complex-settings" class="section level1" number="5">
+<h1><span class="header-section-number">Chapter 5</span> Flexible approaches for complex settings</h1>
+<p>In the previous sections we have discussed the challenges that arise when evaluating environmental mixtures and the several available techniques based on regression modeling that can be used to to address different research questions in this context. The final section of section 4 discussed the 2 major limitations shared by all regression techniques, namely the difficulties in estimating overall mixture effects and to include additional model complexities such as non-linearities and (possibly high-order) interactions. In the previous section we have discussed WQS as a useful tool to address the first limitation. Note than, interestingly, this technique can be actually seen as yet another regression extension, as it is based on integrating a summary score into a generalized linear model.</p>
+<p>To tackle the second challenge, let’s first note that any regression would allow integrating interactions of any order (this is done by simply including product terms between any pair, or higher combination, of exposures) as well as non-linear associations. Splines modeling is probably the best way of accounting for non-linear effects in regression modeling, and one can also consider using generalized additive models (GAM), which have been successfully applied in the context of environmental mixtures (<span class="citation"><a href="#ref-zheng2020evaluating" role="doc-biblioref">Zheng et al.</a> (<a href="#ref-zheng2020evaluating" role="doc-biblioref">2020</a>)</span>). Nevertheless, both the inclusion of product terms and spline transformations will rapidly increase the number of parameters that are to be estimated, and we might be in need of alternative techniques that can more flexibly tackle these issues. In this context, we are going to describe two approaches: first, bayesian kernel machine regression (BKMR), a method directly developed for evaluating environmental mixtures that is increasing in popularity because of its several advantages and flexibility (<span class="citation"><a href="#ref-bobb2015bayesian" role="doc-biblioref">Bobb et al.</a> (<a href="#ref-bobb2015bayesian" role="doc-biblioref">2015</a>)</span>),(<span class="citation"><a href="#ref-bobb2018statistical" role="doc-biblioref">Bobb et al.</a> (<a href="#ref-bobb2018statistical" role="doc-biblioref">2018</a>)</span>). Second, the use of machine learning techniques, and specifically tree-based modeling such as boosted regression trees (<span class="citation"><a href="#ref-lampa2014identification" role="doc-biblioref">Lampa et al.</a> (<a href="#ref-lampa2014identification" role="doc-biblioref">2014</a>)</span>),(<span class="citation"><a href="#ref-bellavia2021joint" role="doc-biblioref">Bellavia et al.</a> (<a href="#ref-bellavia2021joint" role="doc-biblioref">2021</a>)</span>). Additional techniques that can be considered when the specific focus is on detecting interactions will not be discussed here, and the reader can refer to these publications summarizing and discussing methodologies in this context: <span class="citation"><a href="#ref-barrera2017systematic" role="doc-biblioref">Barrera-Gómez et al.</a> (<a href="#ref-barrera2017systematic" role="doc-biblioref">2017</a>)</span>, <span class="citation"><a href="#ref-sun2013statistical" role="doc-biblioref">Sun et al.</a> (<a href="#ref-sun2013statistical" role="doc-biblioref">2013</a>)</span>.</p>
+<div id="bayesian-kernel-machine-regression" class="section level2" number="5.1">
+<h2><span class="header-section-number">5.1</span> Bayesian Kernel Machine Regression</h2>
+<p>The material presented in this section is largely taken from Prof. Coull’s guest lectures material and Dr. Bobb’s <a href="https://jenfb.github.io/bkmr/overview.html">vignette</a>.</p>
+<div id="introduction-1" class="section level3" number="5.1.1">
+<h3><span class="header-section-number">5.1.1</span> Introduction</h3>
+<p>Possible objectives of a mixtures analysis could include detection and estimation of an effect of the overall mixture,
+identification of pollutant or group of pollutants responsible for
+observed mixture effects,visualizing the exposure-response function, or
+detection of interactions among individual pollutants. Bayesian Kernel Machine Regression (BKMR) is designed to address all
+four of these objectives in a flexible non-parametric way. The main idea of BKMR is to model exposure through means of a kernel function. Specifically, the general modeling framework is</p>
+<p><span class="math display">\[Y_i=h(z_{i1},…,z_{iM})+βx_i+\epsilon_i\]</span></p>
+<p>where <span class="math inline">\(Y_i\)</span> is a continuous, normally distributed health endpoint, <span class="math inline">\(h\)</span> is a flexible function of the predictor variables <span class="math inline">\(z_{i1},…,z_{iM}\)</span>, and <span class="math inline">\(x_i\)</span> is a vector of covariates assumed to have a linear relationship with the outcome</p>
+<p>There are several choices for the kernel function used to represent <span class="math inline">\(h\)</span>. The focus here is on the Gaussian kernel, which flexibly captures a wide range of underlying functional forms for h and can accommodate nonlinear and non-additive effects of the
+multivariate exposure. Specifically, the Gaussian kernel implies the following representation for <span class="math inline">\(h\)</span>:</p>
+<p><span class="math display">\[K_{vs}(z_i,z_j)=exp\{-\sum_{M}r_m(z_{im}-z_{jm})^2\}\]</span></p>
+<p>Intuitively, the kernel function shrinks the estimated health effects of two individuals with similar exposure profiles toward each other. The weights <span class="math inline">\(r_m\)</span> present the probability that each exposure is important in the function, with <span class="math inline">\(r_m=0\)</span> indicating that there is no association between the <span class="math inline">\(m^{th}\)</span> exposure and the outcome. By allowing some weights to be 0, the method is implicitly embedding a variable selection procedure. This can also integrate information on existing structures among exposures (e.g. correlation clusters, PCA results, similar mechanisms …) with the so-called hierarchical variable selection, which estimates the probability each group of exposures is important, and the probability that, given a group is important, each
+exposure in that group is driving that group-outcome association.</p>
+</div>
+<div id="estimation" class="section level3" number="5.1.2">
+<h3><span class="header-section-number">5.1.2</span> Estimation</h3>
+<p>BKMR takes its full name from the Bayesian approach used for estimating the parameters. The advantages of this include the ability of estimating the importance of each variable (<span class="math inline">\(r_m\)</span>) simultaneously, estimating uncertainties measures, and easily extending the estimation to longitudinal data. Since the estimation is built within an iterative procedure (MCMC), variable importance are provided in terms of Posterior Inclusion Probability (PIP), the proportion of iterations with <span class="math inline">\(r_m&gt;0\)</span>. Typically, several thousands of iterations are required.</p>
+<p>The <code>bkmr</code> R package developed by the Authors makes implementation of this technique relatively straightforward.</p>
+<p>Using our illustrative example, the following chunk of code includes a set of lines required before estimating a BKMR model. Specifically, we are defining the object containing the mixture (<span class="math inline">\(X_{1}-X_{14}\)</span>), the outcome (<span class="math inline">\(Y\)</span>), and the confounders (<span class="math inline">\(Z_1-Z_3\)</span>). We also need to generate a seed (we are using an iterative process with a random component) and a knots matrix that will help speeding up the process. This final step is very important as the model estimation can be extremely long (the recommendation is to use a number of knots of more or less n/10).</p>
+<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb57-1"><a href="flexible-approaches-for-complex-settings.html#cb57-1" aria-hidden="true" tabindex="-1"></a>mixture<span class="ot">&lt;-</span><span class="fu">as.matrix</span>(data2[,<span class="dv">3</span><span class="sc">:</span><span class="dv">16</span>])</span>
+<span id="cb57-2"><a href="flexible-approaches-for-complex-settings.html#cb57-2" aria-hidden="true" tabindex="-1"></a>y<span class="ot">&lt;-</span>data2<span class="sc">$</span>y</span>
+<span id="cb57-3"><a href="flexible-approaches-for-complex-settings.html#cb57-3" aria-hidden="true" tabindex="-1"></a>covariates<span class="ot">&lt;-</span><span class="fu">as.matrix</span>(data2[,<span class="dv">17</span><span class="sc">:</span><span class="dv">19</span>])</span>
+<span id="cb57-4"><a href="flexible-approaches-for-complex-settings.html#cb57-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-5"><a href="flexible-approaches-for-complex-settings.html#cb57-5" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">10</span>)</span>
+<span id="cb57-6"><a href="flexible-approaches-for-complex-settings.html#cb57-6" aria-hidden="true" tabindex="-1"></a>knots100  <span class="ot">&lt;-</span> fields<span class="sc">::</span><span class="fu">cover.design</span>(mixture, <span class="at">nd =</span> <span class="dv">50</span>)<span class="sc">$</span>design</span></code></pre></div>
+<p>The actual estimation of a BKMR model is very simple and requires one line of R code. With the following lines we fit a BKMR model with Gaussian predictive process using 100 knots. We are using 1000 MCMC iterations for the sake of time, but your final analysis should be run on a much larger number of samples, up to 50000. Here we are allowing for variable selection, but not providing any information on grouping.</p>
+<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="flexible-approaches-for-complex-settings.html#cb58-1" aria-hidden="true" tabindex="-1"></a>temp <span class="ot">&lt;-</span>  <span class="fu">kmbayes</span>(<span class="at">y=</span>y, <span class="at">Z=</span>mixture, <span class="at">X=</span>covariates, <span class="at">iter=</span><span class="dv">1000</span>, <span class="at">verbose=</span><span class="cn">FALSE</span>, <span class="at">varsel=</span><span class="cn">TRUE</span>, </span>
+<span id="cb58-2"><a href="flexible-approaches-for-complex-settings.html#cb58-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">knots=</span>knots100)</span>
+<span id="cb58-3"><a href="flexible-approaches-for-complex-settings.html#cb58-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-4"><a href="flexible-approaches-for-complex-settings.html#cb58-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ExtractPIPs</span>(temp)</span></code></pre></div>
+<pre><code>##    variable   PIP
+## 1        x1 0.110
+## 2        x2 0.082
+## 3        x3 0.000
+## 4        x4 0.000
+## 5        x5 0.072
+## 6        x6 0.142
+## 7        x7 0.000
+## 8        x8 0.336
+## 9        x9 0.062
+## 10      x10 0.400
+## 11      x11 0.188
+## 12      x12 0.818
+## 13      x13 0.080
+## 14      x14 0.158</code></pre>
+<p>The <code>ExtractPIPs()</code> command will show one of the most important results, the posterior inclusion probabilities. We can interpret this output as the variable selection part, in which we get information on the importance of each covariate in defining the exposures-outcome association. In descending order, the most important contribution seem to come from <span class="math inline">\(X_{12}, X_{6}, X_{10}, X_{2}, X_{14}, X_{11}\)</span>. This is in agreement with Elastic Net and WQS, which also identified <span class="math inline">\(X_{12}\)</span> and <span class="math inline">\(X_6\)</span> as the important contributors. Also note that within the other cluster we haven’t yet been able to understand who the bad actor, if any, is.</p>
+</div>
+<div id="trace-plots-and-burning-phase" class="section level3" number="5.1.3">
+<h3><span class="header-section-number">5.1.3</span> Trace plots and burning phase</h3>
+<p>Since we are using several iterations it is important to evaluate the convergence of the parameters. These can be checked by looking at trace plots (what we expect here is some kind of random behaving around a straight line). What we generally observe is an initial phase of burning, which we should remove from the analysis. Here, we are removing the first 100 iterations and this number should be modify depending on the results of your first plots. Here the figures show good convergence.</p>
+<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb60-1"><a href="flexible-approaches-for-complex-settings.html#cb60-1" aria-hidden="true" tabindex="-1"></a>sel<span class="ot">&lt;-</span><span class="fu">seq</span>(<span class="dv">0</span>,<span class="dv">1000</span>,<span class="at">by=</span><span class="dv">1</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb61-1"><a href="flexible-approaches-for-complex-settings.html#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="fu">TracePlot</span>(<span class="at">fit =</span> temp, <span class="at">par =</span> <span class="st">&quot;beta&quot;</span>, <span class="at">sel=</span>sel)</span></code></pre></div>
+<div class="figure" style="text-align: center"><span id="fig:figureenetadjs"></span>
+<img src="bookdown-demo_files/figure-html/figureenetadjs-1.png" alt="Convergence plot for a single parameter without exclusions" width="80%" />
+<p class="caption">
+Figure 5.1: Convergence plot for a single parameter without exclusions
+</p>
+</div>
+<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="flexible-approaches-for-complex-settings.html#cb62-1" aria-hidden="true" tabindex="-1"></a>sel<span class="ot">&lt;-</span><span class="fu">seq</span>(<span class="dv">100</span>,<span class="dv">1000</span>,<span class="at">by=</span><span class="dv">1</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb63-1"><a href="flexible-approaches-for-complex-settings.html#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="fu">TracePlot</span>(<span class="at">fit =</span> temp, <span class="at">par =</span> <span class="st">&quot;beta&quot;</span>, <span class="at">sel=</span>sel)</span></code></pre></div>
+<div class="figure" style="text-align: center"><span id="fig:figureenetadjsd"></span>
+<img src="bookdown-demo_files/figure-html/figureenetadjsd-1.png" alt="Convergence plot for a single parameter after burning phase exclusion" width="80%" />
+<p class="caption">
+Figure 5.2: Convergence plot for a single parameter after burning phase exclusion
+</p>
+</div>
+</div>
+<div id="visualizing-results" class="section level3" number="5.1.4">
+<h3><span class="header-section-number">5.1.4</span> Visualizing results</h3>
+<p>After estimation of a BKMR model, which is relatively straightforward and just requires patience throughout iterations, most of the work will consist of presenting post-estimation figures and functions that can present the complex relationship between the mixture and the outcome. The R package includes several functions to summarize the model output in different ways and to visually display the results.</p>
+<p>To visualize the exposure-response functions we need to create different dataframes with the predictions that will be then graphically displayed with <code>ggpolot</code>.</p>
+<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="flexible-approaches-for-complex-settings.html#cb64-1" aria-hidden="true" tabindex="-1"></a>pred.resp.univar <span class="ot">&lt;-</span> <span class="fu">PredictorResponseUnivar</span>(<span class="at">fit =</span> temp, <span class="at">sel=</span>sel, <span class="at">method=</span><span class="st">&quot;approx&quot;</span>)</span>
+<span id="cb64-2"><a href="flexible-approaches-for-complex-settings.html#cb64-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-3"><a href="flexible-approaches-for-complex-settings.html#cb64-3" aria-hidden="true" tabindex="-1"></a><span class="co">#pred.resp.bivar  &lt;- PredictorResponseBivar(fit = temp,  min.plot.dist = 1, sel=sel, </span></span>
+<span id="cb64-4"><a href="flexible-approaches-for-complex-settings.html#cb64-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                                           method=&quot;approx&quot;)</span></span>
+<span id="cb64-5"><a href="flexible-approaches-for-complex-settings.html#cb64-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-6"><a href="flexible-approaches-for-complex-settings.html#cb64-6" aria-hidden="true" tabindex="-1"></a><span class="co">#pred.resp.bivar.levels &lt;- PredictorResponseBivarLevels(pred.resp.df = pred.resp.bivar, </span></span>
+<span id="cb64-7"><a href="flexible-approaches-for-complex-settings.html#cb64-7" aria-hidden="true" tabindex="-1"></a><span class="co">#                         Z = mixture, both_pairs = TRUE, qs = c(0.25, 0.5, 0.75))</span></span>
+<span id="cb64-8"><a href="flexible-approaches-for-complex-settings.html#cb64-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-9"><a href="flexible-approaches-for-complex-settings.html#cb64-9" aria-hidden="true" tabindex="-1"></a>risks.overall <span class="ot">&lt;-</span> <span class="fu">OverallRiskSummaries</span>(<span class="at">fit =</span> temp, <span class="at">qs =</span> <span class="fu">seq</span>(<span class="fl">0.25</span>, <span class="fl">0.75</span>, <span class="at">by =</span> <span class="fl">0.05</span>), </span>
+<span id="cb64-10"><a href="flexible-approaches-for-complex-settings.html#cb64-10" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">q.fixed =</span> <span class="fl">0.5</span>, <span class="at">method =</span> <span class="st">&quot;approx&quot;</span>,<span class="at">sel=</span>sel)</span>
+<span id="cb64-11"><a href="flexible-approaches-for-complex-settings.html#cb64-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-12"><a href="flexible-approaches-for-complex-settings.html#cb64-12" aria-hidden="true" tabindex="-1"></a>risks.singvar <span class="ot">&lt;-</span> <span class="fu">SingVarRiskSummaries</span>(<span class="at">fit =</span> temp, <span class="at">qs.diff =</span> <span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.75</span>),</span>
+<span id="cb64-13"><a href="flexible-approaches-for-complex-settings.html#cb64-13" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">q.fixed =</span> <span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.50</span>, <span class="fl">0.75</span>), <span class="at">method =</span> <span class="st">&quot;approx&quot;</span>)</span>
+<span id="cb64-14"><a href="flexible-approaches-for-complex-settings.html#cb64-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-15"><a href="flexible-approaches-for-complex-settings.html#cb64-15" aria-hidden="true" tabindex="-1"></a>risks.int <span class="ot">&lt;-</span> <span class="fu">SingVarIntSummaries</span>(<span class="at">fit =</span> temp, <span class="at">qs.diff =</span> <span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.75</span>),</span>
+<span id="cb64-16"><a href="flexible-approaches-for-complex-settings.html#cb64-16" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">qs.fixed =</span> <span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.75</span>))</span></code></pre></div>
+<p>The first three objects will allow us to examine the predictor-response functions, while the next three objects will calculate a range of summary statistics that highlight specific features of the surface.</p>
+<div id="univariate-dose-responses" class="section level4" number="5.1.4.1">
+<h4><span class="header-section-number">5.1.4.1</span> Univariate dose-responses</h4>
+<p>One cross section of interest is the univariate relationship between each covariate and the outcome, where all of the other exposures are fixed to a particular percentile. This can be done using the function <code>PredictorResponseUnivar</code>. The argument specifying the quantile at which to fix the other exposures is given by <code>q.fixed</code> (the default value is <code>q.fixed = 0.5</code>).</p>
+<div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb65-1"><a href="flexible-approaches-for-complex-settings.html#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(pred.resp.univar, <span class="fu">aes</span>(z, est, <span class="at">ymin =</span> est <span class="sc">-</span> <span class="fl">1.96</span><span class="sc">*</span>se, <span class="at">ymax =</span> est <span class="sc">+</span> <span class="fl">1.96</span><span class="sc">*</span>se)) <span class="sc">+</span> </span>
+<span id="cb65-2"><a href="flexible-approaches-for-complex-settings.html#cb65-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">stat =</span> <span class="st">&quot;identity&quot;</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">&quot;h(z)&quot;</span>) <span class="sc">+</span> <span class="fu">facet_wrap</span>(<span class="sc">~</span> variable) </span></code></pre></div>
+<div class="figure" style="text-align: center"><span id="fig:save"></span>
+<img src="bookdown-demo_files/figure-html/save-1.png" alt="Univariate dose-response associations from BKMR" width="80%" />
+<p class="caption">
+Figure 5.3: Univariate dose-response associations from BKMR
+</p>
+</div>
+<p>We can conclude from these figures that all selected covariates have weak to moderate associations, and that all dose-responses seem to be linear (maybe leaving some benefit of doubt to <span class="math inline">\(X_6\)</span>).</p>
+</div>
+<div id="bivariable-exposure-response-functions" class="section level4" number="5.1.4.2">
+<h4><span class="header-section-number">5.1.4.2</span> Bivariable Exposure-Response Functions</h4>
+<p>This visualizes the bivariate exposure-response function for two predictors, where all of the other predictors are fixed at a particular percentile.</p>
+<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="flexible-approaches-for-complex-settings.html#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(pred.resp.bivar, <span class="fu">aes</span>(z1, z2, <span class="at">fill =</span> est)) <span class="sc">+</span> </span>
+<span id="cb66-2"><a href="flexible-approaches-for-complex-settings.html#cb66-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_raster</span>() <span class="sc">+</span> </span>
+<span id="cb66-3"><a href="flexible-approaches-for-complex-settings.html#cb66-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(variable2 <span class="sc">~</span> variable1) <span class="sc">+</span></span>
+<span id="cb66-4"><a href="flexible-approaches-for-complex-settings.html#cb66-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_gradientn</span>(<span class="at">colours=</span><span class="fu">c</span>(<span class="st">&quot;#0000FFFF&quot;</span>,<span class="st">&quot;#FFFFFFFF&quot;</span>,<span class="st">&quot;#FF0000FF&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb66-5"><a href="flexible-approaches-for-complex-settings.html#cb66-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">&quot;expos1&quot;</span>) <span class="sc">+</span></span>
+<span id="cb66-6"><a href="flexible-approaches-for-complex-settings.html#cb66-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">&quot;expos2&quot;</span>) <span class="sc">+</span></span>
+<span id="cb66-7"><a href="flexible-approaches-for-complex-settings.html#cb66-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">&quot;h(expos1, expos2)&quot;</span>)</span></code></pre></div>
+</div>
+<div id="interactions" class="section level4" number="5.1.4.3">
+<h4><span class="header-section-number">5.1.4.3</span> Interactions</h4>
+<p>The figure we just plotted might not be the most intuitive way of checking for interactions. An alternative approach is to investigate the predictor-response function of a single predictor in Z for the second predictor in Z fixed at various quantiles (and for the remaining predictors fixed to a particular value). These can be obtained using the <code>PredictorResponseBivarLevels</code> function, which takes as input the bivariate exposure-response function outputted from the previous command, where the argument <code>qs</code> specifies a sequence of quantiles at which to fix the second predictor. We can easily select a specific combination we want to present, like the X6-X12 one.</p>
+<div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb67-1"><a href="flexible-approaches-for-complex-settings.html#cb67-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(pred.resp.bivar.levels, <span class="fu">aes</span>(z1, est)) <span class="sc">+</span> </span>
+<span id="cb67-2"><a href="flexible-approaches-for-complex-settings.html#cb67-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="fu">aes</span>(<span class="at">col =</span> quantile), <span class="at">stat =</span> <span class="st">&quot;identity&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb67-3"><a href="flexible-approaches-for-complex-settings.html#cb67-3" aria-hidden="true" tabindex="-1"></a> <span class="fu">facet_grid</span>(variable2 <span class="sc">~</span> variable1) <span class="sc">+</span></span>
+<span id="cb67-4"><a href="flexible-approaches-for-complex-settings.html#cb67-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">&quot;h(expos1 | quantiles of expos2)&quot;</span>) <span class="sc">+</span></span>
+<span id="cb67-5"><a href="flexible-approaches-for-complex-settings.html#cb67-5" aria-hidden="true" tabindex="-1"></a> <span class="fu">xlab</span>(<span class="st">&quot;expos1&quot;</span>)</span></code></pre></div>
+<p>This figures do not provide any evidence of interactions throughout the mixture.</p>
+</div>
+<div id="overall-mixture-effect" class="section level4" number="5.1.4.4">
+<h4><span class="header-section-number">5.1.4.4</span> Overall Mixture Effect</h4>
+<p>Another interesting summary plot is the overall effect of the mixture, calculated by comparing the value of <span class="math inline">\(h\)</span> when all of predictors are at a particular percentile as compared to when all of them are at their 50th percentile. The function <code>OverallRiskSummaries</code> allows one to specify a sequence of values of quantiles using the argument <code>qs</code> and the fixed quantile (the default is the 50th percentile) using the argument <code>q.fixed</code>.</p>
+<div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb68-1"><a href="flexible-approaches-for-complex-settings.html#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(risks.overall, <span class="fu">aes</span>(quantile, est, <span class="at">ymin =</span> est <span class="sc">-</span> <span class="fl">1.96</span><span class="sc">*</span>sd, <span class="at">ymax =</span> est <span class="sc">+</span> <span class="fl">1.96</span><span class="sc">*</span>sd)) <span class="sc">+</span>  </span>
+<span id="cb68-2"><a href="flexible-approaches-for-complex-settings.html#cb68-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept=</span><span class="dv">00</span>, <span class="at">linetype=</span><span class="st">&quot;dashed&quot;</span>, <span class="at">color=</span><span class="st">&quot;gray&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb68-3"><a href="flexible-approaches-for-complex-settings.html#cb68-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_pointrange</span>() <span class="sc">+</span> <span class="fu">scale_y_continuous</span>(<span class="at">name=</span><span class="st">&quot;estimate&quot;</span>) </span></code></pre></div>
+<div class="figure" style="text-align: center"><span id="fig:save4"></span>
+<img src="bookdown-demo_files/figure-html/save4-1.png" alt="Overall Mixture Effect from BKMR" width="80%" />
+<p class="caption">
+Figure 5.4: Overall Mixture Effect from BKMR
+</p>
+</div>
+<p>In agreement with WQS, higher exposure to the overall mixture is associated with higher mean outcome.</p>
+</div>
+<div id="single-variables-effects" class="section level4" number="5.1.4.5">
+<h4><span class="header-section-number">5.1.4.5</span> Single Variables effects</h4>
+<p>This additional function summarizes the contribution of an individual predictor to the response. For example, we may wish to compare risk when a single predictor in <span class="math inline">\(h\)</span> is at the 75th percentile as compared to when that predictor is at its 25th percentile, where we fix all of the remaining predictors to a particular percentile.</p>
+<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb69-1"><a href="flexible-approaches-for-complex-settings.html#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(risks.singvar, <span class="fu">aes</span>(variable, est, <span class="at">ymin =</span> est <span class="sc">-</span> <span class="fl">1.96</span><span class="sc">*</span>sd,  <span class="at">ymax =</span> est <span class="sc">+</span> <span class="fl">1.96</span><span class="sc">*</span>sd, </span>
+<span id="cb69-2"><a href="flexible-approaches-for-complex-settings.html#cb69-2" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> q.fixed)) <span class="sc">+</span> <span class="fu">geom_hline</span>(<span class="fu">aes</span>(<span class="at">yintercept=</span><span class="dv">0</span>), <span class="at">linetype=</span><span class="st">&quot;dashed&quot;</span>, </span>
+<span id="cb69-3"><a href="flexible-approaches-for-complex-settings.html#cb69-3" aria-hidden="true" tabindex="-1"></a>       <span class="at">color=</span><span class="st">&quot;gray&quot;</span>) <span class="sc">+</span>  <span class="fu">geom_pointrange</span>(<span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="at">width =</span> <span class="fl">0.75</span>)) <span class="sc">+</span></span>
+<span id="cb69-4"><a href="flexible-approaches-for-complex-settings.html#cb69-4" aria-hidden="true" tabindex="-1"></a>       <span class="fu">coord_flip</span>() <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">&quot;none&quot;</span>)<span class="sc">+</span><span class="fu">scale_x_discrete</span>(<span class="at">name=</span><span class="st">&quot;&quot;</span>) <span class="sc">+</span></span>
+<span id="cb69-5"><a href="flexible-approaches-for-complex-settings.html#cb69-5" aria-hidden="true" tabindex="-1"></a>       <span class="fu">scale_y_continuous</span>(<span class="at">name=</span><span class="st">&quot;estimate&quot;</span>) </span></code></pre></div>
+<div class="figure" style="text-align: center"><span id="fig:save5"></span>
+<img src="bookdown-demo_files/figure-html/save5-1.png" alt="Individual effects from BKMR" width="80%" />
+<p class="caption">
+Figure 5.5: Individual effects from BKMR
+</p>
+</div>
+</div>
+<div id="single-variable-interaction-terms" class="section level4" number="5.1.4.6">
+<h4><span class="header-section-number">5.1.4.6</span> Single Variable Interaction Terms</h4>
+<p>Finally, this function is similar to the latest one, but refers to the interaction of a single exposure with all other covariates. It attempts to represent an overall interaction between that exposure and all other components.</p>
+<div class="sourceCode" id="cb70"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb70-1"><a href="flexible-approaches-for-complex-settings.html#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(risks.int, <span class="fu">aes</span>(variable, est, <span class="at">ymin =</span> est <span class="sc">-</span> <span class="fl">1.96</span><span class="sc">*</span>sd, <span class="at">ymax =</span> est <span class="sc">+</span> <span class="fl">1.96</span><span class="sc">*</span>sd)) <span class="sc">+</span> </span>
+<span id="cb70-2"><a href="flexible-approaches-for-complex-settings.html#cb70-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_pointrange</span>(<span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="at">width =</span> <span class="fl">0.75</span>)) <span class="sc">+</span> </span>
+<span id="cb70-3"><a href="flexible-approaches-for-complex-settings.html#cb70-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">lty =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">&quot;brown&quot;</span>) <span class="sc">+</span> <span class="fu">coord_flip</span>()</span></code></pre></div>
+<div class="figure" style="text-align: center"><span id="fig:save6"></span>
+<img src="bookdown-demo_files/figure-html/save6-1.png" alt="Individual interaction effects from BKMR" width="80%" />
+<p class="caption">
+Figure 5.6: Individual interaction effects from BKMR
+</p>
+</div>
+<p>As we concluded before, this graph also leads us to conclude that we have no evidence of interaction for any covariate (which, as we know from simulated data, is true).</p>
+</div>
+</div>
+<div id="hierarchical-selection" class="section level3" number="5.1.5">
+<h3><span class="header-section-number">5.1.5</span> Hierarchical selection</h3>
+<p>The variable selection procedure embedded into BKMR can also operate within a hierarchical procedure. Using our example, we could for instance inform the model that there are highly correlated clusters of exposures. This will allow us to get an estimate of the relative importance of each cluster and of each exposure within it. The procedure is implemented as follows, where we are specifically informing the model that there is a cluster of three highly correlated covariates:</p>
+<div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb71-1"><a href="flexible-approaches-for-complex-settings.html#cb71-1" aria-hidden="true" tabindex="-1"></a>hier <span class="ot">&lt;-</span>  <span class="fu">kmbayes</span>(<span class="at">y=</span>y, <span class="at">Z=</span>mixture, <span class="at">X=</span>covariates, <span class="at">iter=</span><span class="dv">1000</span>, <span class="at">verbose=</span><span class="cn">FALSE</span>, <span class="at">varsel=</span><span class="cn">TRUE</span>, </span>
+<span id="cb71-2"><a href="flexible-approaches-for-complex-settings.html#cb71-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">knots=</span>knots100, <span class="at">groups=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">2</span>,<span class="dv">2</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>))</span>
+<span id="cb71-3"><a href="flexible-approaches-for-complex-settings.html#cb71-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-4"><a href="flexible-approaches-for-complex-settings.html#cb71-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ExtractPIPs</span>(hier)</span></code></pre></div>
+<pre><code>##    variable group groupPIP   condPIP
+## 1        x1     1    1.000 0.0000000
+## 2        x2     1    1.000 0.0000000
+## 3        x3     2    0.044 0.3636364
+## 4        x4     2    0.044 0.4545455
+## 5        x5     2    0.044 0.1818182
+## 6        x6     1    1.000 0.0160000
+## 7        x7     1    1.000 0.0040000
+## 8        x8     1    1.000 0.0620000
+## 9        x9     1    1.000 0.0540000
+## 10      x10     1    1.000 0.0000000
+## 11      x11     1    1.000 0.0020000
+## 12      x12     1    1.000 0.4500000
+## 13      x13     1    1.000 0.1460000
+## 14      x14     1    1.000 0.2660000</code></pre>
+<p>Group PIPs seem to point out that the cluster is somehow relevant in the dose-response association, and indicates that that <span class="math inline">\(X_4\)</span> might be the most relevant of the three exposures.</p>
+</div>
+<div id="extensions" class="section level3" number="5.1.6">
+<h3><span class="header-section-number">5.1.6</span> Extensions</h3>
+<p>The first release of BKMR was only available for evaluating continuous outcomes, but recent work has extended its use to the context of binary outcomes, which are also integrated in the latest versions of the package. <span class="citation"><a href="#ref-domingo2019association" role="doc-biblioref">Domingo-Relloso et al.</a> (<a href="#ref-domingo2019association" role="doc-biblioref">2019</a>)</span> have also described how to apply BKMR with time-to-event outcomes. Additional extensions of the approach that could be of interest in several settings also include a longitudinal version of BKMR based on lagged regression, which can be used to evaluate time-varying mixtures (<span class="citation"><a href="#ref-liu2018lagged" role="doc-biblioref">Liu et al.</a> (<a href="#ref-liu2018lagged" role="doc-biblioref">2018</a>)</span>). While this method is not yet implemented in the package, it is important to note that similar results can be achieved by evaluating time-varying effects through hierarchical selection. In brief, multiple measurements of exposures can be included simultaneously in the kernel, grouping exposures by time. An example of this application can be found in <span class="citation"><a href="#ref-tyagi2021identifying" role="doc-biblioref">Tyagi et al.</a> (<a href="#ref-tyagi2021identifying" role="doc-biblioref">2021</a>)</span>, evaluating exposures to phthalates during pregnancy, measured at different trimester, as they relate to final gestational weight. By providing a measure of group importance, group PIPs can here be interpreted as measures of relative importance of the time-windows of interest, thus allowing a better understanding of the timing of higher susceptibility to mixture exposures.</p>
+<p>Finally, we have described how BKMR can provide a graphical qualitative assessment of interaction. Some additional work is being conducted to formally provide measures of interaction and is briefly presented <a href="https://github.com/jantonelli111/NLinteraction">here</a>.</p>
+</div>
+<div id="practical-considerations-and-discussion" class="section level3" number="5.1.7">
+<h3><span class="header-section-number">5.1.7</span> Practical considerations and discussion</h3>
+<p>To conclude our presentation of BKMR, let’s list some useful considerations that one should take into account when applying this methodology:</p>
+<ul>
+<li>As a Bayesian technique, prior information could be specified on the model parameters. Nevertheless this is not commonly done, and all code presented here is assuming the use of non-informative priors. In general, it is good to remember that PIP values can be sensitive to priors (although relative importance tends to be stable).</li>
+<li>Because of their sensitivity, PIP values can only be interpreted as a relative measure of importance (as ranking the importance of exposures). Several applied papers have been using thresholds (e.g. 0.5) to define a variable “important” but this is interpretation is erroneous and misleading.</li>
+<li>The BKMR algorithm is more stable when it isn’t dealing with exposures on vastly different scales. We typically center and scale both the outcome and the exposures (and continuous confounders). Similarly, we should be wary of exposure outliers, and log-transforming exposures is also recommended.</li>
+<li>BKMR is operating a variable selection procedure. As such, a PIP of 0 will imply that the dose-response for that covariate is a straight line on zero. This does not mean that a given exposure has no effect on the outcome, but simply that it was not selected in the procedure. As a matter of fact, when an exposure has a weak effect on the outcome BKMR will mostly tend to exclude it. As a consequence of this, the overall mixture effect will really present the overall effect of the selected exposures.</li>
+<li>As a Bayesian technique, BKMR is not based on the classical statistical framework on null-hypothesis testing. 95% CI are interpreted as credible intervals, and common discussions on statistical power should be avoided.</li>
+<li>Despite the estimation improvements through the use of knots as previously described, fitting a BKMR model remains time-demanding. In practice, you might be able to fit a BKMR model on a dataset of up to 10.000 individuals (still waiting few hours to get your results). For any large dataset, alternative approaches should be considered.</li>
+<li>BKMR is a flexible non-parametric method that is designed to deal with complex settings with non-linearities and interactions. In standard settings, regression methods could provide a better estimation and an easier interpretation of results. In practical terms, you would never begin your analysis by fitting a BKMR model but only get to it for results validation or if alternative techniques were not sufficiently equipped to deal with your data.</li>
+</ul>
+</div>
+</div>
+<div id="assessing-interactions" class="section level2" number="5.2">
+<h2><span class="header-section-number">5.2</span> Assessing interactions</h2>
+<div id="tree-based-modeling" class="section level3" number="5.2.1">
+<h3><span class="header-section-number">5.2.1</span> Tree-based modeling</h3>
+<p>In settings when one is interested in formally evaluating interactions, unique challenges are involved. First, we already discussed how evaluating several covariates and high-order interactions within a regression framework
+will rapidly increase the number of parameters to be estimated, and the
+resulting complexity of the model will make classical regression techniques
+of little use. Summary and classification approaches like WQS will not be able to provide an estimate of interaction effects, and we have just discussed how BKMR can only provide some qualitative assessment of interactions, and only among those exposures that have passed the selection procedure.</p>
+<p>To account for the complexity of joint effects and high-dimensional interactions, one should consider specific techniques that have been specifically develop to deal with complex and big data. One machine learning (ML) approach that can be useful in the context of interaction analysis, and specifically when evaluating environmental exposures, is the application of boosted regression trees (BRT), BRT is a tree-based modeling technique that can be used to evaluate complex high-dimensional interactions
+among several variables, which can be continuous, categorical, or binary. Boosted trees are
+designed to improve the performance of classification and regression
+trees (CARTs), which partition the data into several disjoint regions
+approximating the outcome as constant within these regions. CARTs can
+account for complex interactions by conditioning subsequent splits on
+previous ones, a feature that is controlled by a “depth” option.
+Higher-order depths correspond to accounting for higher-order interactions. In practical terms, this implies that by modifying the depth option of the algorithm we can incorporate an increasingly higher number of interaction orders. How many interactions should be evaluated, together with other parameters of the model, are identified by the machine through cross validation techniques.</p>
+<p>Boosted trees improve the predictive performance of a single
+CART by combining several weak learners to accurately identify a set of
+explanatory variables that are associated with the outcome. The
+improved predictive performance, however, will come at the expense of an easy
+interpretation. Specifically, the output of a BRT will provide identification
+of variable importance, partial dependence plot, and interactions
+hierarchy, but will not provide effect estimates for
+each variable or interaction as in classical regression. A BRT model will provide the following objects as output:</p>
+<ul>
+<li><p>Variable importance: this is based on how many times each variable is
+involved in a split, capturing its independent predictive power with
+respect to the outcome. This measure holds the same interpretation of PIPs in BKMR</p></li>
+<li><p>Dependence plots: similarly to the univariate dose-responses in BKMR, these provide a graphical visualization
+of the fitted function that presents the associations between one
+or more predictors and the outcome. These plots are especially helpful
+with continuous predictors, but let’s stress that this technique can be used with any kind of exposures.</p></li>
+<li><p>H-statistics: these are the unique measures of interaction relevance, which indicate,
+for any pair of predictors, the fraction of variance that is not captured by
+the sum of the two fitted response functions. Of importance, the
+Depending on the depth of the algorithm, H-statistics can be calculated
+for all levels of interactions including 2-way and more. These measures
+do not provide a summary of relative importance (i.e. they do not sum
+up to 1) but rather indicate a ranking of importance of interactions.</p></li>
+</ul>
+<p>For more details on boosted trees we refer to previous publications (<span class="citation"><a href="#ref-lampa2014identification" role="doc-biblioref">Lampa et al.</a> (<a href="#ref-lampa2014identification" role="doc-biblioref">2014</a>)</span>) and <a href="http://uc-r.github.io/gbm_regression">online documentation</a>.</p>
+<p>In this study, parameters in the final
+model were selected using a 10-fold cross validation on 75% of the data
+(training sample), estimating the model separately among men and
+women, and selecting the model with the lowest root mean squared
+error (RMSE).</p>
+</div>
+<div id="interaction-screening-and-regression-approaches" class="section level3" number="5.2.2">
+<h3><span class="header-section-number">5.2.2</span> Interaction screening and regression approaches</h3>
+<p>Let us stress once more that both BKMR, which provide a qualitative graphical assessment of interactions, and BRT models, which allow estimating H-statistics to rank interactions of different orders, do not provide direct estimates or tests for interactions effects. For this reason, a recommended practice is to use these techniques as interaction screening procedures and employ a 2-steps approach in which selected interactions are then evaluated in a final regression model. As an illustrative example, we used this approach in a recent paper to identify 2-ways interactions between occupational exposures and health factors that we later integrated in a regression models evaluating the effect of this mixture on ALS risk (<span class="citation"><a href="#ref-bellavia2021joint" role="doc-biblioref">Bellavia et al.</a> (<a href="#ref-bellavia2021joint" role="doc-biblioref">2021</a>)</span>).</p>
+<div class="figure">
+<img src="images/hstats.png" alt="" />
+<p class="caption">H-statistics from Bellavia et al.</p>
+</div>
+
+</div>
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-barrera2017systematic" class="csl-entry">
+Barrera-Gómez, Jose, Lydiane Agier, Lützen Portengen, Marc Chadeau-Hyam, Lise Giorgis-Allemand, Valérie Siroux, Oliver Robinson, et al. 2017. <span>“A Systematic Comparison of Statistical Methods to Detect Interactions in Exposome-Health Associations.”</span> <em>Environmental Health</em> 16 (1): 1–13.
+</div>
+<div id="ref-bellavia2021joint" class="csl-entry">
+Bellavia, Andrea, Aisha S Dickerson, Ran S Rotem, Johnni Hansen, Ole Gredal, and Marc G Weisskopf. 2021. <span>“Joint and Interactive Effects Between Health Comorbidities and Environmental Exposures in Predicting Amyotrophic Lateral Sclerosis.”</span> <em>International Journal of Hygiene and Environmental Health</em> 231: 113655.
+</div>
+<div id="ref-bobb2018statistical" class="csl-entry">
+Bobb, Jennifer F, Birgit Claus Henn, Linda Valeri, and Brent A Coull. 2018. <span>“Statistical Software for Analyzing the Health Effects of Multiple Concurrent Exposures via Bayesian Kernel Machine Regression.”</span> <em>Environmental Health</em> 17 (1): 1–10.
+</div>
+<div id="ref-bobb2015bayesian" class="csl-entry">
+Bobb, Jennifer F, Linda Valeri, Birgit Claus Henn, David C Christiani, Robert O Wright, Maitreyi Mazumdar, John J Godleski, and Brent A Coull. 2015. <span>“Bayesian Kernel Machine Regression for Estimating the Health Effects of Multi-Pollutant Mixtures.”</span> <em>Biostatistics</em> 16 (3): 493–508.
+</div>
+<div id="ref-domingo2019association" class="csl-entry">
+Domingo-Relloso, Arce, Maria Grau-Perez, Laisa Briongos-Figuero, Jose L Gomez-Ariza, Tamara Garcia-Barrera, Antonio Dueñas-Laita, Jennifer F Bobb, et al. 2019. <span>“The Association of Urine Metals and Metal Mixtures with Cardiovascular Incidence in an Adult Population from Spain: The Hortega Follow-up Study.”</span> <em>International Journal of Epidemiology</em> 48 (6): 1839–49.
+</div>
+<div id="ref-lampa2014identification" class="csl-entry">
+Lampa, Erik, Lars Lind, P Monica Lind, and Anna Bornefalk-Hermansson. 2014. <span>“The Identification of Complex Interactions in Epidemiology and Toxicology: A Simulation Study of Boosted Regression Trees.”</span> <em>Environmental Health</em> 13 (1): 1–17.
+</div>
+<div id="ref-liu2018lagged" class="csl-entry">
+Liu, Shelley H, Jennifer F Bobb, Kyu Ha Lee, Chris Gennings, Birgit Claus Henn, David Bellinger, Christine Austin, et al. 2018. <span>“Lagged Kernel Machine Regression for Identifying Time Windows of Susceptibility to Exposures of Complex Mixtures.”</span> <em>Biostatistics</em> 19 (3): 325–41.
+</div>
+<div id="ref-sun2013statistical" class="csl-entry">
+Sun, Zhichao, Yebin Tao, Shi Li, Kelly K Ferguson, John D Meeker, Sung Kyun Park, Stuart A Batterman, and Bhramar Mukherjee. 2013. <span>“Statistical Strategies for Constructing Health Risk Models with Multiple Pollutants and Their Interactions: Possible Choices and Comparisons.”</span> <em>Environmental Health</em> 12 (1): 1–19.
+</div>
+<div id="ref-tyagi2021identifying" class="csl-entry">
+Tyagi, Pooja, Tamarra James-Todd, Lidia Mı́nguez-Alarcón, Jennifer B Ford, Myra Keller, John Petrozza, Antonia M Calafat, et al. 2021. <span>“Identifying Windows of Susceptibility to Endocrine Disrupting Chemicals in Relation to Gestational Weight Gain Among Pregnant Women Attending a Fertility Clinic.”</span> <em>Environmental Research</em> 194: 110638.
+</div>
+<div id="ref-zheng2020evaluating" class="csl-entry">
+Zheng, Yinnan, Cuilin Zhang, Marc G Weisskopf, Paige L Williams, Birgit Claus Henn, Patrick J Parsons, Christopher D Palmer, Germaine M Buck Louis, and Tamarra James-Todd. 2020. <span>“Evaluating Associations Between Early Pregnancy Trace Elements Mixture and 2nd Trimester Gestational Glucose Levels: A Comparison of Three Statistical Approaches.”</span> <em>International Journal of Hygiene and Environmental Health</em> 224: 113446.
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="additional-topics-and-final-remarks.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["bookdown-demo.pdf"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

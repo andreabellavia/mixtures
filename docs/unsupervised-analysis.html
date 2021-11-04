@@ -1,0 +1,2738 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 2 Unsupervised analysis | Statistical Methods for Environmental Mixtures</title>
+  <meta name="description" content="Humans are simultaneously exposed to a large number of environmental hazards. To allow a more accurate identification of the risks associated with environmental exposures and developing more targeted public health interventions, it is crucial that population-based studies account for the complexity of such exposures as environmental mixtures. This poses several analytic challenges and often requires the use of extensions of standard regression approaches or more flexible techinques for high-dimensional data. This document presents an extended version of the class material that was used in an introductory two-weeks course on statistical approaches for environmental mixtures. The main challanges and limitations of standard regression techniques are outlined, and recent methodological developments are introduced in a rigorous yet non-theoretical way. The course was designed for students and postdocs in environmental health with basic preliminary knoweldge on linear and logistic regression models. Sources and code examples to conduct a thorough analysis in R are also included." />
+  <meta name="generator" content="bookdown 0.22 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 2 Unsupervised analysis | Statistical Methods for Environmental Mixtures" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="Humans are simultaneously exposed to a large number of environmental hazards. To allow a more accurate identification of the risks associated with environmental exposures and developing more targeted public health interventions, it is crucial that population-based studies account for the complexity of such exposures as environmental mixtures. This poses several analytic challenges and often requires the use of extensions of standard regression approaches or more flexible techinques for high-dimensional data. This document presents an extended version of the class material that was used in an introductory two-weeks course on statistical approaches for environmental mixtures. The main challanges and limitations of standard regression techniques are outlined, and recent methodological developments are introduced in a rigorous yet non-theoretical way. The course was designed for students and postdocs in environmental health with basic preliminary knoweldge on linear and logistic regression models. Sources and code examples to conduct a thorough analysis in R are also included." />
+  <meta name="github-repo" content="andreabellavia/mixtures" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 2 Unsupervised analysis | Statistical Methods for Environmental Mixtures" />
+  
+  <meta name="twitter:description" content="Humans are simultaneously exposed to a large number of environmental hazards. To allow a more accurate identification of the risks associated with environmental exposures and developing more targeted public health interventions, it is crucial that population-based studies account for the complexity of such exposures as environmental mixtures. This poses several analytic challenges and often requires the use of extensions of standard regression approaches or more flexible techinques for high-dimensional data. This document presents an extended version of the class material that was used in an introductory two-weeks course on statistical approaches for environmental mixtures. The main challanges and limitations of standard regression techniques are outlined, and recent methodological developments are introduced in a rigorous yet non-theoretical way. The course was designed for students and postdocs in environmental health with basic preliminary knoweldge on linear and logistic regression models. Sources and code examples to conduct a thorough analysis in R are also included." />
+  
+
+<meta name="author" content="Andrea Bellavia" />
+
+
+<meta name="date" content="2021-11-04" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="introduction.html"/>
+<link rel="next" href="regression-based-approaches.html"/>
+<script src="libs/header-attrs-2.9/header-attrs.js"></script>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+<link href="libs/table1-1.0/table1_defaults.css" rel="stylesheet" />
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
+<li class="chapter" data-level="" data-path="about-the-author.html"><a href="about-the-author.html"><i class="fa fa-check"></i>About the Author</a></li>
+<li class="chapter" data-level="1" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>1</b> Introduction</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="introduction.html"><a href="introduction.html#the-exposome"><i class="fa fa-check"></i><b>1.1</b> The Exposome</a></li>
+<li class="chapter" data-level="1.2" data-path="introduction.html"><a href="introduction.html#why-focusing-on-multiple-exposures"><i class="fa fa-check"></i><b>1.2</b> Why focusing on multiple exposures?</a></li>
+<li class="chapter" data-level="1.3" data-path="introduction.html"><a href="introduction.html#what-is-your-research-question"><i class="fa fa-check"></i><b>1.3</b> What is your research question?</a></li>
+<li class="chapter" data-level="1.4" data-path="introduction.html"><a href="introduction.html#broad-classifications-of-statistical-approaches"><i class="fa fa-check"></i><b>1.4</b> Broad classification(s) of statistical approaches</a></li>
+<li class="chapter" data-level="1.5" data-path="introduction.html"><a href="introduction.html#introduction-to-r-and-the-simulated-data"><i class="fa fa-check"></i><b>1.5</b> Introduction to R and the simulated data</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html"><i class="fa fa-check"></i><b>2</b> Unsupervised analysis</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#pre-processing"><i class="fa fa-check"></i><b>2.1</b> Pre-processing</a></li>
+<li class="chapter" data-level="2.2" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#correlation-analysis"><i class="fa fa-check"></i><b>2.2</b> Correlation analysis</a></li>
+<li class="chapter" data-level="2.3" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#weighted-correlation-network-analysis"><i class="fa fa-check"></i><b>2.3</b> Weighted correlation network analysis</a></li>
+<li class="chapter" data-level="2.4" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#principal-component-analysis"><i class="fa fa-check"></i><b>2.4</b> Principal component analysis</a>
+<ul>
+<li class="chapter" data-level="2.4.1" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#fitting-a-pca-in-r"><i class="fa fa-check"></i><b>2.4.1</b> Fitting a PCA in R</a></li>
+<li class="chapter" data-level="2.4.2" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#choosing-the-number-of-components"><i class="fa fa-check"></i><b>2.4.2</b> Choosing the number of components</a></li>
+<li class="chapter" data-level="2.4.3" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#getting-sense-of-components-interpretation"><i class="fa fa-check"></i><b>2.4.3</b> Getting sense of components interpretation</a></li>
+<li class="chapter" data-level="2.4.4" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#using-principal-components-in-subsequent-analyses"><i class="fa fa-check"></i><b>2.4.4</b> Using principal components in subsequent analyses</a></li>
+<li class="chapter" data-level="2.4.5" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#pca-in-practice"><i class="fa fa-check"></i><b>2.4.5</b> PCA in practice</a></li>
+</ul></li>
+<li class="chapter" data-level="2.5" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#cluster-analysis"><i class="fa fa-check"></i><b>2.5</b> Cluster analysis</a>
+<ul>
+<li class="chapter" data-level="2.5.1" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#k-means-clustering"><i class="fa fa-check"></i><b>2.5.1</b> K-means clustering</a></li>
+<li class="chapter" data-level="2.5.2" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#k-means-in-r"><i class="fa fa-check"></i><b>2.5.2</b> K-means in R</a></li>
+<li class="chapter" data-level="2.5.3" data-path="unsupervised-analysis.html"><a href="unsupervised-analysis.html#cluster-analysis-to-simplify-descriptive-statistics-presentation"><i class="fa fa-check"></i><b>2.5.3</b> Cluster analysis to simplify descriptive statistics presentation</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html"><i class="fa fa-check"></i><b>3</b> Regression-based approaches</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#ols-regression"><i class="fa fa-check"></i><b>3.1</b> OLS regression</a>
+<ul>
+<li class="chapter" data-level="3.1.1" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#single-regression-ewas"><i class="fa fa-check"></i><b>3.1.1</b> Single regression (EWAS)</a></li>
+<li class="chapter" data-level="3.1.2" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#multiple-regression"><i class="fa fa-check"></i><b>3.1.2</b> Multiple regression</a></li>
+<li class="chapter" data-level="3.1.3" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#the-problem-of-multicollinearity"><i class="fa fa-check"></i><b>3.1.3</b> The problem of Multicollinearity</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#penalized-regression-approaches"><i class="fa fa-check"></i><b>3.2</b> Penalized regression approaches</a>
+<ul>
+<li class="chapter" data-level="3.2.1" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#bias-variance-tradeoff"><i class="fa fa-check"></i><b>3.2.1</b> Bias-variance tradeoff</a></li>
+<li class="chapter" data-level="3.2.2" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#ridge-regression"><i class="fa fa-check"></i><b>3.2.2</b> Ridge regression</a></li>
+<li class="chapter" data-level="3.2.3" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#lasso"><i class="fa fa-check"></i><b>3.2.3</b> LASSO</a></li>
+<li class="chapter" data-level="3.2.4" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#elastic-net"><i class="fa fa-check"></i><b>3.2.4</b> Elastic net</a></li>
+<li class="chapter" data-level="3.2.5" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#additional-notes"><i class="fa fa-check"></i><b>3.2.5</b> Additional notes</a></li>
+<li class="chapter" data-level="3.2.6" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#elastic-net-and-environmental-mixtures"><i class="fa fa-check"></i><b>3.2.6</b> Elastic Net and environmental mixtures</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#other-regression-based-approaches"><i class="fa fa-check"></i><b>3.3</b> Other regression-based approaches</a>
+<ul>
+<li class="chapter" data-level="3.3.1" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#hierarchical-linear-models"><i class="fa fa-check"></i><b>3.3.1</b> Hierarchical linear models</a></li>
+<li class="chapter" data-level="3.3.2" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#partial-least-square-regression"><i class="fa fa-check"></i><b>3.3.2</b> Partial least square regression</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="regression-based-approaches.html"><a href="regression-based-approaches.html#advantages-and-limitations-of-regression-approaches"><i class="fa fa-check"></i><b>3.4</b> Advantages and limitations of regression approaches</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><i class="fa fa-check"></i><b>4</b> Assessing the overall (cumulative) effect of multiple exposures</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#unsupervised-summary-scores"><i class="fa fa-check"></i><b>4.1</b> Unsupervised summary scores</a></li>
+<li class="chapter" data-level="4.2" data-path="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#weighted-quantile-sum"><i class="fa fa-check"></i><b>4.2</b> Weighted quantile sum</a>
+<ul>
+<li class="chapter" data-level="4.2.1" data-path="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#model-definition-and-estimation"><i class="fa fa-check"></i><b>4.2.1</b> Model definition and estimation</a></li>
+<li class="chapter" data-level="4.2.2" data-path="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#the-unidirectionality-assumption"><i class="fa fa-check"></i><b>4.2.2</b> The unidirectionality assumption</a></li>
+<li class="chapter" data-level="4.2.3" data-path="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#extensions-of-the-original-wqs-regression"><i class="fa fa-check"></i><b>4.2.3</b> Extensions of the original WQS regression</a></li>
+<li class="chapter" data-level="4.2.4" data-path="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#quantile-g-computation"><i class="fa fa-check"></i><b>4.2.4</b> Quantile G-computation</a></li>
+<li class="chapter" data-level="4.2.5" data-path="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#wqs-regression-in-r"><i class="fa fa-check"></i><b>4.2.5</b> WQS regression in R</a></li>
+<li class="chapter" data-level="4.2.6" data-path="assessing-the-overall-cumulative-effect-of-multiple-exposures.html"><a href="assessing-the-overall-cumulative-effect-of-multiple-exposures.html#example-from-the-literature"><i class="fa fa-check"></i><b>4.2.6</b> Example from the literature</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html"><i class="fa fa-check"></i><b>5</b> Flexible approaches for complex settings</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#bayesian-kernel-machine-regression"><i class="fa fa-check"></i><b>5.1</b> Bayesian Kernel Machine Regression</a>
+<ul>
+<li class="chapter" data-level="5.1.1" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#introduction-1"><i class="fa fa-check"></i><b>5.1.1</b> Introduction</a></li>
+<li class="chapter" data-level="5.1.2" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#estimation"><i class="fa fa-check"></i><b>5.1.2</b> Estimation</a></li>
+<li class="chapter" data-level="5.1.3" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#trace-plots-and-burning-phase"><i class="fa fa-check"></i><b>5.1.3</b> Trace plots and burning phase</a></li>
+<li class="chapter" data-level="5.1.4" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#visualizing-results"><i class="fa fa-check"></i><b>5.1.4</b> Visualizing results</a></li>
+<li class="chapter" data-level="5.1.5" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#hierarchical-selection"><i class="fa fa-check"></i><b>5.1.5</b> Hierarchical selection</a></li>
+<li class="chapter" data-level="5.1.6" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#extensions"><i class="fa fa-check"></i><b>5.1.6</b> Extensions</a></li>
+<li class="chapter" data-level="5.1.7" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#practical-considerations-and-discussion"><i class="fa fa-check"></i><b>5.1.7</b> Practical considerations and discussion</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#assessing-interactions"><i class="fa fa-check"></i><b>5.2</b> Assessing interactions</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#tree-based-modeling"><i class="fa fa-check"></i><b>5.2.1</b> Tree-based modeling</a></li>
+<li class="chapter" data-level="5.2.2" data-path="flexible-approaches-for-complex-settings.html"><a href="flexible-approaches-for-complex-settings.html#interaction-screening-and-regression-approaches"><i class="fa fa-check"></i><b>5.2.2</b> Interaction screening and regression approaches</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="additional-topics-and-final-remarks.html"><a href="additional-topics-and-final-remarks.html"><i class="fa fa-check"></i><b>6</b> Additional topics and final remarks</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="additional-topics-and-final-remarks.html"><a href="additional-topics-and-final-remarks.html#causal-mixture-effects"><i class="fa fa-check"></i><b>6.1</b> Causal mixture effects</a></li>
+<li class="chapter" data-level="6.2" data-path="additional-topics-and-final-remarks.html"><a href="additional-topics-and-final-remarks.html#binary-and-zero-inflated-exposures"><i class="fa fa-check"></i><b>6.2</b> Binary and zero-inflated exposures</a></li>
+<li class="chapter" data-level="6.3" data-path="additional-topics-and-final-remarks.html"><a href="additional-topics-and-final-remarks.html#mediation-analysis"><i class="fa fa-check"></i><b>6.3</b> Mediation analysis</a></li>
+<li class="chapter" data-level="6.4" data-path="additional-topics-and-final-remarks.html"><a href="additional-topics-and-final-remarks.html#conclusion"><i class="fa fa-check"></i><b>6.4</b> Conclusion</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Statistical Methods for Environmental Mixtures</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="unsupervised-analysis" class="section level1" number="2">
+<h1><span class="header-section-number">Chapter 2</span> Unsupervised analysis</h1>
+<p>As introduced in the previous section, the term unsupervised analysis refers to that critical part of the analytic phase where we only focus on the exposures, trying to characterize, explain, and describe the complex environmental mixture of interest. This could even be the ultimate goal of the analysis (as a matter of fact, to respond to common questions such as “what are the most common exposures in our populations?” or “can we identify subgroups of exposures that are often found together?” we do not to account for the outcome. In other setting, this will be an important part that will inform subsequent analytic steps.</p>
+<p>Note that here the focus is not on understanding biological mechanisms through which chemicals or pollutants operate in the body. The focus on unsupervised analysis in this context is, instead, a descriptive and epidemiologic one. When we are attempting to identify clusters of exposures without accounting the their relationship with a given outcome, the grouping will be based on aspects such as population distribution and shared sources rather than on similar mechanisms of action.</p>
+<div id="pre-processing" class="section level2" number="2.1">
+<h2><span class="header-section-number">2.1</span> Pre-processing</h2>
+<p>Before getting into the actual analysis of the mixture it is important to carefully assess each component independently. Environmental exposures such as chemicals or pollutants, but also indicators of greenness, noise, or temperature, share important characteristics that complicate their statistical evaluation.</p>
+<ul>
+<li><p>Skewedness and variance. Exposures are often non-negative and heavily skewed on the right due to the presence of outliers and to the fact that they are strictly non-negative. For this reason, it is usually recommended to log-transform these exposures. Nevertheless, when such operation is taken into account, researchers have to deal with decisions on how to treat eventual zero-values that do not necessarily represent missing data.</p></li>
+<li><p>Centering and standardizing exposures. Mixture components tend to have different and difficult to compare measurements and variability, even within the same family of exposures. Since these exposures will be eventually evaluated together, centering and standardizing the covariates will allow comparability and better interpretation of statistical findings.</p></li>
+<li><p>Zero values. It is relatively common, when evaluating large mixtures of environmental exposures, to encounter one or more covariates with a considerable amount of values equal to 0. How to deal with such zero-values will have important consequences on the implementation and interpretation of statistical approaches for mixtures. The first question to consider is what these zero values represent: specifically, are they “real zeros” (i.e. the individuals had no exposure to a given chemical), or do they represent non-detected values (i.e. the individual had a low level of exposure that we were not able to detect)? In the first case, the values will have to be treated as an actual zero, with important implications for the analysis (we will briefly deal with this when talking about zero-inflated covariates in Section 6). In the second case, non-detected values are usually imputed to a predefined value (several approaches are available) and the covariate can be treated as continuous.</p></li>
+<li><p>Missing values. Finally, it is important to evaluate the percentage of missing values for each exposure in our mixture. Most techniques that allow evaluating the joint effect of several covariates, including regresison models, will require a complete-case analysis. As such, an individual with just one missing values in one of the several mixture components, will be excluded from the whole analyses. If the proportion of missingness is not too high (10-15%), multiple imputation techniques can be used, even though the user should be aware that most advanced methodologies might not be fully integrated withing a multiple implementation procedure. If the percentage of missingness is too high, there is not too much to be done, and we will have to decide whether to give up the covariate (excluding it from the mixture), or reduce the sample size (excluding all individual with missing values on that component)</p></li>
+</ul>
+<p>The dataset we are using in our illustrative example includes simulated covariates where this pre-processing steps have been done ( all values are greater than 0, no missing data are present, covariates are log-transofmred and standardized).</p>
+<div class="figure" style="text-align: center"><span id="fig:figure1"></span>
+<img src="bookdown-demo_files/figure-html/figure1-1.png" alt="Histogram of first 3 components" width="80%" />
+<p class="caption">
+Figure 2.1: Histogram of first 3 components
+</p>
+</div>
+<p>To conduct a thorough exploratory analysis of environmental mixtures, especially when several covariates are of interest, we encourage the use of the R package <code>rexposome</code> , fully described <a href="https://www.bioconductor.org/packages/release/bioc/vignettes/rexposome/inst/doc/exposome_data_analysis.html#multivariate-exposome-analysis">here</a></p>
+</div>
+<div id="correlation-analysis" class="section level2" number="2.2">
+<h2><span class="header-section-number">2.2</span> Correlation analysis</h2>
+<p>An essential step when evaluating an environmental mixture is the assessment of the correlation between the mixture components. This preliminary analysis gives a sense of the relationship between exposures, allows a preliminary assessment of exposures patterns and clusters, and gives important information that will suggest which method could be better suited for future modeling.</p>
+<p>Given 2 continuous covariates, a simple assessment of their relationship can be checked with a simple two-ways scatterplots. Here we show a set of three 2x2 comparison, also adding a lowess trend line on top of the scatter plot.</p>
+<div class="figure" style="text-align: center"><span id="fig:figure2"></span>
+<img src="bookdown-demo_files/figure-html/figure2-1.png" alt="Scatter plots" width="80%" />
+<p class="caption">
+Figure 2.2: Scatter plots
+</p>
+</div>
+<p>We see some combinations of covariates being highly correlated (like <span class="math inline">\(X_3\)</span> and <span class="math inline">\(X_4\)</span>), while other exposures seem to be completely independent (e.g. <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_5\)</span>).</p>
+<p>A correlation coefficient and a correlation test, will additionally provide a quantitative measure of this relationship. The Pearson correlation (<span class="math inline">\(r\)</span>) measures the linear dependence between two variables and it can only be used when both covariates are normally distributed</p>
+<p><span class="math display">\[r=\frac{\sum(x-m_x)(y-m_y)}{\sqrt{\sum(x-m_x)^2(y-m_y)^2}}\]</span></p>
+<p>where <span class="math inline">\(m_x\)</span> and <span class="math inline">\(m_y\)</span> are the means of the two covariates <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span></p>
+<p>The Spearman correlation (<span class="math inline">\(\rho\)</span>) measure computes the correlation between the rank of the two covariates <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span></p>
+<p><span class="math display">\[\rho=\frac{\sum(x&#39;-m_{x&#39;})(y&#39;-m_{y&#39;})}{\sqrt{\sum(x&#39;-m_{x&#39;})^2(y&#39;-m_{y&#39;})^2}}\]</span></p>
+<p>where <span class="math inline">\(m_{x&#39;}\)</span> and <span class="math inline">\(m_{y&#39;}\)</span> are the ranks of <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span>. This correlation test is non-parametric and does not require assuming normality for the two evaluated covariates.</p>
+<p>Both <span class="math inline">\(r\)</span> and <span class="math inline">\(\rho\)</span> are bounded between -1 and 1 (negative and positive correlation). There is no correlation between the covariates when the coefficient is equal to 0. Tests for significance of the correlation coefficient are available for both <span class="math inline">\(r\)</span> and <span class="math inline">\(\rho\)</span>, testing the null hypothesis of no correlation</p>
+<p>Here we calculate the correlation coefficients, and test, for some pair of exposures in our mixture:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="unsupervised-analysis.html#cb2-1" aria-hidden="true" tabindex="-1"></a>r15 <span class="ot">&lt;-</span> <span class="fu">cor.test</span>(data2<span class="sc">$</span>x1, data2<span class="sc">$</span>x5, <span class="at">method =</span> <span class="st">&quot;pearson&quot;</span>)</span>
+<span id="cb2-2"><a href="unsupervised-analysis.html#cb2-2" aria-hidden="true" tabindex="-1"></a>r15</span></code></pre></div>
+<pre><code>## 
+##  Pearson&#39;s product-moment correlation
+## 
+## data:  data2$x1 and data2$x5
+## t = -0.78615, df = 498, p-value = 0.4322
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  -0.12251881  0.05264665
+## sample estimates:
+##         cor 
+## -0.03520647</code></pre>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="unsupervised-analysis.html#cb4-1" aria-hidden="true" tabindex="-1"></a>rho15 <span class="ot">&lt;-</span> <span class="fu">cor.test</span>(data2<span class="sc">$</span>x1, data2<span class="sc">$</span>x5, <span class="at">method =</span> <span class="st">&quot;spearman&quot;</span>)</span>
+<span id="cb4-2"><a href="unsupervised-analysis.html#cb4-2" aria-hidden="true" tabindex="-1"></a>rho15</span></code></pre></div>
+<pre><code>## 
+##  Spearman&#39;s rank correlation rho
+## 
+## data:  data2$x1 and data2$x5
+## S = 21488934, p-value = 0.4824
+## alternative hypothesis: true rho is not equal to 0
+## sample estimates:
+##         rho 
+## -0.03147296</code></pre>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="unsupervised-analysis.html#cb6-1" aria-hidden="true" tabindex="-1"></a>r1213 <span class="ot">&lt;-</span> <span class="fu">cor.test</span>(data2<span class="sc">$</span>x12, data2<span class="sc">$</span>x13, <span class="at">method =</span> <span class="st">&quot;pearson&quot;</span>)</span>
+<span id="cb6-2"><a href="unsupervised-analysis.html#cb6-2" aria-hidden="true" tabindex="-1"></a>r1213</span></code></pre></div>
+<pre><code>## 
+##  Pearson&#39;s product-moment correlation
+## 
+## data:  data2$x12 and data2$x13
+## t = 47.687, df = 498, p-value &lt; 2.2e-16
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  0.8886169 0.9203247
+## sample estimates:
+##     cor 
+## 0.90573</code></pre>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="unsupervised-analysis.html#cb8-1" aria-hidden="true" tabindex="-1"></a>rho1213 <span class="ot">&lt;-</span> <span class="fu">cor.test</span>(data2<span class="sc">$</span>x12, data2<span class="sc">$</span>x13, <span class="at">method =</span> <span class="st">&quot;spearman&quot;</span>)</span>
+<span id="cb8-2"><a href="unsupervised-analysis.html#cb8-2" aria-hidden="true" tabindex="-1"></a>rho1213</span></code></pre></div>
+<pre><code>## 
+##  Spearman&#39;s rank correlation rho
+## 
+## data:  data2$x12 and data2$x13
+## S = 2113532, p-value &lt; 2.2e-16
+## alternative hypothesis: true rho is not equal to 0
+## sample estimates:
+##       rho 
+## 0.8985501</code></pre>
+<p>When evaluating the correlation between several exposures we can create a correlation matrix</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="unsupervised-analysis.html#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Correlation matrix</span></span>
+<span id="cb10-2"><a href="unsupervised-analysis.html#cb10-2" aria-hidden="true" tabindex="-1"></a>cor.matrix <span class="ot">&lt;-</span> <span class="fu">cor</span> (data2[,<span class="dv">3</span><span class="sc">:</span><span class="dv">16</span>], <span class="at">method =</span> <span class="st">&quot;spearman&quot;</span>)</span>
+<span id="cb10-3"><a href="unsupervised-analysis.html#cb10-3" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(</span>
+<span id="cb10-4"><a href="unsupervised-analysis.html#cb10-4" aria-hidden="true" tabindex="-1"></a>  cor.matrix, <span class="at">booktabs =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb10-5"><a href="unsupervised-analysis.html#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">caption =</span> <span class="st">&#39;Correlation matrix&#39;</span></span>
+<span id="cb10-6"><a href="unsupervised-analysis.html#cb10-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<table>
+<caption>
+<span id="tab:unnamed-chunk-6">Table 2.1: </span>Correlation matrix
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+x1
+</th>
+<th style="text-align:right;">
+x2
+</th>
+<th style="text-align:right;">
+x3
+</th>
+<th style="text-align:right;">
+x4
+</th>
+<th style="text-align:right;">
+x5
+</th>
+<th style="text-align:right;">
+x6
+</th>
+<th style="text-align:right;">
+x7
+</th>
+<th style="text-align:right;">
+x8
+</th>
+<th style="text-align:right;">
+x9
+</th>
+<th style="text-align:right;">
+x10
+</th>
+<th style="text-align:right;">
+x11
+</th>
+<th style="text-align:right;">
+x12
+</th>
+<th style="text-align:right;">
+x13
+</th>
+<th style="text-align:right;">
+x14
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+x1
+</td>
+<td style="text-align:right;">
+1.0000000
+</td>
+<td style="text-align:right;">
+0.3015516
+</td>
+<td style="text-align:right;">
+-0.0443238
+</td>
+<td style="text-align:right;">
+-0.0277916
+</td>
+<td style="text-align:right;">
+-0.0314730
+</td>
+<td style="text-align:right;">
+0.0355735
+</td>
+<td style="text-align:right;">
+0.1636032
+</td>
+<td style="text-align:right;">
+-0.0453658
+</td>
+<td style="text-align:right;">
+0.1525454
+</td>
+<td style="text-align:right;">
+-0.1027089
+</td>
+<td style="text-align:right;">
+-0.1102655
+</td>
+<td style="text-align:right;">
+0.3459623
+</td>
+<td style="text-align:right;">
+0.3358113
+</td>
+<td style="text-align:right;">
+0.0099408
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x2
+</td>
+<td style="text-align:right;">
+0.3015516
+</td>
+<td style="text-align:right;">
+1.0000000
+</td>
+<td style="text-align:right;">
+0.0525986
+</td>
+<td style="text-align:right;">
+0.0624227
+</td>
+<td style="text-align:right;">
+0.0846338
+</td>
+<td style="text-align:right;">
+0.0693562
+</td>
+<td style="text-align:right;">
+0.1827964
+</td>
+<td style="text-align:right;">
+0.0299643
+</td>
+<td style="text-align:right;">
+0.1357383
+</td>
+<td style="text-align:right;">
+-0.0186805
+</td>
+<td style="text-align:right;">
+-0.0251231
+</td>
+<td style="text-align:right;">
+0.3923731
+</td>
+<td style="text-align:right;">
+0.3821572
+</td>
+<td style="text-align:right;">
+0.0482436
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x3
+</td>
+<td style="text-align:right;">
+-0.0443238
+</td>
+<td style="text-align:right;">
+0.0525986
+</td>
+<td style="text-align:right;">
+1.0000000
+</td>
+<td style="text-align:right;">
+0.9874641
+</td>
+<td style="text-align:right;">
+0.9326813
+</td>
+<td style="text-align:right;">
+0.5992095
+</td>
+<td style="text-align:right;">
+0.2848127
+</td>
+<td style="text-align:right;">
+0.7373648
+</td>
+<td style="text-align:right;">
+0.1720033
+</td>
+<td style="text-align:right;">
+0.4028520
+</td>
+<td style="text-align:right;">
+0.5609233
+</td>
+<td style="text-align:right;">
+-0.1051226
+</td>
+<td style="text-align:right;">
+-0.1411885
+</td>
+<td style="text-align:right;">
+0.7041847
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x4
+</td>
+<td style="text-align:right;">
+-0.0277916
+</td>
+<td style="text-align:right;">
+0.0624227
+</td>
+<td style="text-align:right;">
+0.9874641
+</td>
+<td style="text-align:right;">
+1.0000000
+</td>
+<td style="text-align:right;">
+0.9410680
+</td>
+<td style="text-align:right;">
+0.6075068
+</td>
+<td style="text-align:right;">
+0.2893180
+</td>
+<td style="text-align:right;">
+0.7419298
+</td>
+<td style="text-align:right;">
+0.1757588
+</td>
+<td style="text-align:right;">
+0.4087219
+</td>
+<td style="text-align:right;">
+0.5662499
+</td>
+<td style="text-align:right;">
+-0.0938162
+</td>
+<td style="text-align:right;">
+-0.1289154
+</td>
+<td style="text-align:right;">
+0.7113510
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x5
+</td>
+<td style="text-align:right;">
+-0.0314730
+</td>
+<td style="text-align:right;">
+0.0846338
+</td>
+<td style="text-align:right;">
+0.9326813
+</td>
+<td style="text-align:right;">
+0.9410680
+</td>
+<td style="text-align:right;">
+1.0000000
+</td>
+<td style="text-align:right;">
+0.5931920
+</td>
+<td style="text-align:right;">
+0.2946356
+</td>
+<td style="text-align:right;">
+0.7244964
+</td>
+<td style="text-align:right;">
+0.1676753
+</td>
+<td style="text-align:right;">
+0.4165967
+</td>
+<td style="text-align:right;">
+0.5632797
+</td>
+<td style="text-align:right;">
+-0.1040214
+</td>
+<td style="text-align:right;">
+-0.1430413
+</td>
+<td style="text-align:right;">
+0.6895982
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x6
+</td>
+<td style="text-align:right;">
+0.0355735
+</td>
+<td style="text-align:right;">
+0.0693562
+</td>
+<td style="text-align:right;">
+0.5992095
+</td>
+<td style="text-align:right;">
+0.6075068
+</td>
+<td style="text-align:right;">
+0.5931920
+</td>
+<td style="text-align:right;">
+1.0000000
+</td>
+<td style="text-align:right;">
+0.4614976
+</td>
+<td style="text-align:right;">
+0.6356481
+</td>
+<td style="text-align:right;">
+0.3805305
+</td>
+<td style="text-align:right;">
+0.4460931
+</td>
+<td style="text-align:right;">
+0.5435489
+</td>
+<td style="text-align:right;">
+0.0582305
+</td>
+<td style="text-align:right;">
+0.0282746
+</td>
+<td style="text-align:right;">
+0.6183391
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x7
+</td>
+<td style="text-align:right;">
+0.1636032
+</td>
+<td style="text-align:right;">
+0.1827964
+</td>
+<td style="text-align:right;">
+0.2848127
+</td>
+<td style="text-align:right;">
+0.2893180
+</td>
+<td style="text-align:right;">
+0.2946356
+</td>
+<td style="text-align:right;">
+0.4614976
+</td>
+<td style="text-align:right;">
+1.0000000
+</td>
+<td style="text-align:right;">
+0.3906414
+</td>
+<td style="text-align:right;">
+0.6974279
+</td>
+<td style="text-align:right;">
+0.3637349
+</td>
+<td style="text-align:right;">
+0.4113740
+</td>
+<td style="text-align:right;">
+0.4586443
+</td>
+<td style="text-align:right;">
+0.4831571
+</td>
+<td style="text-align:right;">
+0.4081206
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x8
+</td>
+<td style="text-align:right;">
+-0.0453658
+</td>
+<td style="text-align:right;">
+0.0299643
+</td>
+<td style="text-align:right;">
+0.7373648
+</td>
+<td style="text-align:right;">
+0.7419298
+</td>
+<td style="text-align:right;">
+0.7244964
+</td>
+<td style="text-align:right;">
+0.6356481
+</td>
+<td style="text-align:right;">
+0.3906414
+</td>
+<td style="text-align:right;">
+1.0000000
+</td>
+<td style="text-align:right;">
+0.3707775
+</td>
+<td style="text-align:right;">
+0.5494283
+</td>
+<td style="text-align:right;">
+0.6431383
+</td>
+<td style="text-align:right;">
+0.0104423
+</td>
+<td style="text-align:right;">
+-0.0333734
+</td>
+<td style="text-align:right;">
+0.7430785
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x9
+</td>
+<td style="text-align:right;">
+0.1525454
+</td>
+<td style="text-align:right;">
+0.1357383
+</td>
+<td style="text-align:right;">
+0.1720033
+</td>
+<td style="text-align:right;">
+0.1757588
+</td>
+<td style="text-align:right;">
+0.1676753
+</td>
+<td style="text-align:right;">
+0.3805305
+</td>
+<td style="text-align:right;">
+0.6974279
+</td>
+<td style="text-align:right;">
+0.3707775
+</td>
+<td style="text-align:right;">
+1.0000000
+</td>
+<td style="text-align:right;">
+0.3177311
+</td>
+<td style="text-align:right;">
+0.3558096
+</td>
+<td style="text-align:right;">
+0.5047644
+</td>
+<td style="text-align:right;">
+0.4954366
+</td>
+<td style="text-align:right;">
+0.3966118
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x10
+</td>
+<td style="text-align:right;">
+-0.1027089
+</td>
+<td style="text-align:right;">
+-0.0186805
+</td>
+<td style="text-align:right;">
+0.4028520
+</td>
+<td style="text-align:right;">
+0.4087219
+</td>
+<td style="text-align:right;">
+0.4165967
+</td>
+<td style="text-align:right;">
+0.4460931
+</td>
+<td style="text-align:right;">
+0.3637349
+</td>
+<td style="text-align:right;">
+0.5494283
+</td>
+<td style="text-align:right;">
+0.3177311
+</td>
+<td style="text-align:right;">
+1.0000000
+</td>
+<td style="text-align:right;">
+0.7741935
+</td>
+<td style="text-align:right;">
+0.0031582
+</td>
+<td style="text-align:right;">
+-0.0451602
+</td>
+<td style="text-align:right;">
+0.4188343
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x11
+</td>
+<td style="text-align:right;">
+-0.1102655
+</td>
+<td style="text-align:right;">
+-0.0251231
+</td>
+<td style="text-align:right;">
+0.5609233
+</td>
+<td style="text-align:right;">
+0.5662499
+</td>
+<td style="text-align:right;">
+0.5632797
+</td>
+<td style="text-align:right;">
+0.5435489
+</td>
+<td style="text-align:right;">
+0.4113740
+</td>
+<td style="text-align:right;">
+0.6431383
+</td>
+<td style="text-align:right;">
+0.3558096
+</td>
+<td style="text-align:right;">
+0.7741935
+</td>
+<td style="text-align:right;">
+1.0000000
+</td>
+<td style="text-align:right;">
+-0.0115591
+</td>
+<td style="text-align:right;">
+-0.0697092
+</td>
+<td style="text-align:right;">
+0.5384582
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x12
+</td>
+<td style="text-align:right;">
+0.3459623
+</td>
+<td style="text-align:right;">
+0.3923731
+</td>
+<td style="text-align:right;">
+-0.1051226
+</td>
+<td style="text-align:right;">
+-0.0938162
+</td>
+<td style="text-align:right;">
+-0.1040214
+</td>
+<td style="text-align:right;">
+0.0582305
+</td>
+<td style="text-align:right;">
+0.4586443
+</td>
+<td style="text-align:right;">
+0.0104423
+</td>
+<td style="text-align:right;">
+0.5047644
+</td>
+<td style="text-align:right;">
+0.0031582
+</td>
+<td style="text-align:right;">
+-0.0115591
+</td>
+<td style="text-align:right;">
+1.0000000
+</td>
+<td style="text-align:right;">
+0.8985501
+</td>
+<td style="text-align:right;">
+0.1073926
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x13
+</td>
+<td style="text-align:right;">
+0.3358113
+</td>
+<td style="text-align:right;">
+0.3821572
+</td>
+<td style="text-align:right;">
+-0.1411885
+</td>
+<td style="text-align:right;">
+-0.1289154
+</td>
+<td style="text-align:right;">
+-0.1430413
+</td>
+<td style="text-align:right;">
+0.0282746
+</td>
+<td style="text-align:right;">
+0.4831571
+</td>
+<td style="text-align:right;">
+-0.0333734
+</td>
+<td style="text-align:right;">
+0.4954366
+</td>
+<td style="text-align:right;">
+-0.0451602
+</td>
+<td style="text-align:right;">
+-0.0697092
+</td>
+<td style="text-align:right;">
+0.8985501
+</td>
+<td style="text-align:right;">
+1.0000000
+</td>
+<td style="text-align:right;">
+0.0694033
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x14
+</td>
+<td style="text-align:right;">
+0.0099408
+</td>
+<td style="text-align:right;">
+0.0482436
+</td>
+<td style="text-align:right;">
+0.7041847
+</td>
+<td style="text-align:right;">
+0.7113510
+</td>
+<td style="text-align:right;">
+0.6895982
+</td>
+<td style="text-align:right;">
+0.6183391
+</td>
+<td style="text-align:right;">
+0.4081206
+</td>
+<td style="text-align:right;">
+0.7430785
+</td>
+<td style="text-align:right;">
+0.3966118
+</td>
+<td style="text-align:right;">
+0.4188343
+</td>
+<td style="text-align:right;">
+0.5384582
+</td>
+<td style="text-align:right;">
+0.1073926
+</td>
+<td style="text-align:right;">
+0.0694033
+</td>
+<td style="text-align:right;">
+1.0000000
+</td>
+</tr>
+</tbody>
+</table>
+<p>While informative, this is not a really nice way of presenting results, and we prefer to use graphical tools such as the Correlation plot (or, correlogram) This is done by using the package <code>corrplot</code>. Note that the command requires you use the correlation matrix you previously defined.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="unsupervised-analysis.html#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">corrplot</span>(cor.matrix,</span>
+<span id="cb11-2"><a href="unsupervised-analysis.html#cb11-2" aria-hidden="true" tabindex="-1"></a>         <span class="at">method=</span><span class="st">&quot;circle&quot;</span>,</span>
+<span id="cb11-3"><a href="unsupervised-analysis.html#cb11-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">order =</span> <span class="st">&quot;hclust&quot;</span>,</span>
+<span id="cb11-4"><a href="unsupervised-analysis.html#cb11-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">addrect =</span><span class="dv">10</span>,</span>
+<span id="cb11-5"><a href="unsupervised-analysis.html#cb11-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">tl.pos =</span> <span class="st">&quot;l&quot;</span>,</span>
+<span id="cb11-6"><a href="unsupervised-analysis.html#cb11-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">tl.col =</span> <span class="st">&quot;black&quot;</span>,</span>
+<span id="cb11-7"><a href="unsupervised-analysis.html#cb11-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">sig.level =</span> <span class="fl">0.05</span>)</span></code></pre></div>
+<div class="figure" style="text-align: center"><span id="fig:figure"></span>
+<img src="bookdown-demo_files/figure-html/figure-1.png" alt="Correlation Plot" width="80%" />
+<p class="caption">
+Figure 2.3: Correlation Plot
+</p>
+</div>
+<p><a href="https://cran.r-project.org/web/packages/corrplot/vignettes/corrplot-intro.html">This</a> link provides a very useful description of the several <code>corrplot</code> options.</p>
+<p>The correlation plot in the example provides several important information: first of all, we see a cluster of highly correlated exposures (<span class="math inline">\(X_3\)</span>,<span class="math inline">\(X_4\)</span>,<span class="math inline">\(X_5\)</span>), and a cluster of moderately correlated exposures (<span class="math inline">\(X_{12}\)</span>, <span class="math inline">\(X_{13}\)</span>). In addition, we observe that low to moderate levels of correlation also exist between most pairs of exposures, and it is not straightforward to identify clearly define additional subgroups of exposures.</p>
+</div>
+<div id="weighted-correlation-network-analysis" class="section level2" number="2.3">
+<h2><span class="header-section-number">2.3</span> Weighted correlation network analysis</h2>
+<p>Network analysis is emerging as a flexible and powerful technique in different fields. In a nutshell, a network refers to a complex structure of variables, called nodes, and the relationships (formally called edges) between these nodes. Correlation networks define such relationships on the basis of their quantitative correlations, and are increasingly being used in biology to analyze high-dimensional data sets. Weighted correlation networks, in particular, preserve the continuous nature of the underlying correlation information without dicothomizing information. While the theory behind network analysis is beyond the scope of this course, and we refer to other publications for further details (<span class="citation"><a href="#ref-langfelder2008wgcna" role="doc-biblioref">Langfelder and Horvath</a> (<a href="#ref-langfelder2008wgcna" role="doc-biblioref">2008</a>)</span>), (<span class="citation"><a href="#ref-hevey2018network" role="doc-biblioref">Hevey</a> (<a href="#ref-hevey2018network" role="doc-biblioref">2018</a>)</span>), it is here useful to mention that these networks can be used in descriptive analyses to graphically display the relationship between exposures in our mixture based on the correlation structure. This can be now obtained with several R packages, including <code>qgraph</code>, documented <a href="http://sachaepskamp.com/files/Cookbook.html#pearson-correlations">here</a>.</p>
+<div class="figure" style="text-align: center"><span id="fig:figure3"></span>
+<img src="bookdown-demo_files/figure-html/figure3-1.png" alt="Weighted correlation network" width="80%" />
+<p class="caption">
+Figure 2.4: Weighted correlation network
+</p>
+</div>
+<p>This network confirms our finding from the correlation plot, but provides a different and possibly better way of representing and visualizing the relationships between components of the mixture.</p>
+</div>
+<div id="principal-component-analysis" class="section level2" number="2.4">
+<h2><span class="header-section-number">2.4</span> Principal component analysis</h2>
+<p>Principal Component Analysis (PCA) is a useful technique for exploratory data analysis, which allows a better visualization of the variability present in a dataset with many variables. This “better visualization” is achieved by transforming a set of covariates into a smaller set of Principal Components.</p>
+<p>A principal component can be thought of as the direction where there is the most variance or, geometrically speaking, where the data is most spread out. In practical terms, to derive the first principal component that describe our mixture, we try to find the straight line that best spreads the data out when it is projected along it, thus explaining the most substantial variance in the data. The following Figure shows the first principal component in a simple setting with only 3 covariates of interest (so that we could graphically represent it):</p>
+<div class="figure">
+<img src="images/pca1.png" alt="" />
+<p class="caption">First principal component in a 3-covariates setting</p>
+</div>
+<p>Mathematically speaking, this first component <span class="math inline">\(t_1\)</span> is calculated as a linear combination of the <span class="math inline">\(p\)</span> original predictors <span class="math inline">\(T=XW_p\)</span>, where <span class="math inline">\(W_p\)</span> are weights that would maximize the overall explained variability. For those math-oriented readers, it turns out that such weights are the eigenvectors of the correlation matrix of the original exposures.</p>
+<p>Once a first component has been retrieved, we proceed by calculating a second component that would maximize the residual variance. Of interest in our context, the procedure adds a constraints of orthogonality to this second component, that is, it will be uncorrelated to the first one, as presented in the figure.</p>
+<div class="figure">
+<img src="images/pca2.png" alt="" />
+<p class="caption">First principal component in a 3-covariates setting</p>
+</div>
+<p>Mathematically, this is obtained by another linear combination where the weights are the eigenvectors corresponding to the second largest eigenvalue. In this way we can proceed to derive a full set of <span class="math inline">\(p\)</span> components from our original <span class="math inline">\(p\)</span> covariates, until all variance has been explained. In summary, PCA is a set of linear transformation that fits the matrix of exposures into a new coordinate system so that the most variance is explained by the first coordinate, and each subsequent coordinate is orthogonal to the last and has a lesser variance. You transform a set of <span class="math inline">\(p\)</span> correlated variables into a set of <span class="math inline">\(p\)</span> uncorrelated principal components. PCA is sensitive to unscaled covariates, so it is usually recommended to standardize your matrix of exposures before running a PCA analysis.</p>
+<div id="fitting-a-pca-in-r" class="section level3" number="2.4.1">
+<h3><span class="header-section-number">2.4.1</span> Fitting a PCA in R</h3>
+<p>There are several options to conduct PCA in R. Here we will use <code>prcomp</code> but alternative options are available (<code>princomp</code> and <code>principal</code>). PCA is also available in the aforementioned <code>rexposome</code> package. If you want to prepare nice figures for presentations or usage in manuscripts, I also recommend taking a look a the <code>factoextra</code> package to create a ggplot2-based elegant visualization (<a href="http://www.sthda.com/english/wiki/factoextra-r-package-easy-multivariate-data-analyses-and-elegant-visualization">link</a>).</p>
+<p>The <code>prcomp( )</code> function produces a basic principal component analysis. The command requires the raw data you want to reduce (the exposure matrix) and will extract principal components. Here we are also centering and scaling all exposures. Table 2.2. shows the first rows of the newly derived variables (the components).</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="unsupervised-analysis.html#cb12-1" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">prcomp</span>(X, <span class="at">center=</span><span class="cn">TRUE</span>, <span class="at">scale=</span><span class="cn">TRUE</span>)</span></code></pre></div>
+<table>
+<caption>
+<span id="tab:unnamed-chunk-8">Table 2.2: </span>First rows of the components
+</caption>
+<thead>
+<tr>
+<th style="text-align:right;">
+PC1
+</th>
+<th style="text-align:right;">
+PC2
+</th>
+<th style="text-align:right;">
+PC3
+</th>
+<th style="text-align:right;">
+PC4
+</th>
+<th style="text-align:right;">
+PC5
+</th>
+<th style="text-align:right;">
+PC6
+</th>
+<th style="text-align:right;">
+PC7
+</th>
+<th style="text-align:right;">
+PC8
+</th>
+<th style="text-align:right;">
+PC9
+</th>
+<th style="text-align:right;">
+PC10
+</th>
+<th style="text-align:right;">
+PC11
+</th>
+<th style="text-align:right;">
+PC12
+</th>
+<th style="text-align:right;">
+PC13
+</th>
+<th style="text-align:right;">
+PC14
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+-2.2389015
+</td>
+<td style="text-align:right;">
+0.0189525
+</td>
+<td style="text-align:right;">
+-1.2859775
+</td>
+<td style="text-align:right;">
+-0.3216035
+</td>
+<td style="text-align:right;">
+-0.2117773
+</td>
+<td style="text-align:right;">
+0.5065609
+</td>
+<td style="text-align:right;">
+0.0949531
+</td>
+<td style="text-align:right;">
+0.0498184
+</td>
+<td style="text-align:right;">
+-0.3528743
+</td>
+<td style="text-align:right;">
+0.6327501
+</td>
+<td style="text-align:right;">
+-0.9635341
+</td>
+<td style="text-align:right;">
+-0.3863832
+</td>
+<td style="text-align:right;">
+-0.2260102
+</td>
+<td style="text-align:right;">
+0.0393756
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1.1559396
+</td>
+<td style="text-align:right;">
+-0.6968029
+</td>
+<td style="text-align:right;">
+1.0199832
+</td>
+<td style="text-align:right;">
+-1.2520422
+</td>
+<td style="text-align:right;">
+0.2019949
+</td>
+<td style="text-align:right;">
+0.1850336
+</td>
+<td style="text-align:right;">
+0.6115127
+</td>
+<td style="text-align:right;">
+-0.7637062
+</td>
+<td style="text-align:right;">
+-0.0160088
+</td>
+<td style="text-align:right;">
+-0.4436463
+</td>
+<td style="text-align:right;">
+-0.1977756
+</td>
+<td style="text-align:right;">
+0.2647719
+</td>
+<td style="text-align:right;">
+0.1831903
+</td>
+<td style="text-align:right;">
+0.0473029
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.1629765
+</td>
+<td style="text-align:right;">
+-0.0676542
+</td>
+<td style="text-align:right;">
+-0.9676685
+</td>
+<td style="text-align:right;">
+1.3357760
+</td>
+<td style="text-align:right;">
+-0.3980497
+</td>
+<td style="text-align:right;">
+-0.0163378
+</td>
+<td style="text-align:right;">
+0.5089395
+</td>
+<td style="text-align:right;">
+1.0205435
+</td>
+<td style="text-align:right;">
+-0.6352686
+</td>
+<td style="text-align:right;">
+-0.6295934
+</td>
+<td style="text-align:right;">
+0.6662812
+</td>
+<td style="text-align:right;">
+0.4333277
+</td>
+<td style="text-align:right;">
+0.2718524
+</td>
+<td style="text-align:right;">
+-0.1982041
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1.0947459
+</td>
+<td style="text-align:right;">
+-3.8859461
+</td>
+<td style="text-align:right;">
+1.0072495
+</td>
+<td style="text-align:right;">
+0.4083807
+</td>
+<td style="text-align:right;">
+-0.2634263
+</td>
+<td style="text-align:right;">
+0.1651619
+</td>
+<td style="text-align:right;">
+0.3376678
+</td>
+<td style="text-align:right;">
+0.3956715
+</td>
+<td style="text-align:right;">
+-0.0564324
+</td>
+<td style="text-align:right;">
+1.1606182
+</td>
+<td style="text-align:right;">
+0.0526433
+</td>
+<td style="text-align:right;">
+0.0768175
+</td>
+<td style="text-align:right;">
+-0.0135220
+</td>
+<td style="text-align:right;">
+-0.0826189
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1.4205153
+</td>
+<td style="text-align:right;">
+1.1283036
+</td>
+<td style="text-align:right;">
+-1.0392885
+</td>
+<td style="text-align:right;">
+-0.6507554
+</td>
+<td style="text-align:right;">
+0.1587461
+</td>
+<td style="text-align:right;">
+0.3137072
+</td>
+<td style="text-align:right;">
+-0.3465914
+</td>
+<td style="text-align:right;">
+-0.4683247
+</td>
+<td style="text-align:right;">
+0.3952183
+</td>
+<td style="text-align:right;">
+0.1897396
+</td>
+<td style="text-align:right;">
+0.4224867
+</td>
+<td style="text-align:right;">
+-0.0995627
+</td>
+<td style="text-align:right;">
+0.1514907
+</td>
+<td style="text-align:right;">
+-0.0933670
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.3557820
+</td>
+<td style="text-align:right;">
+-0.2771229
+</td>
+<td style="text-align:right;">
+1.0902309
+</td>
+<td style="text-align:right;">
+-0.1366375
+</td>
+<td style="text-align:right;">
+1.8059563
+</td>
+<td style="text-align:right;">
+0.3943783
+</td>
+<td style="text-align:right;">
+-0.9437355
+</td>
+<td style="text-align:right;">
+-0.9424548
+</td>
+<td style="text-align:right;">
+-0.5576855
+</td>
+<td style="text-align:right;">
+-0.8672917
+</td>
+<td style="text-align:right;">
+0.1908570
+</td>
+<td style="text-align:right;">
+0.0755395
+</td>
+<td style="text-align:right;">
+0.5675384
+</td>
+<td style="text-align:right;">
+0.1145596
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="choosing-the-number-of-components" class="section level3" number="2.4.2">
+<h3><span class="header-section-number">2.4.2</span> Choosing the number of components</h3>
+<p>One of the most interesting features of PCA is that, while it is possible to calculate <span class="math inline">\(p\)</span> components from a set of <span class="math inline">\(p\)</span> covariates, we usually need a smaller nummber to successfully describe most of the variance of the original matrix of exposures. In practical terms, not only we are reshaping the original set of exposures into uncorrelated principal components, but we are also able to reduce the dimension of the original matrix into a smaller number of variables that describe the mixture. How many components do we actually need? Before getting to describe the several tools that can guide us on this decision, it is important to stress that this step will be purely subjective. Sometimes these tools will lead to the same evident conclusion, but other times it might not be straightforward to identify a clear number of components to describe the original data. In general, the three common tools used to select a number of components include:</p>
+<ul>
+<li>Select components that explain at least 70 to 80% of the original variance</li>
+<li>Select components corresponding to eigenvalues larger than 1</li>
+<li>Look at the point of inflation of the scree plot</li>
+</ul>
+<p>Let’s take a look at these approaches in our illustrative example. These are the results of the PCA that we ran with the previous R command:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="unsupervised-analysis.html#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit)</span></code></pre></div>
+<pre><code>## Importance of components:
+##                           PC1    PC2     PC3     PC4     PC5     PC6     PC7
+## Standard deviation     2.4627 1.7521 1.12071 0.89784 0.83905 0.72337 0.63861
+## Proportion of Variance 0.4332 0.2193 0.08971 0.05758 0.05029 0.03738 0.02913
+## Cumulative Proportion  0.4332 0.6525 0.74219 0.79977 0.85006 0.88744 0.91657
+##                            PC8    PC9    PC10    PC11    PC12    PC13    PC14
+## Standard deviation     0.60268 0.4892 0.46054 0.43573 0.29751 0.25542 0.09904
+## Proportion of Variance 0.02594 0.0171 0.01515 0.01356 0.00632 0.00466 0.00070
+## Cumulative Proportion  0.94251 0.9596 0.97476 0.98832 0.99464 0.99930 1.00000</code></pre>
+<p>(Square roots of) eigenvalues are reported in the first line, while the second and third line present, respectively, the proportion of variance explained by each given component (note that, as expected, this decreases as we proceed with the estimation), and the cumulative variance explained.</p>
+<p>The scree plot is the plot of the descending eigenvalues. Ideally we would like to identify a point of inflation (also known as “elbow” of the curve), signifying that after a certain number of components, the proportion of variance that is additionally explained becomes minimal.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="unsupervised-analysis.html#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(fit,<span class="at">type=</span><span class="st">&quot;lines&quot;</span>)</span></code></pre></div>
+<div class="figure"><span id="fig:screeplot"></span>
+<img src="bookdown-demo_files/figure-html/screeplot-1.png" alt="Scree plot" width="672" />
+<p class="caption">
+Figure 2.5: Scree plot
+</p>
+</div>
+<p>All these techniques seem to indicate that 3 components might successfully describe the original set of 14 exposures.</p>
+</div>
+<div id="getting-sense-of-components-interpretation" class="section level3" number="2.4.3">
+<h3><span class="header-section-number">2.4.3</span> Getting sense of components interpretation</h3>
+<p>A PCA is made by three steps. Fitting the model is the easiest part as it only requires a line of coding (assuming that the pre-processing has been carefully conducted). The second step, selecting the number of components, requires some levels of subjectivity but is also relatively simple in most settings. The third step is usually the more complicated ones, as we are now tasked with providing some interpretation to the set of principal components that we have selected. To get a sense of what principal components represent, we usually look at loading factors, the correlation coefficients between the derived components and the original covariates. In practical terms they inform us on how much of the original variance of each covariate is explained by each component. Here are the loading factors for our example:</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="unsupervised-analysis.html#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Correlation matrix</span></span>
+<span id="cb16-2"><a href="unsupervised-analysis.html#cb16-2" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(</span>
+<span id="cb16-3"><a href="unsupervised-analysis.html#cb16-3" aria-hidden="true" tabindex="-1"></a>  fit<span class="sc">$</span>rotation, <span class="at">booktabs =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb16-4"><a href="unsupervised-analysis.html#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">caption =</span> <span class="st">&#39;Loading factors&#39;</span></span>
+<span id="cb16-5"><a href="unsupervised-analysis.html#cb16-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<table>
+<caption>
+<span id="tab:unnamed-chunk-9">Table 2.3: </span>Loading factors
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+PC1
+</th>
+<th style="text-align:right;">
+PC2
+</th>
+<th style="text-align:right;">
+PC3
+</th>
+<th style="text-align:right;">
+PC4
+</th>
+<th style="text-align:right;">
+PC5
+</th>
+<th style="text-align:right;">
+PC6
+</th>
+<th style="text-align:right;">
+PC7
+</th>
+<th style="text-align:right;">
+PC8
+</th>
+<th style="text-align:right;">
+PC9
+</th>
+<th style="text-align:right;">
+PC10
+</th>
+<th style="text-align:right;">
+PC11
+</th>
+<th style="text-align:right;">
+PC12
+</th>
+<th style="text-align:right;">
+PC13
+</th>
+<th style="text-align:right;">
+PC14
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+x1
+</td>
+<td style="text-align:right;">
+0.0017143
+</td>
+<td style="text-align:right;">
+0.2965204
+</td>
+<td style="text-align:right;">
+0.3599497
+</td>
+<td style="text-align:right;">
+0.4250816
+</td>
+<td style="text-align:right;">
+0.7716378
+</td>
+<td style="text-align:right;">
+0.0241569
+</td>
+<td style="text-align:right;">
+-0.0616770
+</td>
+<td style="text-align:right;">
+0.0387385
+</td>
+<td style="text-align:right;">
+0.0109328
+</td>
+<td style="text-align:right;">
+-0.0093448
+</td>
+<td style="text-align:right;">
+0.0086599
+</td>
+<td style="text-align:right;">
+-0.0130703
+</td>
+<td style="text-align:right;">
+0.0023798
+</td>
+<td style="text-align:right;">
+-0.0065664
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x2
+</td>
+<td style="text-align:right;">
+0.0348101
+</td>
+<td style="text-align:right;">
+0.2789407
+</td>
+<td style="text-align:right;">
+0.4678814
+</td>
+<td style="text-align:right;">
+0.4540801
+</td>
+<td style="text-align:right;">
+-0.5779524
+</td>
+<td style="text-align:right;">
+-0.3462568
+</td>
+<td style="text-align:right;">
+-0.0266760
+</td>
+<td style="text-align:right;">
+0.1950322
+</td>
+<td style="text-align:right;">
+0.0333408
+</td>
+<td style="text-align:right;">
+-0.0376913
+</td>
+<td style="text-align:right;">
+0.0035594
+</td>
+<td style="text-align:right;">
+-0.0102783
+</td>
+<td style="text-align:right;">
+0.0235316
+</td>
+<td style="text-align:right;">
+0.0015467
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x3
+</td>
+<td style="text-align:right;">
+0.3581046
+</td>
+<td style="text-align:right;">
+-0.1358796
+</td>
+<td style="text-align:right;">
+0.2730333
+</td>
+<td style="text-align:right;">
+-0.1308238
+</td>
+<td style="text-align:right;">
+-0.0277497
+</td>
+<td style="text-align:right;">
+0.1564570
+</td>
+<td style="text-align:right;">
+-0.2131188
+</td>
+<td style="text-align:right;">
+-0.0881940
+</td>
+<td style="text-align:right;">
+-0.1294119
+</td>
+<td style="text-align:right;">
+-0.0178195
+</td>
+<td style="text-align:right;">
+-0.0636970
+</td>
+<td style="text-align:right;">
+-0.0951566
+</td>
+<td style="text-align:right;">
+0.4535153
+</td>
+<td style="text-align:right;">
+-0.6688317
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x4
+</td>
+<td style="text-align:right;">
+0.3603185
+</td>
+<td style="text-align:right;">
+-0.1307061
+</td>
+<td style="text-align:right;">
+0.2778158
+</td>
+<td style="text-align:right;">
+-0.1220231
+</td>
+<td style="text-align:right;">
+-0.0224492
+</td>
+<td style="text-align:right;">
+0.1593879
+</td>
+<td style="text-align:right;">
+-0.1971830
+</td>
+<td style="text-align:right;">
+-0.1012582
+</td>
+<td style="text-align:right;">
+-0.1325533
+</td>
+<td style="text-align:right;">
+-0.0225153
+</td>
+<td style="text-align:right;">
+-0.0513707
+</td>
+<td style="text-align:right;">
+-0.0756590
+</td>
+<td style="text-align:right;">
+0.3346375
+</td>
+<td style="text-align:right;">
+0.7399659
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x5
+</td>
+<td style="text-align:right;">
+0.3538227
+</td>
+<td style="text-align:right;">
+-0.1278570
+</td>
+<td style="text-align:right;">
+0.2817634
+</td>
+<td style="text-align:right;">
+-0.0994146
+</td>
+<td style="text-align:right;">
+-0.0387517
+</td>
+<td style="text-align:right;">
+0.1404008
+</td>
+<td style="text-align:right;">
+-0.2198003
+</td>
+<td style="text-align:right;">
+-0.1002304
+</td>
+<td style="text-align:right;">
+-0.1072366
+</td>
+<td style="text-align:right;">
+-0.0246148
+</td>
+<td style="text-align:right;">
+-0.0823058
+</td>
+<td style="text-align:right;">
+0.1455071
+</td>
+<td style="text-align:right;">
+-0.8030483
+</td>
+<td style="text-align:right;">
+-0.0683894
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x6
+</td>
+<td style="text-align:right;">
+0.3149583
+</td>
+<td style="text-align:right;">
+0.0061111
+</td>
+<td style="text-align:right;">
+-0.0271741
+</td>
+<td style="text-align:right;">
+-0.0576998
+</td>
+<td style="text-align:right;">
+0.1244917
+</td>
+<td style="text-align:right;">
+-0.6198890
+</td>
+<td style="text-align:right;">
+0.4398883
+</td>
+<td style="text-align:right;">
+-0.5028593
+</td>
+<td style="text-align:right;">
+-0.2167525
+</td>
+<td style="text-align:right;">
+-0.0206792
+</td>
+<td style="text-align:right;">
+-0.0551119
+</td>
+<td style="text-align:right;">
+-0.0059773
+</td>
+<td style="text-align:right;">
+-0.0017058
+</td>
+<td style="text-align:right;">
+-0.0090137
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x7
+</td>
+<td style="text-align:right;">
+0.2351557
+</td>
+<td style="text-align:right;">
+0.3255146
+</td>
+<td style="text-align:right;">
+-0.2369090
+</td>
+<td style="text-align:right;">
+-0.1356534
+</td>
+<td style="text-align:right;">
+0.0298706
+</td>
+<td style="text-align:right;">
+-0.2785907
+</td>
+<td style="text-align:right;">
+-0.5252466
+</td>
+<td style="text-align:right;">
+-0.1919585
+</td>
+<td style="text-align:right;">
+0.5956024
+</td>
+<td style="text-align:right;">
+0.0534903
+</td>
+<td style="text-align:right;">
+0.0214018
+</td>
+<td style="text-align:right;">
+0.1151769
+</td>
+<td style="text-align:right;">
+0.0398633
+</td>
+<td style="text-align:right;">
+0.0078041
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x8
+</td>
+<td style="text-align:right;">
+0.3589990
+</td>
+<td style="text-align:right;">
+-0.0482006
+</td>
+<td style="text-align:right;">
+-0.0071116
+</td>
+<td style="text-align:right;">
+-0.0053818
+</td>
+<td style="text-align:right;">
+0.0322053
+</td>
+<td style="text-align:right;">
+0.0151705
+</td>
+<td style="text-align:right;">
+0.2523556
+</td>
+<td style="text-align:right;">
+0.3158598
+</td>
+<td style="text-align:right;">
+0.1335415
+</td>
+<td style="text-align:right;">
+0.7818271
+</td>
+<td style="text-align:right;">
+0.2730510
+</td>
+<td style="text-align:right;">
+-0.0112164
+</td>
+<td style="text-align:right;">
+-0.0151052
+</td>
+<td style="text-align:right;">
+-0.0010123
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x9
+</td>
+<td style="text-align:right;">
+0.1994071
+</td>
+<td style="text-align:right;">
+0.3538425
+</td>
+<td style="text-align:right;">
+-0.3139263
+</td>
+<td style="text-align:right;">
+-0.1751365
+</td>
+<td style="text-align:right;">
+0.0764960
+</td>
+<td style="text-align:right;">
+-0.2198462
+</td>
+<td style="text-align:right;">
+-0.2360800
+</td>
+<td style="text-align:right;">
+0.5070062
+</td>
+<td style="text-align:right;">
+-0.5711764
+</td>
+<td style="text-align:right;">
+-0.0808290
+</td>
+<td style="text-align:right;">
+-0.0680062
+</td>
+<td style="text-align:right;">
+-0.0325586
+</td>
+<td style="text-align:right;">
+-0.0184280
+</td>
+<td style="text-align:right;">
+0.0060362
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x10
+</td>
+<td style="text-align:right;">
+0.2719030
+</td>
+<td style="text-align:right;">
+-0.0246063
+</td>
+<td style="text-align:right;">
+-0.4067448
+</td>
+<td style="text-align:right;">
+0.5312151
+</td>
+<td style="text-align:right;">
+-0.0862533
+</td>
+<td style="text-align:right;">
+0.2341755
+</td>
+<td style="text-align:right;">
+0.0432445
+</td>
+<td style="text-align:right;">
+-0.0808694
+</td>
+<td style="text-align:right;">
+0.0100615
+</td>
+<td style="text-align:right;">
+0.1084960
+</td>
+<td style="text-align:right;">
+-0.6275928
+</td>
+<td style="text-align:right;">
+-0.0353979
+</td>
+<td style="text-align:right;">
+0.0115316
+</td>
+<td style="text-align:right;">
+0.0036618
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x11
+</td>
+<td style="text-align:right;">
+0.3171664
+</td>
+<td style="text-align:right;">
+-0.0545167
+</td>
+<td style="text-align:right;">
+-0.3057558
+</td>
+<td style="text-align:right;">
+0.3905798
+</td>
+<td style="text-align:right;">
+-0.0645898
+</td>
+<td style="text-align:right;">
+0.1757389
+</td>
+<td style="text-align:right;">
+-0.0067514
+</td>
+<td style="text-align:right;">
+-0.1002333
+</td>
+<td style="text-align:right;">
+-0.0707991
+</td>
+<td style="text-align:right;">
+-0.3387861
+</td>
+<td style="text-align:right;">
+0.6962794
+</td>
+<td style="text-align:right;">
+-0.0190559
+</td>
+<td style="text-align:right;">
+-0.0130578
+</td>
+<td style="text-align:right;">
+-0.0108932
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x12
+</td>
+<td style="text-align:right;">
+0.0255698
+</td>
+<td style="text-align:right;">
+0.5179345
+</td>
+<td style="text-align:right;">
+0.0409402
+</td>
+<td style="text-align:right;">
+-0.1247229
+</td>
+<td style="text-align:right;">
+-0.1192813
+</td>
+<td style="text-align:right;">
+0.3585736
+</td>
+<td style="text-align:right;">
+0.2381737
+</td>
+<td style="text-align:right;">
+-0.1875666
+</td>
+<td style="text-align:right;">
+-0.1238166
+</td>
+<td style="text-align:right;">
+0.0428674
+</td>
+<td style="text-align:right;">
+0.0193237
+</td>
+<td style="text-align:right;">
+0.6686867
+</td>
+<td style="text-align:right;">
+0.1201416
+</td>
+<td style="text-align:right;">
+-0.0054517
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x13
+</td>
+<td style="text-align:right;">
+0.0053067
+</td>
+<td style="text-align:right;">
+0.5259246
+</td>
+<td style="text-align:right;">
+0.0210257
+</td>
+<td style="text-align:right;">
+-0.1709542
+</td>
+<td style="text-align:right;">
+-0.1152485
+</td>
+<td style="text-align:right;">
+0.2871454
+</td>
+<td style="text-align:right;">
+0.1429746
+</td>
+<td style="text-align:right;">
+-0.2310884
+</td>
+<td style="text-align:right;">
+0.0123912
+</td>
+<td style="text-align:right;">
+0.0492287
+</td>
+<td style="text-align:right;">
+0.0319341
+</td>
+<td style="text-align:right;">
+-0.7074520
+</td>
+<td style="text-align:right;">
+-0.1414000
+</td>
+<td style="text-align:right;">
+-0.0070955
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x14
+</td>
+<td style="text-align:right;">
+0.3423131
+</td>
+<td style="text-align:right;">
+0.0204381
+</td>
+<td style="text-align:right;">
+0.0623947
+</td>
+<td style="text-align:right;">
+-0.1981742
+</td>
+<td style="text-align:right;">
+0.0732766
+</td>
+<td style="text-align:right;">
+0.0523398
+</td>
+<td style="text-align:right;">
+0.4415704
+</td>
+<td style="text-align:right;">
+0.4250604
+</td>
+<td style="text-align:right;">
+0.4319188
+</td>
+<td style="text-align:right;">
+-0.4951539
+</td>
+<td style="text-align:right;">
+-0.1539282
+</td>
+<td style="text-align:right;">
+-0.0062058
+</td>
+<td style="text-align:right;">
+-0.0021136
+</td>
+<td style="text-align:right;">
+-0.0004576
+</td>
+</tr>
+</tbody>
+</table>
+<p>It is not simple to identify any clear pattern. Loading factors are generally low, and several covariates seem to equally load to more components. However, there is a trick that can be tried out to improve the interpretation of the components, consisting in rotating the axes. The most common approach to do that is called “varimax.” Let’s take a look at the rotated loading factors for the first three components (the ones that we have selected) in our example:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="unsupervised-analysis.html#cb17-1" aria-hidden="true" tabindex="-1"></a>rawLoadings_3<span class="ot">&lt;-</span> fit<span class="sc">$</span>rotation[,<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>]</span>
+<span id="cb17-2"><a href="unsupervised-analysis.html#cb17-2" aria-hidden="true" tabindex="-1"></a>rotatedLoadings_3 <span class="ot">&lt;-</span> <span class="fu">varimax</span>(rawLoadings_3)<span class="sc">$</span>loadings</span>
+<span id="cb17-3"><a href="unsupervised-analysis.html#cb17-3" aria-hidden="true" tabindex="-1"></a>rotatedLoadings_3</span></code></pre></div>
+<pre><code>## 
+## Loadings:
+##     PC1    PC2    PC3   
+## x1          0.162  0.428
+## x2   0.163  0.123  0.506
+## x3   0.452 -0.102       
+## x4   0.455              
+## x5   0.450              
+## x6   0.275  0.105 -0.115
+## x7          0.435 -0.152
+## x8   0.332        -0.131
+## x9          0.473 -0.198
+## x10         0.178 -0.446
+## x11  0.182  0.134 -0.382
+## x12         0.466  0.227
+## x13         0.473  0.218
+## x14  0.332              
+## 
+##                  PC1   PC2   PC3
+## SS loadings    1.000 1.000 1.000
+## Proportion Var 0.071 0.071 0.071
+## Cumulative Var 0.071 0.143 0.214</code></pre>
+<p>Interpretation remains a bit tricky and very subjective, but definitely improves. With 3 rotated components we observe covariates groupings that recall what we observed in the network analysis: we have <span class="math inline">\(X_1, X_2\)</span> with higher loadings on PC3, <span class="math inline">\(X_7, X_9, X_{12}, X_{13}\)</span> loading on PC2, and all others on PC1</p>
+</div>
+<div id="using-principal-components-in-subsequent-analyses" class="section level3" number="2.4.4">
+<h3><span class="header-section-number">2.4.4</span> Using principal components in subsequent analyses</h3>
+<p>We have here described PCA as an unsupervised technique for describing the mixture. Principal components, however, can be used in further analysis, for example including the selected components into a regression model instead of the original exposures. This approach is very appealing in the context of environmental mixtures as it would result into incorporating most of the information of out exposure matrix into a regression models by using uncorrelated covariates, thus overcoming one of the major limitations of using multiple regression in this context (see Section 3). Nevertheless, the validity of this approach is strictly dependent on whether a good interpretation of the components has been determined; in our example we would not conclude that the PCA clearly summarizes exposures into well defined groups, and we would get negligible advantages by including such components into a regression model. The next subsection will present some published papers that applied this technique in environmental epidemiology. Furthermore, if subgroups of exposures are clearly identified from a PCA, this information can be incorporated into subsequent modeling technique such as BKMR or hierarchical modeling.</p>
+</div>
+<div id="pca-in-practice" class="section level3" number="2.4.5">
+<h3><span class="header-section-number">2.4.5</span> PCA in practice</h3>
+<p>Despite several techniques developed ad-hoc for the analysis of environmental mixtures have emerged, PCA remains a very common choice among environmental epidemiologists. Most of the times, the method is used to reduce the dimension of a mixture of correlated exposures into a subset of uncorrelated components that are later included in regression analysis.</p>
+<p>As a first example, let’s consider a paper by <span class="citation"><a href="#ref-lee2017identification" role="doc-biblioref">Lee et al.</a> (<a href="#ref-lee2017identification" role="doc-biblioref">2017</a>)</span> evalauting the association between pregnancy exposure to 28 contaminants (metals, pesticides, PCBs, phthalates, PFAS, BPA) and socio-economic status in the MIREC study.To summarize the mixture, the Authors conduct a PCA that suggests selecting 11 principal components. The following figure presents the loading factors, as included in the paper:</p>
+<div class="figure">
+<img src="images/table5.png" alt="" />
+<p class="caption">Loading factors (figure from Lee et al., 2017)</p>
+</div>
+<p>The interpretation of such components is not straightforward (the paper does not mention whether a rotation was considered). The first component has higher loadings on PCBs, while the second component has high loadings on DEHP metabolites. All other components have high loadings on specific subsets of exposures, but fail to uniquely identify clusters of exposures within the mixture. For example, to describe exposure to organochlorine pesticides, we find similar loading factors in PC1, PC5, and PC9. Similarly, organophosphate pesticides equivalently load on PC3, PC4, and PC6. As described in the previous paragraphs, this has relevant implications when attempting to evaluate PCA components in a regression model. The following figure presents results from such regression in the paper:</p>
+<div class="figure">
+<img src="images/table6.png" alt="" />
+<p class="caption">Regression (figure from Lee et al., 2017)</p>
+</div>
+<p>From this table we might be able to conclude that PCBs are associated with the outcome of interest (as they load on PC1), but it is not easy to draw any conclusion about other sets of exposures, whose variability is captured by multiple components. To conclude, the real information that a PCA model is giving us in this example is that the mixture is very complex and we do not observe clearly defined subgroups of exposures based on the correlation structure. In such setting, a PCA analysis might not be the best option to evaluate exposure-outcome associations, and other methods should be considered.</p>
+<p>A second interesting example can be found in <span class="citation"><a href="#ref-sanchez2018urinary" role="doc-biblioref">Sanchez et al.</a> (<a href="#ref-sanchez2018urinary" role="doc-biblioref">2018</a>)</span>, evaluating metals and socio-demographic characteristics in the HEALS study in Bangladesh. Out of a mixture of 15 metals, a rotated PCA identified 6 principal components explaining 81% of the total variability. Differently from the previous examples, such components better identify subgroups of exposures (figure).</p>
+<div class="figure">
+<img src="images/tableaa.png" alt="" />
+<p class="caption">Loading factors (figure from Sanchez et al., 2018)</p>
+</div>
+<p>If we look at these loading factors by row, we see that each metal has a high loading factor with one component, and low loadings to all other. For example arsenic (row 1) is described by PC3, cadmium (row 3), by PC6, and so on down to zinc, described by PC5.
+In this situation, a regression model with the principal components will have a better interpretation; for example, associations between PC3 and the outcome can be used to retrieve information on the associations between arsenic, molybdenum, and tungsten, on the outcome.</p>
+<p>Nevertheless, it is important to note some critical limitations of this approach, that remain valid also when a perfect interpretation can be provided. Let’s think of this third principal component that is well describing the variability of arsenic, molybdenum, and tungsten. A regression coefficient linking PC3 with the outcome would only tell us how the subgroup of these 3 exposures is associated with the outcome, but would not inform us on which if the three is driving the association, whether all three exposures have effects in the same direction, nor whether there is any interaction between the three components. Moreover, let’s not forget that components are calculated as linear combinations of the exposures and without taking the relationship with the outcome into account.</p>
+<p>For these reasons, we can conclude that PCA is very powerful tool to be considered in the preliminary unsupervised assessment of the mixture as it can inform subsequent analyses. On the other hand, using derived components into regression modeling must be done with caution, and is usually outperformed by most supervised approaches that we will describe later.</p>
+<p>Finally, it is important to mention that several extensions of the classical PCA have been developed, including a supervised version of the approach. These techniques, however, were developed in other fields and have not gained too much popularity in the context of environmental exposures, where alternative supervised approaches, presented in the following sections, are generally used.</p>
+</div>
+</div>
+<div id="cluster-analysis" class="section level2" number="2.5">
+<h2><span class="header-section-number">2.5</span> Cluster analysis</h2>
+<p>While a principal components analysis can be seen as a way to identify subgroups of exposures (the columns of the mixture matrix) within the mixture based on their correlation structure, another useful exploratory analysis consists in identifying subgroups of individuals (the rows of the data) that share similar exposure profiles. This is commonly done with cluster analysis. Like PCA, cluster analysis requires complete data and standardized variables. To group individuals, a distance measure must be identified, with several options available from standard euclidean distance to distances based on the correlations structure.</p>
+<div id="k-means-clustering" class="section level3" number="2.5.1">
+<h3><span class="header-section-number">2.5.1</span> K-means clustering</h3>
+<p>The most common approach to partition the data into clusters, is an unsupervised approach called k-means clustering. This method classifies objects in <span class="math inline">\(k\)</span> groups (i.e., clusters), so that individuals within the same cluster are as similar as possible, while individuals from different clusters are as dissimilar as possible. To achieve that, clusters are defined in a way that minimizes within-cluster variation. A simple algorithm for k-clustering proceeds as follow</p>
+<ol style="list-style-type: decimal">
+<li>Pre-specify <span class="math inline">\(k\)</span>, the number of clusters</li>
+<li>Select <span class="math inline">\(k\)</span> random individuals as center for each cluster and define the centroids, vectors of length <span class="math inline">\(p\)</span> that contain the means of all variables for the observation in the cluster. In our context, the <span class="math inline">\(p\)</span> variables are the components of our mixture of interest</li>
+<li>Define a distance measure. The standard choice is the euclidean distance defined as <span class="math inline">\((x_i-\mu_k)\)</span> i, for each individual in the study (<span class="math inline">\(x_i\)</span>) and each cluster center (<span class="math inline">\(\mu_k\)</span>).</li>
+<li>Assign each individual to the closest centroid</li>
+<li>For each of the <span class="math inline">\(k\)</span> clusters update the cluster centroid by calculating the new mean values of all the data points in the cluster</li>
+<li>Iteratively update the previous 2 steps until the the cluster assignments stop changing or the maximum number of iterations is reached. By default, the R software uses 10 as the default value for the maximum number of iterations.</li>
+</ol>
+<p>This simple algorithm minimizes the total within-cluster variation, defined for each cluster <span class="math inline">\(C_k\)</span> as the sum of squared euclidean distances within that cluster <span class="math inline">\(W(C_k)=\sum_{x_i\in C_k}(x_i-\mu_k)^2\)</span></p>
+<p>Since k-mean clustering requires the user to specify the number of groups, it is important to assess the optimal number of groups. A simple technique is to use the elbow method, similar to the one presented for PCA, which consists in plotting the within-cluster sum of squares versus the number of clusters, and locating the bend in the plot.</p>
+</div>
+<div id="k-means-in-r" class="section level3" number="2.5.2">
+<h3><span class="header-section-number">2.5.2</span> K-means in R</h3>
+<p>We can compute k-means in R with the <code>kmeans</code> function within the <code>cluster</code> package. Here we are selecting 3 groups, also using the <code>nstart</code> option that will attempts multiple initial configurations (here 20) and report the best one.</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="unsupervised-analysis.html#cb19-1" aria-hidden="true" tabindex="-1"></a>k3 <span class="ot">&lt;-</span> <span class="fu">kmeans</span>(X, <span class="at">centers =</span> <span class="dv">3</span>, <span class="at">nstart =</span> <span class="dv">20</span>)</span>
+<span id="cb19-2"><a href="unsupervised-analysis.html#cb19-2" aria-hidden="true" tabindex="-1"></a>k3</span></code></pre></div>
+<p>The option <code>fviz_cluster</code> provides a nice graphical representation of the groupings. If there are more than two variables <code>fviz_cluster</code> will perform principal component analysis (PCA) and plot the data points according to the first two principal components that explain the majority of the variance.</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="unsupervised-analysis.html#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_cluster</span>(k3, <span class="at">data =</span> X)</span></code></pre></div>
+<div class="figure" style="text-align: center"><span id="fig:figurecl"></span>
+<img src="bookdown-demo_files/figure-html/figurecl-1.png" alt="Cluster analysis with 3 groups" width="80%" />
+<p class="caption">
+Figure 2.6: Cluster analysis with 3 groups
+</p>
+</div>
+<p>Here we can test more</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="unsupervised-analysis.html#cb21-1" aria-hidden="true" tabindex="-1"></a>k2 <span class="ot">&lt;-</span> <span class="fu">kmeans</span>(X, <span class="at">centers =</span> <span class="dv">2</span>, <span class="at">nstart =</span> <span class="dv">20</span>)</span>
+<span id="cb21-2"><a href="unsupervised-analysis.html#cb21-2" aria-hidden="true" tabindex="-1"></a>k4 <span class="ot">&lt;-</span> <span class="fu">kmeans</span>(X, <span class="at">centers =</span> <span class="dv">4</span>, <span class="at">nstart =</span> <span class="dv">20</span>)</span>
+<span id="cb21-3"><a href="unsupervised-analysis.html#cb21-3" aria-hidden="true" tabindex="-1"></a>k5 <span class="ot">&lt;-</span> <span class="fu">kmeans</span>(X, <span class="at">centers =</span> <span class="dv">5</span>, <span class="at">nstart =</span> <span class="dv">20</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="unsupervised-analysis.html#cb22-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">fviz_cluster</span>(k2, <span class="at">geom =</span> <span class="st">&quot;point&quot;</span>, <span class="at">data =</span> X) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">&quot;k = 2&quot;</span>)</span>
+<span id="cb22-2"><a href="unsupervised-analysis.html#cb22-2" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">fviz_cluster</span>(k3, <span class="at">geom =</span> <span class="st">&quot;point&quot;</span>,  <span class="at">data =</span> X) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">&quot;k = 3&quot;</span>)</span>
+<span id="cb22-3"><a href="unsupervised-analysis.html#cb22-3" aria-hidden="true" tabindex="-1"></a>p3 <span class="ot">&lt;-</span> <span class="fu">fviz_cluster</span>(k4, <span class="at">geom =</span> <span class="st">&quot;point&quot;</span>,  <span class="at">data =</span> X) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">&quot;k = 4&quot;</span>)</span>
+<span id="cb22-4"><a href="unsupervised-analysis.html#cb22-4" aria-hidden="true" tabindex="-1"></a>p4 <span class="ot">&lt;-</span> <span class="fu">fviz_cluster</span>(k5, <span class="at">geom =</span> <span class="st">&quot;point&quot;</span>,  <span class="at">data =</span> X) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">&quot;k = 5&quot;</span>)</span>
+<span id="cb22-5"><a href="unsupervised-analysis.html#cb22-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-6"><a href="unsupervised-analysis.html#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="fu">grid.arrange</span>(p1, p2, p3, p4, <span class="at">nrow =</span> <span class="dv">2</span>)</span></code></pre></div>
+<div class="figure" style="text-align: center"><span id="fig:figurecl2"></span>
+<img src="bookdown-demo_files/figure-html/figurecl2-1.png" alt="Cluster analysis with 2-5 groups" width="80%" />
+<p class="caption">
+Figure 2.7: Cluster analysis with 2-5 groups
+</p>
+</div>
+<p>The elbow plot can tell us how many groups optimally classify individuals. This figure shows that 2 might be enough.</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="unsupervised-analysis.html#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb23-2"><a href="unsupervised-analysis.html#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_nbclust</span>(X, kmeans, <span class="at">method =</span> <span class="st">&quot;wss&quot;</span>)</span></code></pre></div>
+<div class="figure" style="text-align: center"><span id="fig:figurecl3"></span>
+<img src="bookdown-demo_files/figure-html/figurecl3-1.png" alt="Elbow plot" width="80%" />
+<p class="caption">
+Figure 2.8: Elbow plot
+</p>
+</div>
+</div>
+<div id="cluster-analysis-to-simplify-descriptive-statistics-presentation" class="section level3" number="2.5.3">
+<h3><span class="header-section-number">2.5.3</span> Cluster analysis to simplify descriptive statistics presentation</h3>
+<p>One of the advantages of clustering individuals is to provide a better presentation of descriptive statistics and univariate associations with other covariates in the dataset prior to formal analysis (what is commonly done in table 1 of a scientific manuscript). First, let’s define the exposure profiles by evaluating the distribution of original exposures in the clusters:</p>
+<div class="Rtable1"><table class="Rtable1">
+<thead>
+<tr>
+<th class='rowlabel firstrow lastrow'></th>
+<th class='firstrow lastrow'><span class='stratlabel'>1<br><span class='stratn'>(N=236)</span></span></th>
+<th class='firstrow lastrow'><span class='stratlabel'>2<br><span class='stratn'>(N=264)</span></span></th>
+<th class='firstrow lastrow'><span class='stratlabel'>Overall<br><span class='stratn'>(N=500)</span></span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class='rowlabel firstrow'>x1</td>
+<td class='firstrow'></td>
+<td class='firstrow'></td>
+<td class='firstrow'></td>
+</tr>
+<tr>
+<td class='rowlabel'>Mean (SD)</td>
+<td>1.04 (0.718)</td>
+<td>1.01 (0.684)</td>
+<td>1.02 (0.699)</td>
+</tr>
+<tr>
+<td class='rowlabel lastrow'>Median [Min, Max]</td>
+<td class='lastrow'>1.04 [-1.18, 2.49]</td>
+<td class='lastrow'>1.02 [-0.936, 2.89]</td>
+<td class='lastrow'>1.03 [-1.18, 2.89]</td>
+</tr>
+<tr>
+<td class='rowlabel firstrow'>x2</td>
+<td class='firstrow'></td>
+<td class='firstrow'></td>
+<td class='firstrow'></td>
+</tr>
+<tr>
+<td class='rowlabel'>Mean (SD)</td>
+<td>-2.05 (0.765)</td>
+<td>-2.18 (0.759)</td>
+<td>-2.12 (0.764)</td>
+</tr>
+<tr>
+<td class='rowlabel lastrow'>Median [Min, Max]</td>
+<td class='lastrow'>-2.10 [-4.32, 0.193]</td>
+<td class='lastrow'>-2.23 [-4.01, -0.291]</td>
+<td class='lastrow'>-2.14 [-4.32, 0.193]</td>
+</tr>
+<tr>
+<td class='rowlabel firstrow'>x3</td>
+<td class='firstrow'></td>
+<td class='firstrow'></td>
+<td class='firstrow'></td>
+</tr>
+<tr>
+<td class='rowlabel'>Mean (SD)</td>
+<td>2.48 (0.885)</td>
+<td>0.291 (0.907)</td>
+<td>1.32 (1.41)</td>
+</tr>
+<tr>
+<td class='rowlabel lastrow'>Median [Min, Max]</td>
+<td class='lastrow'>2.36 [0.993, 5.43]</td>
+<td class='lastrow'>0.511 [-2.33, 1.83]</td>
+<td class='lastrow'>1.33 [-2.33, 5.43]</td>
+</tr>
+<tr>
+<td class='rowlabel firstrow'>x4</td>
+<td class='firstrow'></td>
+<td class='firstrow'></td>
+<td class='firstrow'></td>
+</tr>
+<tr>
+<td class='rowlabel'>Mean (SD)</td>
+<td>3.49 (0.867)</td>
+<td>1.33 (0.889)</td>
+<td>2.35 (1.39)</td>
+</tr>
+<tr>
+<td class='rowlabel lastrow'>Median [Min, Max]</td>
+<td class='lastrow'>3.39 [1.93, 6.36]</td>
+<td class='lastrow'>1.51 [-1.36, 2.92]</td>
+<td class='lastrow'>2.32 [-1.36, 6.36]</td>
+</tr>
+<tr>
+<td class='rowlabel firstrow'>x5</td>
+<td class='firstrow'></td>
+<td class='firstrow'></td>
+<td class='firstrow'></td>
+</tr>
+<tr>
+<td class='rowlabel'>Mean (SD)</td>
+<td>1.86 (1.03)</td>
+<td>-0.645 (1.04)</td>
+<td>0.537 (1.62)</td>
+</tr>
+<tr>
+<td class='rowlabel lastrow'>Median [Min, Max]</td>
+<td class='lastrow'>1.81 [-0.311, 4.85]</td>
+<td class='lastrow'>-0.459 [-4.22, 1.42]</td>
+<td class='lastrow'>0.504 [-4.22, 4.85]</td>
+</tr>
+<tr>
+<td class='rowlabel firstrow'>x6</td>
+<td class='firstrow'></td>
+<td class='firstrow'></td>
+<td class='firstrow'></td>
+</tr>
+<tr>
+<td class='rowlabel'>Mean (SD)</td>
+<td>1.52 (0.892)</td>
+<td>0.326 (0.815)</td>
+<td>0.891 (1.04)</td>
+</tr>
+<tr>
+<td class='rowlabel lastrow'>Median [Min, Max]</td>
+<td class='lastrow'>1.50 [-0.564, 3.76]</td>
+<td class='lastrow'>0.356 [-2.12, 2.25]</td>
+<td class='lastrow'>0.833 [-2.12, 3.76]</td>
+</tr>
+<tr>
+<td class='rowlabel firstrow'>x7</td>
+<td class='firstrow'></td>
+<td class='firstrow'></td>
+<td class='firstrow'></td>
+</tr>
+<tr>
+<td class='rowlabel'>Mean (SD)</td>
+<td>1.51 (0.556)</td>
+<td>1.15 (0.490)</td>
+<td>1.32 (0.552)</td>
+</tr>
+<tr>
+<td class='rowlabel lastrow'>Median [Min, Max]</td>
+<td class='lastrow'>1.51 [0.216, 2.94]</td>
+<td class='lastrow'>1.18 [-0.356, 2.50]</td>
+<td class='lastrow'>1.33 [-0.356, 2.94]</td>
+</tr>
+<tr>
+<td class='rowlabel firstrow'>x8</td>
+<td class='firstrow'></td>
+<td class='firstrow'></td>
+<td class='firstrow'></td>
+</tr>
+<tr>
+<td class='rowlabel'>Mean (SD)</td>
+<td>3.39 (0.737)</td>
+<td>2.08 (0.767)</td>
+<td>2.70 (0.999)</td>
+</tr>
+<tr>
+<td class='rowlabel lastrow'>Median [Min, Max]</td>
+<td class='lastrow'>3.31 [1.65, 5.92]</td>
+<td class='lastrow'>2.10 [-0.268, 4.84]</td>
+<td class='lastrow'>2.69 [-0.268, 5.92]</td>
+</tr>
+<tr>
+<td class='rowlabel firstrow'>x9</td>
+<td class='firstrow'></td>
+<td class='firstrow'></td>
+<td class='firstrow'></td>
+</tr>
+<tr>
+<td class='rowlabel'>Mean (SD)</td>
+<td>1.45 (0.529)</td>
+<td>1.21 (0.571)</td>
+<td>1.32 (0.564)</td>
+</tr>
+<tr>
+<td class='rowlabel lastrow'>Median [Min, Max]</td>
+<td class='lastrow'>1.43 [0.0496, 2.70]</td>
+<td class='lastrow'>1.25 [-0.328, 2.98]</td>
+<td class='lastrow'>1.34 [-0.328, 2.98]</td>
+</tr>
+<tr>
+<td class='rowlabel firstrow'>x10</td>
+<td class='firstrow'></td>
+<td class='firstrow'></td>
+<td class='firstrow'></td>
+</tr>
+<tr>
+<td class='rowlabel'>Mean (SD)</td>
+<td>3.46 (0.690)</td>
+<td>2.86 (0.683)</td>
+<td>3.14 (0.748)</td>
+</tr>
+<tr>
+<td class='rowlabel lastrow'>Median [Min, Max]</td>
+<td class='lastrow'>3.42 [1.69, 5.26]</td>
+<td class='lastrow'>2.81 [1.07, 4.66]</td>
+<td class='lastrow'>3.13 [1.07, 5.26]</td>
+</tr>
+<tr>
+<td class='rowlabel firstrow'>x11</td>
+<td class='firstrow'></td>
+<td class='firstrow'></td>
+<td class='firstrow'></td>
+</tr>
+<tr>
+<td class='rowlabel'>Mean (SD)</td>
+<td>5.61 (0.638)</td>
+<td>4.81 (0.674)</td>
+<td>5.19 (0.769)</td>
+</tr>
+<tr>
+<td class='rowlabel lastrow'>Median [Min, Max]</td>
+<td class='lastrow'>5.53 [3.98, 7.80]</td>
+<td class='lastrow'>4.80 [2.62, 6.71]</td>
+<td class='lastrow'>5.21 [2.62, 7.80]</td>
+</tr>
+<tr>
+<td class='rowlabel firstrow'>x12</td>
+<td class='firstrow'></td>
+<td class='firstrow'></td>
+<td class='firstrow'></td>
+</tr>
+<tr>
+<td class='rowlabel'>Mean (SD)</td>
+<td>0.466 (0.337)</td>
+<td>0.493 (0.347)</td>
+<td>0.481 (0.342)</td>
+</tr>
+<tr>
+<td class='rowlabel lastrow'>Median [Min, Max]</td>
+<td class='lastrow'>0.443 [-0.429, 1.15]</td>
+<td class='lastrow'>0.507 [-0.481, 1.49]</td>
+<td class='lastrow'>0.483 [-0.481, 1.49]</td>
+</tr>
+<tr>
+<td class='rowlabel firstrow'>x13</td>
+<td class='firstrow'></td>
+<td class='firstrow'></td>
+<td class='firstrow'></td>
+</tr>
+<tr>
+<td class='rowlabel'>Mean (SD)</td>
+<td>0.530 (0.348)</td>
+<td>0.578 (0.348)</td>
+<td>0.555 (0.349)</td>
+</tr>
+<tr>
+<td class='rowlabel lastrow'>Median [Min, Max]</td>
+<td class='lastrow'>0.514 [-0.371, 1.42]</td>
+<td class='lastrow'>0.570 [-0.355, 1.65]</td>
+<td class='lastrow'>0.552 [-0.371, 1.65]</td>
+</tr>
+<tr>
+<td class='rowlabel firstrow'>x14</td>
+<td class='firstrow'></td>
+<td class='firstrow'></td>
+<td class='firstrow'></td>
+</tr>
+<tr>
+<td class='rowlabel'>Mean (SD)</td>
+<td>1.79 (0.549)</td>
+<td>0.881 (0.562)</td>
+<td>1.31 (0.719)</td>
+</tr>
+<tr>
+<td class='rowlabel lastrow'>Median [Min, Max]</td>
+<td class='lastrow'>1.79 [0.373, 3.55]</td>
+<td class='lastrow'>0.879 [-1.29, 2.64]</td>
+<td class='lastrow'>1.31 [-1.29, 3.55]</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>We see that individuals in the first cluster have higher exposure levels to most of the included contaminants, so we could define cluster 1 as “high” and cluster 2 as “low” exposure. Next, we can see the distribution of outcome and covariates by clustering.</p>
+<div class="Rtable1"><table class="Rtable1">
+<thead>
+<tr>
+<th class='rowlabel firstrow lastrow'></th>
+<th class='firstrow lastrow'><span class='stratlabel'>1<br><span class='stratn'>(N=236)</span></span></th>
+<th class='firstrow lastrow'><span class='stratlabel'>2<br><span class='stratn'>(N=264)</span></span></th>
+<th class='firstrow lastrow'><span class='stratlabel'>Overall<br><span class='stratn'>(N=500)</span></span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class='rowlabel firstrow'>Outcome</td>
+<td class='firstrow'></td>
+<td class='firstrow'></td>
+<td class='firstrow'></td>
+</tr>
+<tr>
+<td class='rowlabel'>Mean (SD)</td>
+<td>4.19 (0.619)</td>
+<td>3.64 (0.569)</td>
+<td>3.90 (0.653)</td>
+</tr>
+<tr>
+<td class='rowlabel lastrow'>Median [Min, Max]</td>
+<td class='lastrow'>4.17 [2.66, 6.00]</td>
+<td class='lastrow'>3.62 [2.25, 5.22]</td>
+<td class='lastrow'>3.87 [2.25, 6.00]</td>
+</tr>
+<tr>
+<td class='rowlabel firstrow'>Poverty index</td>
+<td class='firstrow'></td>
+<td class='firstrow'></td>
+<td class='firstrow'></td>
+</tr>
+<tr>
+<td class='rowlabel'>Mean (SD)</td>
+<td>2.26 (1.59)</td>
+<td>1.90 (1.63)</td>
+<td>2.07 (1.62)</td>
+</tr>
+<tr>
+<td class='rowlabel lastrow'>Median [Min, Max]</td>
+<td class='lastrow'>2.18 [-1.87, 7.62]</td>
+<td class='lastrow'>1.87 [-2.47, 5.95]</td>
+<td class='lastrow'>2.08 [-2.47, 7.62]</td>
+</tr>
+<tr>
+<td class='rowlabel firstrow'>Age</td>
+<td class='firstrow'></td>
+<td class='firstrow'></td>
+<td class='firstrow'></td>
+</tr>
+<tr>
+<td class='rowlabel'>Mean (SD)</td>
+<td>46.4 (18.8)</td>
+<td>14.4 (17.9)</td>
+<td>29.5 (24.3)</td>
+</tr>
+<tr>
+<td class='rowlabel lastrow'>Median [Min, Max]</td>
+<td class='lastrow'>45.2 [1.01, 102]</td>
+<td class='lastrow'>15.1 [-38.3, 54.3]</td>
+<td class='lastrow'>28.6 [-38.3, 102]</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>We see that both z1, z2, z3, as well as the outcome are higher among individuals in cluster 1, who are characterized by the exposure profile presented in the previous table.</p>
+
+</div>
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-hevey2018network" class="csl-entry">
+Hevey, David. 2018. <span>“Network Analysis: A Brief Overview and Tutorial.”</span> <em>Health Psychology and Behavioral Medicine</em> 6 (1): 301–28.
+</div>
+<div id="ref-langfelder2008wgcna" class="csl-entry">
+Langfelder, Peter, and Steve Horvath. 2008. <span>“WGCNA: An r Package for Weighted Correlation Network Analysis.”</span> <em>BMC Bioinformatics</em> 9 (1): 1–13.
+</div>
+<div id="ref-lee2017identification" class="csl-entry">
+Lee, Wan-Chen, Mandy Fisher, Karelyn Davis, Tye E Arbuckle, and Sanjoy K Sinha. 2017. <span>“Identification of Chemical Mixtures to Which Canadian Pregnant Women Are Exposed: The MIREC Study.”</span> <em>Environment International</em> 99: 321–30.
+</div>
+<div id="ref-sanchez2018urinary" class="csl-entry">
+Sanchez, Tiffany R, Vesna Slavkovich, Nancy LoIacono, Alexander van Geen, Tyler Ellis, Steven N Chillrud, Olgica Balac, et al. 2018. <span>“Urinary Metals and Metal Mixtures in Bangladesh: Exploring Environmental Sources in the Health Effects of Arsenic Longitudinal Study (HEALS).”</span> <em>Environment International</em> 121: 852–60.
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="introduction.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="regression-based-approaches.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["bookdown-demo.pdf"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>
