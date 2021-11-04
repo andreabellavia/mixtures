@@ -218,7 +218,7 @@ Finally, we can summarize the results of our final model for the selected value 
 ```{r, tidy=FALSE}
 model_cv <- glmnet(X, Y, alpha = 0, lambda = lambda_cv, standardize = TRUE)
 knitr::kable(
- summary(model_cv$beta),
+ as.array(summary(model_cv$beta)),
   caption = 'Ridge'
 )
 ```
@@ -270,7 +270,7 @@ We see that, differently from what observed in Ridge regression, coefficients ar
 ```{r, tidy=FALSE}
 model_cv_lasso <- glmnet(X, Y, alpha = 1, lambda = lambda_cv_lasso, standardize = TRUE)
 knitr::kable(
- summary(model_cv_lasso$beta),
+ as.array(summary(model_cv_lasso$beta)),
   caption = 'Lasso'
 )
 ```
@@ -320,7 +320,7 @@ We see that coefficients are shrinked to a point where they exactly equal 0, and
 model_cv_enet <- glmnet(X, Y, alpha = 0.7, lambda = lambda_cv_enet, standardize = TRUE)
 knitr::kable(
 
-summary(model_cv_enet$beta),
+as.array(summary(model_cv_enet$beta)),
   caption = 'Lasso'
 )
 ```
@@ -355,7 +355,7 @@ Note that, regardless of how large $\lambda$ will be, the three confounders will
 model_cv_enet_adj <- glmnet(X, Y, alpha = 0.6, lambda = lambda_cv_enet, standardize = TRUE,penalty.factor=c(rep(1,ncol(X) - 3),0,0,0))
 knitr::kable(
 
-summary(model_cv_enet_adj$beta),
+as.array(summary(model_cv_enet_adj$beta)),
   caption = 'Lasso, adjusted'
 )
 ```

@@ -1452,14 +1452,10 @@ PC14
 <p>Let’s take a look at these approaches in our illustrative example. These are the results of the PCA that we ran with the previous R command:</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="unsupervised-analysis.html#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit)</span></code></pre></div>
 <pre><code>## Importance of components:
-##                           PC1    PC2     PC3     PC4     PC5     PC6     PC7
-## Standard deviation     2.4627 1.7521 1.12071 0.89784 0.83905 0.72337 0.63861
-## Proportion of Variance 0.4332 0.2193 0.08971 0.05758 0.05029 0.03738 0.02913
-## Cumulative Proportion  0.4332 0.6525 0.74219 0.79977 0.85006 0.88744 0.91657
-##                            PC8    PC9    PC10    PC11    PC12    PC13    PC14
-## Standard deviation     0.60268 0.4892 0.46054 0.43573 0.29751 0.25542 0.09904
-## Proportion of Variance 0.02594 0.0171 0.01515 0.01356 0.00632 0.00466 0.00070
-## Cumulative Proportion  0.94251 0.9596 0.97476 0.98832 0.99464 0.99930 1.00000</code></pre>
+##                           PC1    PC2     PC3     PC4     PC5     PC6     PC7     PC8    PC9    PC10    PC11    PC12    PC13    PC14
+## Standard deviation     2.4627 1.7521 1.12071 0.89784 0.83905 0.72337 0.63861 0.60268 0.4892 0.46054 0.43573 0.29751 0.25542 0.09904
+## Proportion of Variance 0.4332 0.2193 0.08971 0.05758 0.05029 0.03738 0.02913 0.02594 0.0171 0.01515 0.01356 0.00632 0.00466 0.00070
+## Cumulative Proportion  0.4332 0.6525 0.74219 0.79977 0.85006 0.88744 0.91657 0.94251 0.9596 0.97476 0.98832 0.99464 0.99930 1.00000</code></pre>
 <p>(Square roots of) eigenvalues are reported in the first line, while the second and third line present, respectively, the proportion of variance explained by each given component (note that, as expected, this decreases as we proceed with the estimation), and the cumulative variance explained.</p>
 <p>The scree plot is the plot of the descending eigenvalues. Ideally we would like to identify a point of inflation (also known as “elbow” of the curve), signifying that after a certain number of components, the proportion of variance that is additionally explained becomes minimal.</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="unsupervised-analysis.html#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(fit,<span class="at">type=</span><span class="st">&quot;lines&quot;</span>)</span></code></pre></div>
